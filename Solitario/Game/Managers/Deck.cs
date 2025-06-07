@@ -20,7 +20,7 @@ internal class Deck {
     Shuffle();
   }
 
-  public void Shuffle() {
+  internal void Shuffle() {
     for (int i = cards.Count - 1; i > 0; i--) {
       int j = rng.Next(i + 1);
       (cards[i], cards[j]) = (cards[j], cards[i]);
@@ -55,31 +55,24 @@ internal class Deck {
   /// Removes the top card from the deck and adds it to the waste pile.
   /// </summary>
   /// <remarks>This method modifies the state of the deck and waste pile. The top card is removed from the deck
-  /// and added to the waste pile. If the deck is empty, an exception is thrown.</remarks>
-  /// <exception cref="InvalidOperationException">Thrown when the deck is empty and no cards are available to pick.</exception>
+  /// and added to the waste pile.</remarks>
   internal void PickCard() {
     if (cards.Count == 0) {
-      throw new InvalidOperationException("Non ci sono più carte nel mazzo.");
+      cards.AddRange(waste.AsEnumerable().Reverse());
+      waste.Clear();
+      //Shuffle();
+      return;
     }
     Card card = cards[0];
     cards.RemoveAt(0);
-    waste.Add(card);
+    waste.Insert(0, card);
   }
 
   internal string GetWasteArt() {
     string art;
 
     if (waste.Count == 0) {
-      art =
-$@"╔ ═ ═ ═ ═ ═ ╗
-           
-║           ║
-           
-║           ║
-           
-║           ║
-           
-╚ ═ ═ ═ ═ ═ ╝";
+      art = Utils.GetEmptyCardArt();
     }
     else {
       art = waste[0].GetCardArt();
@@ -90,6 +83,6 @@ $@"╔ ═ ═ ═ ═ ═ ╗
 
   internal ConsoleColor GetWasteColor() {
     if (waste.Count == 0) return ConsoleColor.DarkGray;
-    return waste[0].GetColor();
+    return waste[0].GetColor(true);
   }
 }

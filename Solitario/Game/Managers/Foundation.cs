@@ -69,5 +69,64 @@ $@"╔ ═ ═ ═ ═ ═ ╗
     if (piles[index].Count == 0) return ConsoleColor.DarkGray;
     return piles[index][^1].GetColor();
   }
+
+  internal List<Card> GetCards(int index) {
+    if (index < 0 || index >= piles.Length) {
+      throw new ArgumentOutOfRangeException(nameof(index), "Indice fuori dai limiti della fondazione.");
+    }
+    return piles[index];
+  }
+  internal Card GetCardAt(int pileIndex, int index = -1) {
+    if (index == -1) {
+      index = piles[pileIndex].Count - 1; // Prendi l'ultima carta della pila
+    }
+    if (pileIndex < 0 || pileIndex >= piles.Length) {
+      throw new ArgumentOutOfRangeException(nameof(pileIndex), "Indice della pila fuori dai limiti della fondazione.");
+    }
+    if (index < 0 || index >= piles[pileIndex].Count) {
+      throw new ArgumentOutOfRangeException(nameof(index), "Indice della carta fuori dai limiti della pila.");
+    }
+    return piles[pileIndex][index];
+  }
+
+  /// <summary>
+  /// Takes the cards from a pile from a starting index. For example, if pile is of length 7, and we give it index 3, it will return all cards starting from that index all the way to 6
+  /// </summary>
+  /// <param name="index"></param>
+  /// <returns></returns>
+  /// <remarks>Mutates the pile, removing the cards from that pile</remarks>
+  /// <exception cref="ArgumentOutOfRangeException"></exception>
+  internal List<Card> TakeCards(int index) {
+    if (index < 0 || index >= piles.Length) {
+      throw new ArgumentOutOfRangeException(nameof(index), "Indice fuori dai limiti della fondazione.");
+    }
+
+    if (piles[index].Count == 0) return new List<Card>(); // Se la pila è vuota, ritorna una lista vuota
+
+    var cards = new List<Card>();
+    for (int i = index; i < piles[index].Count; i++) {
+      cards.Add(piles[index][i]);
+    }
+
+    return cards;
+  }
+
+  internal Card TakeCardAt(int pileIndex, int index = -1) {
+    if (pileIndex < 0 || pileIndex >= piles.Length) {
+      throw new ArgumentOutOfRangeException(nameof(pileIndex), "Indice della pila fuori dai limiti della fondazione.");
+    }
+    if (piles[pileIndex].Count == 0) {
+      throw new InvalidOperationException("Non ci sono carte nella pila specificata.");
+    }
+    if (index == -1) {
+      index = piles[pileIndex].Count - 1; // Prendi l'ultima carta della pila
+    }
+    if (index < 0 || index >= piles[pileIndex].Count) {
+      throw new ArgumentOutOfRangeException(nameof(index), "Indice della carta fuori dai limiti della pila.");
+    }
+    Card card = piles[pileIndex][index];
+    piles[pileIndex].RemoveAt(index);
+    return card;
+  }
 }
 

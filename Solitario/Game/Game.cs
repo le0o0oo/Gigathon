@@ -6,22 +6,47 @@ internal class Game {
   internal const byte cardWidth = 15; // (+ offset)
   internal const byte cardHeight = 9;
 
+  private bool autoplay = false;
+
   Deck deck;
   Tableau tableau;
   Foundation foundation;
   Cursor cursor;
+  Legend legend;
+  Selection selection;
 
   public Game() {
     deck = new Deck(); // Create a new deck of cards
     tableau = new Tableau(deck); // Create a new tableau with the deck
+    legend = new Legend(); // Initialize the legend for the game
     foundation = new Foundation(); // Create a new foundation
-    cursor = new Cursor(); // Initialize the cursor for card selection
+    selection = new Selection(tableau, deck, foundation);
+    cursor = new Cursor(tableau, legend, selection); // Initialize the cursor for card selection
 
-    Utils.SetCurrentGame(this); // Set the current game for utility functions
+    Draw();
 
-    Utils.PrintDeck();
-    Utils.PrintFoundations();
-    Utils.PrintTableau();
+    // Gestisce ridimensionamento spawnando un nuovo thread in background
+    Thread resizeThread = new Thread(() => {
+      int lastWidth = Console.WindowWidth;
+      int lastHeight = Console.WindowHeight;
+
+      while (true) {
+        int currentWidth = Console.WindowWidth;
+        int currentHeight = Console.WindowHeight;
+
+        if (currentWidth != lastWidth || currentHeight != lastHeight) {
+          Draw();
+
+          lastWidth = currentWidth;
+          lastHeight = currentHeight;
+        }
+
+        Thread.Sleep(200);
+      }
+    });
+
+    resizeThread.IsBackground = true;
+    resizeThread.Start();
 
     Input();
   }
@@ -36,10 +61,24 @@ internal class Game {
     return foundation;
   }
 
+  /// <summary>
+  /// "Disegna" il gioco nella console da zero.
+  /// </summary>
+  internal void Draw() {
+    Console.Clear();
+
+    Utils.SetCurrentGame(this); // Set the current game for utility functions
+
+    Utils.PrintDeck();
+    Utils.PrintFoundations();
+    Utils.PrintTableau();
+    cursor.DrawSelection(true);
+
+    cursor.Draw();
+    legend.Draw();
+  }
+
   private void Input() {
-    Console.SetCursorPosition(0, cardHeight * 3);
-    Console.WriteLine("Premi ESC per uscire dal gioco");
-    Console.WriteLine("Ascoltando per input...");
     while (true) {
       ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
@@ -58,6 +97,22 @@ internal class Game {
           break;
         case ConsoleKey.RightArrow:
           cursor.MoveRight(); // Move the cursor right
+          break;
+
+        case ConsoleKey.R:
+          deck.PickCard();
+          Utils.PrintDeck();
+          break;
+
+        case ConsoleKey.Spacebar:
+          cursor.Select();
+          break;
+        case ConsoleKey.X:
+          if (!selection.active) break;
+          selection.ClearSelection();
+          legend.SetSelected(false);
+          Utils.PrintTableau();
+          cursor.Draw();
           break;
       }
     }

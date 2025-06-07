@@ -34,9 +34,12 @@ class Card {
     };
   }
 
-  public ConsoleColor GetColor() // Ottieni il colore della carta
-  {
-    if (!revealed) return ConsoleColor.DarkGray;
+  /// <summary>
+  /// Get the color of the card based on its seed and revealed state.
+  /// </summary>
+  /// <returns></returns>
+  public ConsoleColor GetColor(bool force = false) {
+    if (!revealed && !force) return ConsoleColor.DarkGray;
     if (seed == "spades" || seed == "clubs") return ConsoleColor.White;
     else return ConsoleColor.Red;
   }
