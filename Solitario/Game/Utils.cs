@@ -61,6 +61,8 @@ internal static class Utils {
       Console.Write(lines[i]);
     }
 
+    // Waste
+
     string[] wasteLines = deck.GetWasteArt().Split('\n');
     Console.ForegroundColor = deck.GetWasteColor();
 
@@ -74,6 +76,7 @@ internal static class Utils {
 
   public static void PrintFoundations() {
     int startXPos = Game.cardWidth * 3;
+    ClearRectangle(startXPos, 0, Game.cardWidth * 4, Game.cardHeight + 2);
 
     Console.SetCursorPosition(startXPos, 0);
     Console.Write("Fondazioni");

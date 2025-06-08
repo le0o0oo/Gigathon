@@ -128,5 +128,16 @@ $@"╔ ═ ═ ═ ═ ═ ╗
     piles[pileIndex].RemoveAt(index);
     return card;
   }
+
+  internal List<Card>[] GetRawFoundation() {
+    return piles;
+  }
+
+  internal List<Card> GetPile(int index) {
+    if (index < 0 || index >= piles.Length) {
+      throw new ArgumentOutOfRangeException(nameof(index), "Indice della pila fuori dai limiti della fondazione.");
+    }
+    return piles[index];
+  }
 }
 

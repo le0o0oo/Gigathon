@@ -14,6 +14,8 @@ internal class Cursor {
   private readonly Tableau tableau;
   private readonly Legend legend;
   private readonly Selection selection;
+  private readonly Foundation foundation;
+  private readonly Deck deck; // Necessario per disegnare la selezione dalla riserva
 
   CursorArea currentArea = CursorArea.Tableau;
   /*Indica l'elemento corrente della selezione in base all'area, e vale solo per tableau e foundation.
@@ -32,10 +34,12 @@ internal class Cursor {
   */
   private int[] selectionPosition = { 0, 0 }; // Posizione del cursore di selezione (colonna, riga), usato per disegnare la selezione
 
-  internal Cursor(Tableau tableau, Legend legend, Selection selection) {
+  internal Cursor(Tableau tableau, Legend legend, Selection selection, Foundation foundation, Deck deck) {
     this.tableau = tableau;
     this.legend = legend;
     this.selection = selection;
+    this.foundation = foundation;
+    this.deck = deck;
 
     Draw();
   }
@@ -165,22 +169,51 @@ internal class Cursor {
       selectionPosition[1] = currentCardPileIndex;
     }
 
-    List<Card> cards = selection.selectedCards;
-    for (int i = 0; i < cards.Count; i++) {
-      Card card = cards[i];
-      string cardArt = i == cards.Count - 1 ? card.GetCardArt() : card.GetCardArtShort();
-      string[] artLines = cardArt.Split('\n');
+    if (selection.sourceArea == Selection.Areas.Tableau) {
+      List<Card> cards = selection.selectedCards;
+      for (int i = 0; i < cards.Count; i++) {
+        Card card = cards[i];
+        string cardArt = i == cards.Count - 1 ? card.GetCardArt() : card.GetCardArtShort();
+        string[] artLines = cardArt.Split('\n');
 
+        Console.ForegroundColor = card.GetColor() == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
+        Console.BackgroundColor = ConsoleColor.Gray;
+
+        int j = 0;
+        foreach (string line in artLines) {
+          Console.SetCursorPosition(Game.cardWidth * currentItemIndex, Game.cardHeight + 2 + j + i + currentCardPileIndex);
+          Console.WriteLine(line);
+          j++;
+        }
+      }
+    }
+    else if (selection.sourceArea == Selection.Areas.Foundation) {
+      Card card = selection.selectedCards[0];
+      string cardArt = card.GetCardArt();
+      string[] artLines = cardArt.Split('\n');
       Console.ForegroundColor = card.GetColor() == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
       Console.BackgroundColor = ConsoleColor.Gray;
-
       int j = 0;
       foreach (string line in artLines) {
-        Console.SetCursorPosition(Game.cardWidth * currentItemIndex, Game.cardHeight + 2 + j + i + currentCardPileIndex);
+        Console.SetCursorPosition(Game.cardWidth * (3 + currentItemIndex), 1 + j);
         Console.WriteLine(line);
         j++;
       }
     }
+    else if (selection.sourceArea == Selection.Areas.Waste) {
+      Card card = selection.selectedCards[0];
+      string cardArt = card.GetCardArt();
+      string[] artLines = cardArt.Split('\n');
+      Console.ForegroundColor = card.GetColor(true) == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
+      Console.BackgroundColor = ConsoleColor.Gray;
+      int j = 0;
+      foreach (string line in artLines) {
+        Console.SetCursorPosition(Game.cardWidth, 1 + j);
+        Console.WriteLine(line);
+        j++;
+      }
+    }
+
 
     if (redraw) {
       currentItemIndex = prevItemIndex;
@@ -193,16 +226,30 @@ internal class Cursor {
 
   internal void Select() {
     if (currentArea == CursorArea.Foundation) {
-      if (selection.active && selection.sourceArea == Selection.Areas.Tableau) {
+      // Da tableau/riserva alla fondazione
+      if (selection.active) {
         selection.AddToTarget(Selection.Areas.Foundation, currentItemIndex);
         Utils.PrintTableau();
         Utils.PrintFoundations();
+        Utils.PrintDeck();
         legend.SetSelected(false);
-      }
+        Draw();
 
+      }
+      // Selezione non attiva, seleziona carta dalla fondazione
+      else if (!selection.active) {
+        if (foundation.GetPile(currentItemIndex).Count == 0) return; // Non ci sono carte nella fondazione
+        var cards = new List<Card>([foundation.GetCardAt(currentItemIndex, -1)]);
+        selection.SetSelection(Selection.Areas.Foundation, currentItemIndex, cards);
+
+        DrawSelection();
+        legend.SetSelected(true);
+        Draw();
+      }
     }
-    else {
-      // Selezione non attiva
+    // Nel tableau. Potevo anche toglere else if ma è più chiaro così
+    else if (currentArea == CursorArea.Tableau) {
+      // Selezione non attiva: seleziona carte dalla pila corrente del tableau
       if (!selection.active) {
         List<Card> cards = new List<Card>();
 
@@ -220,7 +267,10 @@ internal class Cursor {
       else {
         selection.AddToTarget(Selection.Areas.Tableau, currentItemIndex);
         Utils.PrintTableau();
+        Utils.PrintFoundations();
+        Utils.PrintDeck();
         Draw();
+        legend.SetSelected(false);
       }
     }
   }

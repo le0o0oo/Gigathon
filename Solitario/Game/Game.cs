@@ -21,7 +21,7 @@ internal class Game {
     legend = new Legend(); // Initialize the legend for the game
     foundation = new Foundation(); // Create a new foundation
     selection = new Selection(tableau, deck, foundation);
-    cursor = new Cursor(tableau, legend, selection); // Initialize the cursor for card selection
+    cursor = new Cursor(tableau, legend, selection, foundation, deck); // Initialize the cursor for card selection
 
     Draw();
 
@@ -100,8 +100,16 @@ internal class Game {
           break;
 
         case ConsoleKey.R:
+          if (selection.active) break;
           deck.PickCard();
           Utils.PrintDeck();
+          break;
+
+        case ConsoleKey.E:
+          if (selection.active || deck.GetWaste().Count == 0) break;
+          selection.SetSelection(Selection.Areas.Waste, 0, [deck.GetWasteCardAt(-1)]);
+          cursor.DrawSelection();
+          legend.SetSelected(true);
           break;
 
         case ConsoleKey.Spacebar:
@@ -111,7 +119,11 @@ internal class Game {
           if (!selection.active) break;
           selection.ClearSelection();
           legend.SetSelected(false);
-          Utils.PrintTableau();
+
+          if (selection.sourceArea == Selection.Areas.Tableau) Utils.PrintTableau();
+          else if (selection.sourceArea == Selection.Areas.Foundation) Utils.PrintFoundations();
+          else if (selection.sourceArea == Selection.Areas.Waste) Utils.PrintDeck();
+
           cursor.Draw();
           break;
       }

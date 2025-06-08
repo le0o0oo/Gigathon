@@ -58,14 +58,14 @@ internal class Deck {
   /// and added to the waste pile.</remarks>
   internal void PickCard() {
     if (cards.Count == 0) {
-      cards.AddRange(waste.AsEnumerable().Reverse());
+      cards.AddRange(waste);
       waste.Clear();
       //Shuffle();
       return;
     }
     Card card = cards[0];
     cards.RemoveAt(0);
-    waste.Insert(0, card);
+    waste.Add(card);
   }
 
   internal string GetWasteArt() {
@@ -75,7 +75,7 @@ internal class Deck {
       art = Utils.GetEmptyCardArt();
     }
     else {
-      art = waste[0].GetCardArt();
+      art = GetWasteCardAt(-1).GetCardArt();
     }
 
     return art;
@@ -83,6 +83,28 @@ internal class Deck {
 
   internal ConsoleColor GetWasteColor() {
     if (waste.Count == 0) return ConsoleColor.DarkGray;
-    return waste[0].GetColor(true);
+    return GetWasteCardAt(-1).GetColor(true);
+  }
+
+  internal Card GetWasteCardAt(int index = -1) {
+    if (index == -1) {
+      index = waste.Count - 1; // Prendi l'ultima carta della pila di scarti
+    }
+    if (index < 0 || index >= waste.Count) {
+      throw new ArgumentOutOfRangeException(nameof(index), "Indice fuori dai limiti della pila di scarti.");
+    }
+    return waste[index];
+  }
+
+  internal Card TakeWasteCardAt(int index = -1) {
+    if (index == -1) {
+      index = waste.Count - 1; // Prendi l'ultima carta della pila di scarti
+    }
+    if (index < 0 || index >= waste.Count) {
+      throw new ArgumentOutOfRangeException(nameof(index), "Indice fuori dai limiti della pila di scarti.");
+    }
+    Card card = waste[index];
+    waste.RemoveAt(index);
+    return card;
   }
 }

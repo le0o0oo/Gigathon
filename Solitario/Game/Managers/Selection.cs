@@ -39,7 +39,8 @@ internal class Selection {
   public void AddToTarget(Areas destArea, int destIndex) {
     if (!active) throw new Exception("Selection mode not active");
 
-    if (destArea == Areas.Foundation) {
+    // Da tableau a fondazione
+    if (sourceArea == Areas.Tableau && destArea == Areas.Foundation) {
       if (selectedCards.Count != 1) throw new ArgumentException("Per la fondazione è possibile selezionare una sola carta alla volta.", nameof(selectedCards));
 
       int pileVal; // Valore della pila di destinazione
@@ -51,18 +52,40 @@ internal class Selection {
       tableau.TakeCardAt(sourceIndex, -1);
       if (tableau.GetPile(sourceIndex).Count > 0) tableau.GetCardAt(sourceIndex, -1).revealed = true;
 
-      selectedCards.Clear();
-      active = false;
     }
-    // Aggiungi carte a una pila del tableau
-    else {
+    // Muovi carte del tableau
+    else if (sourceArea == Areas.Tableau && destArea == Areas.Tableau) {
       tableau.GetPile(destIndex).AddRange(selectedCards);
 
       tableau.TakeCards(sourceIndex, tableau.GetPile(sourceIndex).Count - selectedCards.Count);
       if (tableau.GetPile(sourceIndex).Count > 0) tableau.GetCardAt(sourceIndex, -1).revealed = true;
 
-      selectedCards.Clear();
-      active = false;
     }
+    // Dalla fondazione al tableau
+    else if (sourceArea == Areas.Foundation && destArea == Areas.Tableau) {
+      foundation.TakeCardAt(sourceIndex, -1); // Rimuovi la carta dalla riserva
+      tableau.GetPile(destIndex).Add(selectedCards[0]); // Aggiungi la carta al tableau
+    }
+    // Dalla riserva al tableau
+    else if (sourceArea == Areas.Waste && destArea == Areas.Tableau) {
+      var card = deck.TakeWasteCardAt(-1); // Prendi l'ultima carta dalla riserva
+      card.revealed = true;
+
+      tableau.GetPile(destIndex).Add(card);
+    }
+    // Dalla riserva alla fondazione
+    else if (sourceArea == Areas.Waste && destArea == Areas.Foundation) {
+      if (selectedCards.Count != 1) throw new ArgumentException("Per la fondazione è possibile selezionare una sola carta alla volta.", nameof(selectedCards));
+
+      var card = deck.TakeWasteCardAt(-1); // Prendi l'ultima carta dalla riserva
+      card.revealed = true;
+      foundation.AddCard(card);
+    }
+    else {
+      throw new ArgumentException("Combinazione di aree non valida.", nameof(destArea));
+    }
+
+    selectedCards.Clear();
+    active = false;
   }
 }
