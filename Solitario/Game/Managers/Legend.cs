@@ -1,7 +1,8 @@
 ﻿namespace Solitario.Game.Managers;
 internal class Legend {
   // Config
-  private static int legendWidth = 61;
+  private static readonly int legendWidth = 61;
+  private static readonly int legendStartHeight = Game.cardHeight * 3;
   private static readonly string[] selectTexts = { "Seleziona carta/e", "Posiziona" };
   private static string pickCardText = "Pesca una carta dal mazzo";
   private static string pickWasteText = "Seleziona carta di riserva";
@@ -19,7 +20,7 @@ internal class Legend {
   /// </summary>
   internal void Draw() {
     //legendWidth = Console.WindowWidth / 2;
-    Console.SetCursorPosition(0, Game.cardHeight * 3);
+    Console.SetCursorPosition(0, legendStartHeight);
     Console.Write(
         $"\u001b[1;34m╔{new string('═', legendWidth - 2)}╗\n" +
         $"\u001b[1;34m║\u001b[0m  \u001b[1;32mUsa le freccie per muovere il cursore\u001b[0m{new string(' ', legendWidth - 2 - 39)}\u001b[1;34m║\n" +

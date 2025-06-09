@@ -3,6 +3,7 @@
 namespace Solitario.Game;
 internal static class Utils {
   private static Game? currentGame;
+  internal static readonly int tableauHeight = Game.cardHeight + 6;
 
   public static void SetCurrentGame(Game game) {
     if (game == null) {
@@ -100,7 +101,7 @@ internal static class Utils {
 
     int startLine = (int)(Game.cardHeight + 2);
 
-    ClearRectangle(0, startLine, Game.cardWidth * 7, Game.cardHeight + 6);
+    ClearRectangle(0, startLine, Game.cardWidth * 7, tableauHeight);
     // Itera per ogni colonna
     for (int i = 0; i < 7; i++) {
       byte j = 0;
@@ -145,5 +146,32 @@ internal static class Utils {
       Console.SetCursorPosition(left, y);
       Console.Write(blankLine);
     }
+  }
+
+  public static bool ValidateCardMove(Card sourceCard, List<Card> targetPile, Selection.Areas targetArea) {
+    if (targetArea == Selection.Areas.Tableau) {
+      // Se è un re
+      if (targetPile.Count == 0) {
+        if (sourceCard.numericValue == 13) return true;
+        return false;
+      }
+      if (targetPile[^1].GetColor() == sourceCard.GetColor()) return false; // Stesso colore, non valido
+
+      if (sourceCard.numericValue == targetPile[^1].numericValue - 1) return true;
+      return false;
+    }
+    else if (targetArea == Selection.Areas.Foundation) {
+      // Caso dell'asso
+      if (targetPile.Count == 0) {
+        if (sourceCard.numericValue == 1) return true;
+        return false;
+      }
+      if (sourceCard.seed != targetPile[0].seed) return false; // Seme diverso, non valido
+
+      if (sourceCard.numericValue == targetPile[^1].numericValue + 1) return true;
+      return false;
+    }
+
+    else return false; // Non supportato
   }
 }

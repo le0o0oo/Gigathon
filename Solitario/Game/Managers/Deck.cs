@@ -1,8 +1,8 @@
 ﻿namespace Solitario.Game.Managers;
 
 internal class Deck {
-  private List<Card> cards = new();
-  private List<Card> waste = new();
+  private readonly List<Card> cards = [];
+  private readonly List<Card> waste = [];
   private static readonly Random rng = new();
 
   private void GenerateCards() {

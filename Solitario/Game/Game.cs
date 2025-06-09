@@ -8,12 +8,14 @@ internal class Game {
 
   private bool autoplay = false;
 
-  Deck deck;
-  Tableau tableau;
-  Foundation foundation;
-  Cursor cursor;
-  Legend legend;
-  Selection selection;
+  private readonly Deck deck;
+  private readonly Tableau tableau;
+  private readonly Foundation foundation;
+  private readonly Cursor cursor;
+  private readonly Legend legend;
+  private readonly Selection selection;
+
+  private readonly Thread resizeThread;
 
   public Game() {
     deck = new Deck(); // Create a new deck of cards
@@ -26,7 +28,7 @@ internal class Game {
     Draw();
 
     // Gestisce ridimensionamento spawnando un nuovo thread in background
-    Thread resizeThread = new Thread(() => {
+    resizeThread = new Thread(() => {
       int lastWidth = Console.WindowWidth;
       int lastHeight = Console.WindowHeight;
 

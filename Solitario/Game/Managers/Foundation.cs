@@ -8,7 +8,7 @@
 */
 internal class Foundation {
   private readonly List<Card>[] piles = { new List<Card>(), new List<Card>(), new List<Card>(), new List<Card>() };
-  readonly Dictionary<string, int> seedIndexMap = new Dictionary<string, int> {
+  static internal readonly Dictionary<string, int> seedIndexMap = new Dictionary<string, int> {
     { "clubs", 0 },
     { "hearts", 1 },
     { "spades", 2 },

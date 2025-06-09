@@ -82,7 +82,7 @@ internal class Selection {
       foundation.AddCard(card);
     }
     else {
-      throw new ArgumentException("Combinazione di aree non valida.", nameof(destArea));
+      //throw new ArgumentException("Combinazione di aree non valida.", nameof(destArea));
     }
 
     selectedCards.Clear();

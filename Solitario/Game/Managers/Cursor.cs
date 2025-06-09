@@ -228,6 +228,10 @@ internal class Cursor {
     if (currentArea == CursorArea.Foundation) {
       // Da tableau/riserva alla fondazione
       if (selection.active) {
+        if (selection.selectedCards.Count != 1) return; // Per la fondazione è possibile selezionare una sola carta alla volta
+        if (!Utils.ValidateCardMove(selection.selectedCards[0], foundation.GetPile(currentItemIndex), Selection.Areas.Foundation)) return;
+        if (Foundation.seedIndexMap[selection.selectedCards[0].seed] != currentItemIndex) return;
+
         selection.AddToTarget(Selection.Areas.Foundation, currentItemIndex);
         Utils.PrintTableau();
         Utils.PrintFoundations();
@@ -265,6 +269,7 @@ internal class Cursor {
       }
       // Selezione attiva, muovi carte
       else {
+        if (!Utils.ValidateCardMove(selection.selectedCards[0], tableau.GetPile(currentItemIndex), Selection.Areas.Tableau)) return;
         selection.AddToTarget(Selection.Areas.Tableau, currentItemIndex);
         Utils.PrintTableau();
         Utils.PrintFoundations();
