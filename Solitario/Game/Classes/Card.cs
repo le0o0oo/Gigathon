@@ -7,7 +7,7 @@
 
 
 class Card {
-  protected readonly string value; // Valore della carta (A, 2, ..., 10, J, Q, K)
+  internal readonly string value; // Valore della carta (A, 2, ..., 10, J, Q, K)
   internal readonly byte numericValue; // Vero valore numerico della carta (1, 2, ..., 10, 11, 12, 13)
   internal readonly string seed; // Seme della carta (spades, hearts, diamonds, clubs)
   internal bool revealed;
@@ -32,91 +32,5 @@ class Card {
       13 => "K",// Re
       _ => numericValue.ToString(),// Numeri da 2 a 10
     };
-  }
-
-  /// <summary>
-  /// Get the color of the card based on its seed and revealed state.
-  /// </summary>
-  /// <returns></returns>
-  public ConsoleColor GetColor(bool force = false) {
-    if (!revealed && !force) return ConsoleColor.DarkGray;
-    if (seed == "spades" || seed == "clubs") return ConsoleColor.White;
-    else return ConsoleColor.Red;
-  }
-
-  public string GetCharacter() {
-    if (value == "1") return "A";
-    if (value == "10") return "10";
-
-    return value[0].ToString().ToUpper();
-  }
-
-  /// <summary>
-  /// Restituisce una "immagine" della carta in formato stringa.
-  /// </summary>
-  /// <returns></returns>
-  /// <exception cref="InvalidOperationException">Triggerata quando il seme non viene riconosciuto</exception>
-  internal string GetCardArt() {
-    char icon = seed switch
-    {
-      "spades" => '♠',
-      "hearts" => '♥',
-      "diamonds" => '♦',
-      "clubs" => '♣',
-      _ => throw new InvalidOperationException("Seme non riconosciuto.")
-    };
-
-    string art =
-$@"╔═══════════╗
-║ {GetCharacter()}        {(GetCharacter().Length > 1 ? "" : " ")}║
-║ {icon}         ║
-║           ║
-║     {numericValue}{(numericValue > 9 ? "" : " ")}    ║
-║           ║
-║        {(GetCharacter().Length > 1 ? "" : " ")}{GetCharacter()} ║
-║         {icon} ║
-╚═══════════╝";
-
-    return art;
-  }
-
-  internal string GetCardArtShort() {
-    char icon = seed switch
-    {
-      "spades" => '♠',
-      "hearts" => '♥',
-      "diamonds" => '♦',
-      "clubs" => '♣',
-      _ => throw new InvalidOperationException("Seme non riconosciuto.")
-    };
-
-    string artExposed = $@"╔ {GetCharacter()}{icon} {(GetCharacter().Length > 1 ? "" : "═")}══════╗";
-    string artHidden = "╔═══════════╗";
-
-    return revealed ? artExposed : artHidden;
-  }
-
-  internal string GetCardArtVertical() {
-    char icon = seed switch
-    {
-      "spades" => '♠',
-      "hearts" => '♥',
-      "diamonds" => '♦',
-      "clubs" => '♣',
-      _ => throw new InvalidOperationException("Seme non riconosciuto.")
-    };
-
-    string art =
-$@"╔═{(GetCharacter().Length > 1 ? "═" : "")}
-{GetCharacter()}{icon}
-║
-║
-║
-║
-║
-║
-╚═{(GetCharacter().Length > 1 ? "═" : "")}";
-
-    return art;
   }
 }

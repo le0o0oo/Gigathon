@@ -1,4 +1,6 @@
-﻿namespace Solitario.Game.Managers;
+﻿using Solitario.Game.Rendering;
+
+namespace Solitario.Game.Managers;
 
 /*
  * Clubs - Fiori - 0
@@ -60,14 +62,14 @@ $@"╔ ═ ═ ═ ═ ═ ╗
 ╚ ═ ═ ═ ═ ═ ╝";
     }
     else {
-      art = piles[index][^1].GetCardArt();
+      art = CardArt.GetCardArt(piles[index][^1]);
     }
 
     return art;
   }
   internal ConsoleColor GetFoundationColor(int index) {
     if (piles[index].Count == 0) return ConsoleColor.DarkGray;
-    return piles[index][^1].GetColor();
+    return CardArt.GetColor(piles[index][^1]);
   }
 
   internal List<Card> GetCards(int index) {

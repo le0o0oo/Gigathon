@@ -68,22 +68,10 @@ internal class Deck {
     waste.Add(card);
   }
 
-  internal string GetWasteArt() {
-    string art;
+  internal Card? GetTopWaste() {
+    if (waste.Count == 0) return null;
 
-    if (waste.Count == 0) {
-      art = Utils.GetEmptyCardArt();
-    }
-    else {
-      art = GetWasteCardAt(-1).GetCardArt();
-    }
-
-    return art;
-  }
-
-  internal ConsoleColor GetWasteColor() {
-    if (waste.Count == 0) return ConsoleColor.DarkGray;
-    return GetWasteCardAt(-1).GetColor(true);
+    return waste[^1];
   }
 
   internal Card GetWasteCardAt(int index = -1) {

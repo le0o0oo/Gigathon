@@ -1,4 +1,5 @@
 ﻿using Solitario.Game.Managers;
+using Solitario.Game.Rendering;
 
 namespace Solitario.Game;
 
@@ -15,6 +16,8 @@ internal class Game {
   private readonly Legend legend;
   private readonly Selection selection;
 
+  private readonly ConsoleRenderer renderer;
+
   private readonly Thread resizeThread;
 
   public Game() {
@@ -23,7 +26,9 @@ internal class Game {
     legend = new Legend(); // Initialize the legend for the game
     foundation = new Foundation(); // Create a new foundation
     selection = new Selection(tableau, deck, foundation);
-    cursor = new Cursor(tableau, legend, selection, foundation, deck); // Initialize the cursor for card selection
+    cursor = new Cursor(tableau, legend, selection, foundation); // Initialize the cursor for card selection
+
+    renderer = new ConsoleRenderer(deck, tableau, foundation, cursor, legend, selection);
 
     Draw();
 
@@ -69,19 +74,19 @@ internal class Game {
   internal void Draw() {
     Console.Clear();
 
-    Utils.SetCurrentGame(this); // Set the current game for utility functions
+    renderer.DrawDeck();
+    renderer.DrawFoundations();
+    renderer.DrawTableau();
+    renderer.DrawSelection(true);
 
-    Utils.PrintDeck();
-    Utils.PrintFoundations();
-    Utils.PrintTableau();
-    cursor.DrawSelection(true);
-
-    cursor.Draw();
+    renderer.DrawCursor();
     legend.Draw();
   }
 
   private void Input() {
     while (true) {
+
+
       ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
       switch (keyInfo.Key) {
@@ -89,44 +94,52 @@ internal class Game {
           return; // Exit the game
 
         case ConsoleKey.UpArrow:
-          cursor.MoveUp(); // Move the cursor up
+          cursor.MoveUp();
+          renderer.DrawCursor();
           break;
         case ConsoleKey.DownArrow:
-          cursor.MoveDown(); // Move the cursor down
+          cursor.MoveDown();
+          renderer.DrawCursor();
           break;
         case ConsoleKey.LeftArrow:
-          cursor.MoveLeft(); // Move the cursor left
+          cursor.MoveLeft();
+          renderer.DrawCursor();
           break;
         case ConsoleKey.RightArrow:
-          cursor.MoveRight(); // Move the cursor right
+          cursor.MoveRight();
+          renderer.DrawCursor();
           break;
 
         case ConsoleKey.R:
           if (selection.active) break;
           deck.PickCard();
-          Utils.PrintDeck();
+          renderer.DrawDeck();
           break;
 
         case ConsoleKey.E:
           if (selection.active || deck.GetWaste().Count == 0) break;
           selection.SetSelection(Selection.Areas.Waste, 0, [deck.GetWasteCardAt(-1)]);
-          cursor.DrawSelection();
+          renderer.DrawSelection();
           legend.SetSelected(true);
           break;
 
         case ConsoleKey.Spacebar:
-          cursor.Select();
+          if (cursor.Select()) {
+            renderer.DrawAll();
+            renderer.DrawSelection();
+          }
+
           break;
         case ConsoleKey.X:
           if (!selection.active) break;
           selection.ClearSelection();
           legend.SetSelected(false);
 
-          if (selection.sourceArea == Selection.Areas.Tableau) Utils.PrintTableau();
-          else if (selection.sourceArea == Selection.Areas.Foundation) Utils.PrintFoundations();
-          else if (selection.sourceArea == Selection.Areas.Waste) Utils.PrintDeck();
+          if (selection.sourceArea == Selection.Areas.Tableau) renderer.DrawTableau();
+          else if (selection.sourceArea == Selection.Areas.Foundation) renderer.DrawFoundations();
+          else if (selection.sourceArea == Selection.Areas.Waste) renderer.DrawDeck();
 
-          cursor.Draw();
+          renderer.DrawCursor();
           break;
       }
     }
