@@ -6,10 +6,8 @@ internal class Selection {
   // Variabili di stato della selezione
   internal List<Card> selectedCards { get; private set; } = new List<Card>();
   internal int sourceIndex { get; private set; } = 0; // Indice della selezione corrente. Valido per tableau e foundation, e si riferisce alla pila della selezione.
-  internal int destinationIndex { get; private set; } = 0;
 
   internal Areas sourceArea { get; private set; } = Areas.Waste;
-  internal Areas TargetArea { get; private set; } = Areas.Waste; // Last used target area
 
 
   internal bool active { get; private set; } = false;
@@ -32,12 +30,4 @@ internal class Selection {
     active = false; // Disattiva la selezione
   }
 
-  public void AddToTarget(Areas destArea, int destIndex) {
-    if (!active) throw new Exception("Selection mode not active");
-
-    TargetArea = destArea;
-    destinationIndex = destIndex;
-
-    active = false;
-  }
 }

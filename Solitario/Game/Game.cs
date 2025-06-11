@@ -71,6 +71,16 @@ internal class Game {
     renderer.DrawLegend();
   }
 
+  // Ottieni pila da ogni area
+  private List<Card> GetPile(Areas area, int index) {
+    return area switch
+    {
+      Areas.Tableau => tableau.GetPile(index),
+      Areas.Foundation => foundation.GetPile(index),
+      _ => deck.GetWaste()
+    };
+  }
+
   private void Input() {
     while (true) {
       ConsoleKeyInfo keyInfo = Console.ReadKey(true);
@@ -151,30 +161,29 @@ internal class Game {
 
   private void HandleSelectAction() {
     if (selection.active) {
-      // --- ATTEMPT TO PLACE CARDS ---
-      var targetArea = cursor.CurrentArea; // Tableau or Foundation
+      // Piazza le carte
+      var targetArea = cursor.CurrentArea; // Tableau o fondazioni
       var targetPileIndex = cursor.CurrentItemIndex;
 
       // Convert the cursor area to a selection area (they are logically the same)
       var selectionTargetArea = targetArea == CursorArea.Tableau ? Areas.Tableau : Areas.Foundation;
 
-      // 1. VALIDATE
+      // 1. Controlla se mossa valida
       if (!Validator.ValidateCardMove(selection.selectedCards[0], GetPile(selectionTargetArea, targetPileIndex), selectionTargetArea)) {
         return; // Invalid move, do nothing.
       }
 
-      // 2. EXECUTE
-      // The move is valid, so we execute it by passing parameters directly.
+      // 2. Piazza le carte
       PlaceSelectedCards(selection.sourceArea, selection.sourceIndex, selectionTargetArea, targetPileIndex);
 
-      // 3. CLEANUP
+      // 3. Cleanup
       selection.ClearSelection();
       legend.SetSelected(false);
 
 
     }
     else {
-      // --- ATTEMPT TO PICK UP CARDS ---
+      // Prendi le carte
       if (cursor.CurrentArea == CursorArea.Tableau) {
         var pile = tableau.GetPile(cursor.CurrentItemIndex);
         if (pile.Count == 0 || cursor.CurrentCardPileIndex >= pile.Count) return;
@@ -183,12 +192,12 @@ internal class Game {
         for (int i = cursor.CurrentCardPileIndex; i < pile.Count; i++) {
           cardsToSelect.Add(pile[i]);
         }
-        if (!cardsToSelect[0].Revealed) return; // Cannot pick up un-revealed cards
+        if (!cardsToSelect[0].Revealed) return; // Carte non rivelate, non prenderle
 
         selection.SetSelection(Areas.Tableau, cursor.CurrentItemIndex, cardsToSelect);
         legend.SetSelected(true);
       }
-      else { // Cursor is on Foundation
+      else { // Cursore nella fondazione
         var pile = foundation.GetPile(cursor.CurrentItemIndex);
         if (pile.Count == 0) return;
 
@@ -197,17 +206,6 @@ internal class Game {
       }
     }
   }
-
-  // A helper to get a pile from any area
-  private List<Card> GetPile(Areas area, int index) {
-    return area switch
-    {
-      Areas.Tableau => tableau.GetPile(index),
-      Areas.Foundation => foundation.GetPile(index),
-      _ => deck.GetWaste() // Note: you might need a method on Deck for this
-    };
-  }
-
 
   // This method now receives all information it needs as parameters.
   // It is a pure "action" method.
