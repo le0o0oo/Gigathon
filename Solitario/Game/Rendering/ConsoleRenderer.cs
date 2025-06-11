@@ -1,4 +1,5 @@
 ﻿using Solitario.Game.Managers;
+using Solitario.Game.Types;
 
 namespace Solitario.Game.Rendering;
 internal class ConsoleRenderer {
@@ -12,7 +13,10 @@ internal class ConsoleRenderer {
   #endregion
 
   #region Costanti
-  internal static readonly int tableauHeight = Game.cardHeight + 6;
+  private static readonly int tableauHeight = CardArt.cardHeight + 6;
+
+  private static readonly int legendWidth = 61;
+  private static readonly int legendStartHeight = CardArt.cardHeight * 3;
   #endregion
 
   #region Variabili di stato
@@ -55,6 +59,7 @@ internal class ConsoleRenderer {
   }
   #endregion
 
+  #region Public helpers
   internal void DrawAll() {
     DrawDeck();
     DrawFoundations();
@@ -62,17 +67,24 @@ internal class ConsoleRenderer {
     DrawCursor();
   }
 
-  internal void DrawCursor(int left, int top) {
-    SaveCursorPosition();
-
-
-
-    RestoreCursorPosition();
+  internal void DrawBasedOnArea(Areas area) {
+    switch (area) {
+      case Areas.Tableau:
+        DrawTableau();
+        break;
+      case Areas.Foundation:
+        DrawFoundations();
+        break;
+      case Areas.Waste:
+        DrawDeck();
+        break;
+    }
   }
+  #endregion
 
   internal void DrawDeck() {
     SaveCursorPosition();
-    ClearRectangle(0, 0, Game.cardWidth * 2, Game.cardHeight + 2);
+    ClearRectangle(0, 0, CardArt.cardWidth * 2, CardArt.cardHeight + 2);
 
     string art = CardArt.GetFlippedArt();
 
@@ -82,7 +94,7 @@ internal class ConsoleRenderer {
 
     Console.SetCursorPosition(0, 0);
     Console.Write($"Mazzo ({deck.GetCards().Count})");
-    Console.SetCursorPosition(Game.cardWidth, 0);
+    Console.SetCursorPosition(CardArt.cardWidth, 0);
     Console.Write($"Scarti ({deck.GetWaste().Count})");
 
     Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -106,7 +118,7 @@ internal class ConsoleRenderer {
     Console.ForegroundColor = wasteCard == null ? ConsoleColor.DarkGray : CardArt.GetColor(wasteCard, true);
 
     for (int i = 0; i < wasteLines.Length; i++) {
-      Console.SetCursorPosition(Game.cardWidth, i + 1);
+      Console.SetCursorPosition(CardArt.cardWidth, i + 1);
       Console.Write(wasteLines[i]);
     }
 
@@ -116,9 +128,9 @@ internal class ConsoleRenderer {
 
   internal void DrawTableau() {
 
-    int startLine = (int)(Game.cardHeight + 2);
+    int startLine = (int)(CardArt.cardHeight + 2);
 
-    ClearRectangle(0, startLine, Game.cardWidth * 7, tableauHeight);
+    ClearRectangle(0, startLine, CardArt.cardWidth * 7, tableauHeight);
     // Itera per ogni colonna
     for (int i = 0; i < 7; i++) {
       byte j = 0;
@@ -126,7 +138,7 @@ internal class ConsoleRenderer {
         string[] lines = CardArt.GetEmptyArt().Split('\n');
         Console.ForegroundColor = ConsoleColor.DarkGray;
         for (int k = 0; k < lines.Length; k++) {
-          Console.SetCursorPosition(i * Game.cardWidth, j + startLine);
+          Console.SetCursorPosition(i * CardArt.cardWidth, j + startLine);
           Console.Write(lines[k]);
           j++;
         }
@@ -139,16 +151,16 @@ internal class ConsoleRenderer {
 
         Console.ForegroundColor = CardArt.GetColor(card);
         if (rawTableau[i].IndexOf(card) != rawTableau[i].Count - 1) {
-          Console.SetCursorPosition(i * Game.cardWidth, j + startLine);
+          Console.SetCursorPosition(i * CardArt.cardWidth, j + startLine);
           Console.WriteLine(CardArt.GetShortArt(card));
         }
         else {
-          Console.SetCursorPosition(i * Game.cardWidth, j + startLine);
+          Console.SetCursorPosition(i * CardArt.cardWidth, j + startLine);
           //DrawArt(card.GetCardArt());
           string[] lines = CardArt.GetCardArt(card).Split('\n');
           byte offset = 0;
           for (int line = 0; line < lines.Length; line++) {
-            Console.SetCursorPosition(i * Game.cardWidth, j + offset + startLine);
+            Console.SetCursorPosition(i * CardArt.cardWidth, j + offset + startLine);
             Console.Write(lines[line]);
             offset++;
           }
@@ -162,22 +174,22 @@ internal class ConsoleRenderer {
   }
 
   internal void DrawFoundations() {
-    int startXPos = Game.cardWidth * 3;
-    ClearRectangle(startXPos, 0, Game.cardWidth * 4, Game.cardHeight + 2);
+    int startXPos = CardArt.cardWidth * 3;
+    ClearRectangle(startXPos, 0, CardArt.cardWidth * 4, CardArt.cardHeight + 2);
 
     Console.SetCursorPosition(startXPos, 0);
     Console.Write("Fondazioni");
 
     for (int i = 0; i < 4; i++) {
-      string[] lines = foundation.GetFoundationArt(i).Split('\n');
-      Console.ForegroundColor = foundation.GetFoundationColor(i);
+      string[] lines = CardArt.GetFoundationArt(foundation, i).Split('\n');
+      Console.ForegroundColor = CardArt.GetFoundationColor(foundation, i);
 
       for (int j = 0; j < lines.Length; j++) {
         Console.SetCursorPosition(startXPos, j + 1);
         Console.Write(lines[j]);
       }
 
-      startXPos += Game.cardWidth;
+      startXPos += CardArt.cardWidth;
     }
 
     Console.ResetColor();
@@ -214,7 +226,7 @@ internal class ConsoleRenderer {
       selectionCardPileIndex = cursor.CurrentCardPileIndex;
     }
 
-    if (selection.sourceArea == Selection.Areas.Tableau) {
+    if (selection.sourceArea == Areas.Tableau) {
       List<Card> cards = selection.selectedCards;
       for (int i = 0; i < cards.Count; i++) {
         Card card = cards[i];
@@ -226,13 +238,13 @@ internal class ConsoleRenderer {
 
         int j = 0;
         foreach (string line in artLines) {
-          Console.SetCursorPosition(Game.cardWidth * selectionItemIndex, Game.cardHeight + 2 + j + i + selectionCardPileIndex);
+          Console.SetCursorPosition(CardArt.cardWidth * selectionItemIndex, CardArt.cardHeight + 2 + j + i + selectionCardPileIndex);
           Console.WriteLine(line);
           j++;
         }
       }
     }
-    else if (selection.sourceArea == Selection.Areas.Foundation) {
+    else if (selection.sourceArea == Areas.Foundation) {
       Card card = selection.selectedCards[0];
       string cardArt = CardArt.GetCardArt(card);
       string[] artLines = cardArt.Split('\n');
@@ -240,12 +252,12 @@ internal class ConsoleRenderer {
       Console.BackgroundColor = ConsoleColor.Gray;
       int j = 0;
       foreach (string line in artLines) {
-        Console.SetCursorPosition(Game.cardWidth * (3 + selectionItemIndex), 1 + j);
+        Console.SetCursorPosition(CardArt.cardWidth * (3 + selectionItemIndex), 1 + j);
         Console.WriteLine(line);
         j++;
       }
     }
-    else if (selection.sourceArea == Selection.Areas.Waste) {
+    else if (selection.sourceArea == Areas.Waste) {
       Card card = selection.selectedCards[0];
       string cardArt = CardArt.GetCardArt(card);
       string[] artLines = cardArt.Split('\n');
@@ -253,12 +265,30 @@ internal class ConsoleRenderer {
       Console.BackgroundColor = ConsoleColor.Gray;
       int j = 0;
       foreach (string line in artLines) {
-        Console.SetCursorPosition(Game.cardWidth, 1 + j);
+        Console.SetCursorPosition(CardArt.cardWidth, 1 + j);
         Console.WriteLine(line);
         j++;
       }
     }
 
     RestoreCursorPosition();
+  }
+
+  /// <summary>
+  /// Disegna la legenda in base allo stato attuale
+  /// </summary>
+  internal void DrawLegend() {
+
+    Console.SetCursorPosition(0, legendStartHeight);
+    Console.Write(
+        $"\u001b[1;34m╔{new string('═', legendWidth - 2)}╗\n" +
+        $"\u001b[1;34m║\u001b[0m  \u001b[1;32mUsa le freccie per muovere il cursore\u001b[0m{new string(' ', legendWidth - 2 - 39)}\u001b[1;34m║\n" +
+        $"\u001b[1;34m║\u001b[0m  \u001b[1;33m(R)\u001b[0m \u001b[1;3{(legend.selectTextIndex == 0 ? '6' : '0')}m{Legend.pickCardText}\u001b[0m{new string(' ', legendWidth - 2 - 6 - Legend.pickCardText.Length)}\u001b[1;34m║\n" +
+        $"\u001b[1;34m║\u001b[0m  \u001b[1;33m(E)\u001b[0m \u001b[1;3{(legend.selectTextIndex == 0 ? '6' : '0')}m{Legend.pickWasteText}\u001b[0m{new string(' ', legendWidth - 2 - 6 - Legend.pickWasteText.Length)}\u001b[1;34m║\n" +
+        $"\u001b[1;34m║\u001b[0m  \u001b[1;33m(Spazio)\u001b[0m \u001b[1;36m{Legend.selectTexts[legend.selectTextIndex]}\u001b[0m{new string(' ', legendWidth - 2 - 11 - Legend.selectTexts[legend.selectTextIndex].Length)}\u001b[1;34m║\n" +
+        $"\u001b[1;34m║\u001b[0m  \u001b[1;33m(X)\u001b[0m \u001b[1;3{(legend.selectTextIndex == 0 ? '0' : '6')}m{Legend.deselectText} \u001b[0m {new string(' ', legendWidth - 2 - 8 - Legend.deselectText.Length)}\u001b[1;34m║\n" +
+        //$"\u001b[1;34m║\u001b[0m  \u001b[1;37mIn attesa di un input...\u001b[0m{new string(' ', legendWidth - 2 - 26)}\u001b[1;34m║\n" +
+        $"\u001b[1;34m╚{new string('═', legendWidth - 2)}╝\u001b[0m\n"
+    );
   }
 }

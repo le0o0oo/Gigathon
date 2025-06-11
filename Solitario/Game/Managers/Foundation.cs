@@ -1,6 +1,4 @@
-﻿using Solitario.Game.Rendering;
-
-namespace Solitario.Game.Managers;
+﻿namespace Solitario.Game.Managers;
 
 /*
  * Clubs - Fiori - 0
@@ -22,54 +20,20 @@ internal class Foundation {
   }
 
   internal void AddCard(Card card) {
-    if (!ValidateCard(card, seedIndexMap[card.seed])) {
+    if (!ValidateCard(card, seedIndexMap[card.Seed])) {
       throw new ArgumentException("Carta non valida per questa fondazione.", nameof(card));
     }
 
-    piles[seedIndexMap[card.seed]].Add(card);
+    piles[seedIndexMap[card.Seed]].Add(card);
   }
 
   private bool ValidateCard(Card card, int pileIndex) {
-    int lastCardVal = piles[pileIndex].Count > 0 ? piles[pileIndex][^1].numericValue : 0;
+    int lastCardVal = piles[pileIndex].Count > 0 ? piles[pileIndex][^1].NumericValue : 0;
 
     bool result = false;
-    if (card.numericValue == lastCardVal + 1) result = true;
+    if (card.NumericValue == lastCardVal + 1) result = true;
 
     return result;
-  }
-
-  internal string GetFoundationArt(int index) {
-    string art;
-    string cardIcon = index switch
-    {
-      0 => "♣", // Clubs
-      1 => "♥", // Hearts
-      2 => "♠", // Spades
-      3 => "♦", // Diamonds
-      _ => throw new ArgumentOutOfRangeException(nameof(index), "Indice della fondazione non valido.")
-    };
-
-    if (piles[index].Count == 0) {
-      art =
-$@"╔ ═ ═ ═ ═ ═ ╗
-           
-║           ║
-           
-║     {cardIcon}     ║
-           
-║           ║
-           
-╚ ═ ═ ═ ═ ═ ╝";
-    }
-    else {
-      art = CardArt.GetCardArt(piles[index][^1]);
-    }
-
-    return art;
-  }
-  internal ConsoleColor GetFoundationColor(int index) {
-    if (piles[index].Count == 0) return ConsoleColor.DarkGray;
-    return CardArt.GetColor(piles[index][^1]);
   }
 
   internal List<Card> GetCards(int index) {

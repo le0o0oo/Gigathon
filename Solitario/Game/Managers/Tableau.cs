@@ -11,7 +11,7 @@ internal class Tableau {
       for (byte j = 0; j <= i; j++) { // j = indice della carta nella colonna
         var card = deck.TakeCardAt(0);
         tableau[i].Add(card);
-        if (j == i) card.revealed = true;
+        if (j == i) card.Revealed = true;
       }
     }
   }
