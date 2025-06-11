@@ -145,7 +145,7 @@ internal class ConsoleRenderer {
         continue;
       }
 
-      var rawTableau = tableau.GetRawTableau();
+      var rawTableau = tableau.tableau;
 
       foreach (Card card in rawTableau[i]) {
 

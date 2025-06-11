@@ -3,7 +3,7 @@
 internal class Tableau {
   private static readonly Random rng = new();
 
-  List<List<Card>> tableau = [];
+  internal List<List<Card>> tableau { get; private set; } = [];
 
   public Tableau(Deck deck) {
     for (byte i = 0; i < 7; i++) { // i = indice della colonna
@@ -31,10 +31,6 @@ internal class Tableau {
 
   internal List<Card> GetPile(int index) {
     return tableau[index];
-  }
-
-  internal List<List<Card>> GetRawTableau() {
-    return tableau;
   }
 
   internal List<Card> TakeCards(int column, int startIndex) {

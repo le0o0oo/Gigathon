@@ -120,28 +120,28 @@ internal class Game {
           break;
 
         case ConsoleKey.Spacebar:
-          // If the selection state changed
+          var wasActive = selection.active;
+          var sourceAreaBeforeMove = selection.sourceArea;
+
           HandleSelectAction();
 
-          legend.SetSelected(selection.active);
-
-          renderer.DrawAll();
-          if (selection.active) renderer.DrawSelection();
-
-          /*if (selection.active) {
-            renderer.DrawBasedOnArea(selection.sourceArea);
+          // If a move was just completed (selection is now inactive)
+          if (wasActive && !selection.active) {
+            // Redraw the source and destination areas
+            var destArea = cursor.CurrentArea == CursorArea.Tableau ? Areas.Tableau : Areas.Foundation;
+            renderer.DrawBasedOnArea(sourceAreaBeforeMove);
+            renderer.DrawBasedOnArea(destArea);
+          }
+          // If a selection was just made
+          else if (!wasActive && selection.active) {
             renderer.DrawSelection();
           }
-          else {
-            renderer.DrawBasedOnArea(selection.sourceArea);
-            renderer.DrawBasedOnArea(selection.TargetArea);
-          } */
 
-          renderer.DrawCursor();
+          legend.SetSelected(selection.active);
           renderer.DrawLegend();
-
-
+          renderer.DrawCursor();
           break;
+
         case ConsoleKey.X:
           if (!selection.active) break;
           selection.ClearSelection();
@@ -183,7 +183,7 @@ internal class Game {
 
     }
     else {
-      // Prendi le carte
+      // Prendi le carte da tableau
       if (cursor.CurrentArea == CursorArea.Tableau) {
         var pile = tableau.GetPile(cursor.CurrentItemIndex);
         if (pile.Count == 0 || cursor.CurrentCardPileIndex >= pile.Count) return;
@@ -194,12 +194,18 @@ internal class Game {
         }
         if (!cardsToSelect[0].Revealed) return; // Carte non rivelate, non prenderle
 
+        cursor.SelectionPosition[0] = cursor.CurrentItemIndex;
+        cursor.SelectionPosition[1] = cursor.CurrentCardPileIndex;
+
         selection.SetSelection(Areas.Tableau, cursor.CurrentItemIndex, cardsToSelect);
         legend.SetSelected(true);
       }
-      else { // Cursore nella fondazione
+      else { // Cursore nella fondazione, prende da essa.
         var pile = foundation.GetPile(cursor.CurrentItemIndex);
         if (pile.Count == 0) return;
+
+        cursor.SelectionPosition[0] = cursor.CurrentItemIndex;
+        cursor.SelectionPosition[1] = cursor.CurrentCardPileIndex;
 
         selection.SetSelection(Areas.Foundation, cursor.CurrentItemIndex, [pile[^1]]);
         legend.SetSelected(true);
@@ -208,9 +214,8 @@ internal class Game {
   }
 
   // This method now receives all information it needs as parameters.
-  // It is a pure "action" method.
   private void PlaceSelectedCards(Areas sourceArea, int sourceIndex, Areas destArea, int destIndex) {
-    // FROM TABLEAU
+    // From tableau
     if (sourceArea == Areas.Tableau) {
       var cardsToMove = tableau.TakeCards(sourceIndex, tableau.GetPile(sourceIndex).Count - selection.selectedCards.Count);
       if (tableau.GetPile(sourceIndex).Count > 0) {
@@ -224,9 +229,10 @@ internal class Game {
         foundation.AddCard(cardsToMove[0]);
       }
     }
-    // FROM WASTE
+    // From waste
     else if (sourceArea == Areas.Waste) {
       var cardToMove = deck.TakeWasteCardAt(-1);
+      cardToMove.Revealed = true;
       if (destArea == Areas.Tableau) {
         tableau.GetPile(destIndex).Add(cardToMove);
       }
@@ -234,7 +240,7 @@ internal class Game {
         foundation.AddCard(cardToMove);
       }
     }
-    // FROM FOUNDATION
+    // From foundation
     else if (sourceArea == Areas.Foundation) {
       var cardToMove = foundation.TakeCardAt(sourceIndex);
       tableau.GetPile(destIndex).Add(cardToMove);

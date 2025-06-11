@@ -9,7 +9,6 @@ internal class Selection {
 
   internal Areas sourceArea { get; private set; } = Areas.Waste;
 
-
   internal bool active { get; private set; } = false;
 
   internal Selection() {
