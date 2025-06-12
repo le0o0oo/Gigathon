@@ -7,8 +7,7 @@ internal static class Validator {
     if (targetArea == Areas.Tableau) {
       // Se è un re
       if (targetPile.Count == 0) {
-        if (sourceCard.NumericValue == 13) return true;
-        return false;
+        return sourceCard.NumericValue == 13; // Just return the result of the comparison!
       }
       if (targetPile[^1].Color == sourceCard.Color) return false; // Stesso colore, non valido
 

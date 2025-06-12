@@ -23,20 +23,9 @@ internal class Foundation {
   }
 
   internal void AddCard(Card card) {
-    if (!ValidateCard(card, seedIndexMap[card.Seed])) {
-      throw new ArgumentException("Carta non valida per questa fondazione.", nameof(card));
-    }
+    var pile = piles[seedIndexMap[card.Seed]];
 
     piles[seedIndexMap[card.Seed]].Add(card);
-  }
-
-  private bool ValidateCard(Card card, int pileIndex) {
-    int lastCardVal = piles[pileIndex].Count > 0 ? piles[pileIndex][^1].NumericValue : 0;
-
-    bool result = false;
-    if (card.NumericValue == lastCardVal + 1) result = true;
-
-    return result;
   }
 
   internal List<Card> GetCards(int index) {
@@ -58,28 +47,6 @@ internal class Foundation {
     return piles[pileIndex][index];
   }
 
-  /// <summary>
-  /// Takes the cards from a pile from a starting index. For example, if pile is of length 7, and we give it index 3, it will return all cards starting from that index all the way to 6
-  /// </summary>
-  /// <param name="index"></param>
-  /// <returns></returns>
-  /// <remarks>Mutates the pile, removing the cards from that pile</remarks>
-  /// <exception cref="ArgumentOutOfRangeException"></exception>
-  internal List<Card> TakeCards(int index) {
-    if (index < 0 || index >= piles.Length) {
-      throw new ArgumentOutOfRangeException(nameof(index), "Indice fuori dai limiti della fondazione.");
-    }
-
-    if (piles[index].Count == 0) return new List<Card>(); // Se la pila è vuota, ritorna una lista vuota
-
-    var cards = new List<Card>();
-    for (int i = index; i < piles[index].Count; i++) {
-      cards.Add(piles[index][i]);
-    }
-
-    return cards;
-  }
-
   internal Card TakeCardAt(int pileIndex, int index = -1) {
     if (pileIndex < 0 || pileIndex >= piles.Length) {
       throw new ArgumentOutOfRangeException(nameof(pileIndex), "Indice della pila fuori dai limiti della fondazione.");
@@ -96,10 +63,6 @@ internal class Foundation {
     Card card = piles[pileIndex][index];
     piles[pileIndex].RemoveAt(index);
     return card;
-  }
-
-  internal List<Card>[] GetRawFoundation() {
-    return piles;
   }
 
   internal List<Card> GetPile(int index) {

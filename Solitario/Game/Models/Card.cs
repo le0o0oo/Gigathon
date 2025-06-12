@@ -10,11 +10,12 @@ using Solitario.Game.Types;
 namespace Solitario.Game.Models;
 
 class Card {
-  internal readonly string Rank; // Valore della carta (A, 2, ..., 10, J, Q, K)
-  internal readonly byte NumericValue; // Vero valore numerico della carta (1, 2, ..., 10, 11, 12, 13)
-  internal readonly CardSeed Seed; // Seme della carta (spades, hearts, diamonds, clubs)
-  internal readonly CardColor Color;
-  internal bool Revealed;
+  internal string Rank { get; }  // Valore della carta (A, 2, ..., 10, J, Q, K)
+  internal byte NumericValue { get; }  // Vero valore numerico della carta (1, 2, ..., 10, 11, 12, 13)
+  internal CardSeed Seed { get; } // Seme della carta (spades, hearts, diamonds, clubs)
+  internal CardColor Color { get; }
+  internal bool Revealed { get; set; }
+
 
   public Card(CardSeed seed, byte numericValue) {
     this.Seed = seed;

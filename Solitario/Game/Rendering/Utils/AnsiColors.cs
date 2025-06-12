@@ -18,6 +18,5 @@ internal static class AnsiColors {
   internal const string BoldYellow = "\u001b[1;33m";
   internal const string BoldCyan = "\u001b[1;36m";
 
-  // A less intense color for "disabled" text
   internal const string DarkGray = "\u001b[1;30m";
 }

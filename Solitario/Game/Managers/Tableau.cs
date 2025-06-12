@@ -61,17 +61,4 @@ internal class Tableau {
     tableau[column].RemoveAt(index);
     return card;
   }
-
-  internal Card GetCardAt(int column, int index = -1) {
-    if (column < 0 || column >= tableau.Count) {
-      throw new ArgumentOutOfRangeException(nameof(column), "Colonna fuori dai limiti del tableau.");
-    }
-    if (index == -1) {
-      index = tableau[column].Count - 1; // Prendi l'ultima carta della colonna
-    }
-    if (index < 0 || index >= tableau[column].Count) {
-      throw new ArgumentOutOfRangeException(nameof(index), "Indice fuori dai limiti della colonna.");
-    }
-    return tableau[column][index];
-  }
 }

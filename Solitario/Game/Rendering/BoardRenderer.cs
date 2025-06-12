@@ -14,7 +14,6 @@ internal class BoardRenderer {
   }
 
   internal void DrawDeck() {
-    ConsoleRenderer.SaveCursorPosition();
     ConsoleRenderer.ClearRectangle(0, 0, CardArt.cardWidth * 2, CardArt.cardHeight + 2);
 
     string art = CardArt.GetFlippedArt();
@@ -54,7 +53,6 @@ internal class BoardRenderer {
     }
 
     Console.ResetColor();
-    ConsoleRenderer.RestoreCursorPosition();
   }
 
   internal void DrawTableau() {
@@ -113,7 +111,10 @@ internal class BoardRenderer {
 
     for (int i = 0; i < 4; i++) {
       string[] lines = CardArt.GetFoundationArt(foundation, i).Split('\n');
-      Console.ForegroundColor = CardArt.GetFoundationColor(foundation, i);
+      ConsoleColor foregroundColor;
+      if (foundation.GetPile(i).Count == 0) foregroundColor = ConsoleColor.DarkGray;
+      else foregroundColor = CardArt.GetColor(foundation.GetPile(i)[^1]);
+      Console.ForegroundColor = foregroundColor;
 
       for (int j = 0; j < lines.Length; j++) {
         Console.SetCursorPosition(startXPos, j + 1);

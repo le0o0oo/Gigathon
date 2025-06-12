@@ -47,9 +47,10 @@ internal class Deck {
     return card;
   }
 
-  internal List<Card> GetCards() {
-    return cards;
+  public IReadOnlyList<Card> GetCards() {
+    return cards.AsReadOnly();
   }
+
   internal List<Card> GetWaste() {
     return waste;
   }

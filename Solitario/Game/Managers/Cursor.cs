@@ -1,4 +1,5 @@
-﻿using Solitario.Game.Rendering;
+﻿using Solitario.Game.Models;
+using Solitario.Game.Rendering;
 using Solitario.Game.Types;
 
 namespace Solitario.Game.Managers;
@@ -21,8 +22,8 @@ internal class Cursor {
   internal int CurrentCardPileIndex { get; private set; } = 0; // Indice della carta nella pla corrente (solo per tableau). Parte della carta più in basso della pila corrente.
 
 
-  internal int[] Position { get; private set; } = { CardArt.cardWidth - 2, CardArt.cardHeight + 2 }; // Posizione iniziale del cursore (colonna, riga)
-  internal int[] PrevPosition { get; private set; } = { CardArt.cardWidth - 2, CardArt.cardHeight + 2 }; // Posizione iniziale del cursore (colonna, riga)
+  internal ConsolePoint Position { get; private set; } = new(CardArt.cardWidth - 2, CardArt.cardHeight + 2); // Posizione iniziale del cursore (colonna, riga)
+  internal ConsolePoint PrevPosition { get; private set; } = new(CardArt.cardWidth - 2, CardArt.cardHeight + 2); // Posizione iniziale del cursore (colonna, riga)
 
   /*
    * 0 - currentItemIndex
@@ -41,12 +42,10 @@ internal class Cursor {
   /// <param name="left">Numero di colonne a partire da sinistra</param>
   private void SetPosition(int left, int top) {
     // Salva la posizione precedente per il disegno della selezione
-    PrevPosition[0] = Position[0];
-    PrevPosition[1] = Position[1];
+    PrevPosition = new(Position.X, Position.Y);
 
     // Aggiorna la posizione corrente
-    Position[0] = left;
-    Position[1] = top;
+    Position = new(left, top);
   }
 
   private void UpdatePosition() {

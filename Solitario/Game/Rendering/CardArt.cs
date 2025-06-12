@@ -43,12 +43,12 @@ internal static class CardArt {
 
     string art =
 $@"╔═══════════╗
-║ {GetCharacter(card)}        {(GetCharacter(card).Length > 1 ? "" : " ")}║
+║ {GetCharacter(card),-2}        ║
 ║ {icon}         ║
 ║           ║
-║     {card.NumericValue}{(card.NumericValue > 9 ? "" : " ")}    ║
+║     {card.NumericValue.ToString(),-2}    ║
 ║           ║
-║        {(GetCharacter(card).Length > 1 ? "" : " ")}{GetCharacter(card)} ║
+║        {GetCharacter(card),2} ║
 ║         {icon} ║
 ╚═══════════╝";
 
@@ -87,11 +87,6 @@ $@"╔═══════════╗
 ║░░░░░░░░░░░║
 ║░░░░░░░░░░░║
 ╚═══════════╝";
-  }
-
-  internal static ConsoleColor GetFoundationColor(Managers.Foundation foundation, int index) {
-    if (foundation.GetPile(index).Count == 0) return ConsoleColor.DarkGray;
-    return CardArt.GetColor(foundation.GetPile(index)[^1]);
   }
 
   internal static string GetFoundationArt(Managers.Foundation foundation, int index) {

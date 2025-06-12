@@ -19,15 +19,32 @@ internal class UIRenderer {
     this.legend = legend;
   }
 
+  #region Private helpers
+  private static void DrawCard(Card card, int x, int y, bool highlightWhiteAsBlack = false) {
+    string cardArt = CardArt.GetCardArt(card);
+    string[] artLines = cardArt.Split('\n');
+
+    var cardConsoleColor = CardArt.GetColor(card, highlightWhiteAsBlack);
+    Console.ForegroundColor = (cardConsoleColor == ConsoleColor.White) ? ConsoleColor.Black : ConsoleColor.Red;
+
+    Console.BackgroundColor = ConsoleColor.Gray;
+
+    for (int j = 0; j < artLines.Length; j++) {
+      Console.SetCursorPosition(x, y + j);
+      Console.WriteLine(artLines[j]);
+    }
+  }
+  #endregion
+
   internal void DrawCursor() {
     (int prevLeft, int prevTop) = Console.GetCursorPosition();
 
     // Rimuove il cursore dalla posizione precedente
-    Console.SetCursorPosition(cursor.PrevPosition[0], cursor.PrevPosition[1]);
+    Console.SetCursorPosition(cursor.PrevPosition.X, cursor.PrevPosition.Y);
     Console.Write(' '); // Sovrascrive con uno spazio vuoto
 
     // Imposta la nuova posizione del cursore
-    Console.SetCursorPosition(cursor.Position[0], cursor.Position[1]);
+    Console.SetCursorPosition(cursor.Position.X, cursor.Position.Y);
     Console.ForegroundColor = ConsoleRenderer.color;
     Console.Write(ConsoleRenderer.cursorChar); // Disegna il cursore nella nuova posizione
 
@@ -39,60 +56,34 @@ internal class UIRenderer {
     if (!selection.active) return;
     ConsoleRenderer.SaveCursorPosition();
 
-    int selectionItemIndex, selectionCardPileIndex;
+    int selectionItemIndex = redraw ? cursor.SelectionPosition[0] : cursor.CurrentItemIndex;
+    int selectionCardPileIndex = redraw ? cursor.SelectionPosition[1] : cursor.CurrentCardPileIndex;
 
-    if (redraw) {
-      selectionItemIndex = cursor.SelectionPosition[0];
-      selectionCardPileIndex = cursor.SelectionPosition[1];
-    }
-    else {
-      selectionItemIndex = cursor.CurrentItemIndex;
-      selectionCardPileIndex = cursor.CurrentCardPileIndex;
-    }
+    switch (selection.sourceArea) {
+      case Areas.Tableau:
+        var cards = selection.selectedCards;
+        for (int i = 0; i < cards.Count; i++) {
+          var card = cards[i];
+          string art = i == cards.Count - 1 ? CardArt.GetCardArt(card) : CardArt.GetShortArt(card);
+          string[] lines = art.Split('\n');
 
-    if (selection.sourceArea == Areas.Tableau) {
-      List<Card> cards = selection.selectedCards;
-      for (int i = 0; i < cards.Count; i++) {
-        Card card = cards[i];
-        string cardArt = i == cards.Count - 1 ? CardArt.GetCardArt(card) : CardArt.GetShortArt(card);
-        string[] artLines = cardArt.Split('\n');
+          Console.ForegroundColor = CardArt.GetColor(card) == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
+          Console.BackgroundColor = ConsoleColor.Gray;
 
-        Console.ForegroundColor = CardArt.GetColor(card) == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
-        Console.BackgroundColor = ConsoleColor.Gray;
-
-        int j = 0;
-        foreach (string line in artLines) {
-          Console.SetCursorPosition(CardArt.cardWidth * selectionItemIndex, CardArt.cardHeight + 2 + j + i + selectionCardPileIndex);
-          Console.WriteLine(line);
-          j++;
+          for (int j = 0; j < lines.Length; j++) {
+            Console.SetCursorPosition(CardArt.cardWidth * selectionItemIndex, CardArt.cardHeight + 2 + j + i + selectionCardPileIndex);
+            Console.WriteLine(lines[j]);
+          }
         }
-      }
-    }
-    else if (selection.sourceArea == Areas.Foundation) {
-      Card card = selection.selectedCards[0];
-      string cardArt = CardArt.GetCardArt(card);
-      string[] artLines = cardArt.Split('\n');
-      Console.ForegroundColor = CardArt.GetColor(card) == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
-      Console.BackgroundColor = ConsoleColor.Gray;
-      int j = 0;
-      foreach (string line in artLines) {
-        Console.SetCursorPosition(CardArt.cardWidth * (3 + selectionItemIndex), 1 + j);
-        Console.WriteLine(line);
-        j++;
-      }
-    }
-    else if (selection.sourceArea == Areas.Waste) {
-      Card card = selection.selectedCards[0];
-      string cardArt = CardArt.GetCardArt(card);
-      string[] artLines = cardArt.Split('\n');
-      Console.ForegroundColor = CardArt.GetColor(card, true) == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
-      Console.BackgroundColor = ConsoleColor.Gray;
-      int j = 0;
-      foreach (string line in artLines) {
-        Console.SetCursorPosition(CardArt.cardWidth, 1 + j);
-        Console.WriteLine(line);
-        j++;
-      }
+        break;
+
+      case Areas.Foundation:
+        DrawCard(selection.selectedCards[0], CardArt.cardWidth * (3 + selectionItemIndex), 1);
+        break;
+
+      case Areas.Waste:
+        DrawCard(selection.selectedCards[0], CardArt.cardWidth, 1, highlightWhiteAsBlack: true);
+        break;
     }
 
     ConsoleRenderer.RestoreCursorPosition();
