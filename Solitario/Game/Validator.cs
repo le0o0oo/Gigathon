@@ -1,4 +1,5 @@
-﻿using Solitario.Game.Types;
+﻿using Solitario.Game.Models;
+using Solitario.Game.Types;
 
 namespace Solitario.Game;
 internal static class Validator {
@@ -17,8 +18,7 @@ internal static class Validator {
     else if (targetArea == Areas.Foundation) {
       // Caso dell'asso
       if (targetPile.Count == 0) {
-        if (sourceCard.NumericValue == 1) return true;
-        return false;
+        return sourceCard.NumericValue == 1;
       }
       if (sourceCard.Seed != targetPile[0].Seed) return false; // Seme diverso, non valido
 

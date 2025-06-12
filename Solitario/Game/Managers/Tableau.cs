@@ -1,4 +1,6 @@
-﻿namespace Solitario.Game.Managers;
+﻿using Solitario.Game.Models;
+
+namespace Solitario.Game.Managers;
 
 internal class Tableau {
   private static readonly Random rng = new();

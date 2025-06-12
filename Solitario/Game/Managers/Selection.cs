@@ -1,6 +1,7 @@
 ﻿namespace Solitario.Game.Managers;
-using Solitario.Game.Types;
 
+using Solitario.Game.Models;
+using Solitario.Game.Types;
 
 internal class Selection {
   // Variabili di stato della selezione

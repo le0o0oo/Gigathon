@@ -5,12 +5,15 @@ internal enum Areas {
   Foundation,
   Tableau
 }
-internal enum CursorArea {
-  Foundation,
-  Tableau
-}
 
 internal enum CardColor {
   Red,
   Black
+}
+
+internal enum CardSeed {
+  Spades,
+  Hearts,
+  Diamonds,
+  Clubs
 }

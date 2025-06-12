@@ -1,4 +1,7 @@
-﻿namespace Solitario.Game.Rendering;
+﻿using Solitario.Game.Models;
+using Solitario.Game.Types;
+
+namespace Solitario.Game.Rendering;
 internal static class CardArt {
   internal static readonly byte cardWidth = 15; // (+ offset)
   internal static readonly byte cardHeight = 9;
@@ -13,11 +16,21 @@ internal static class CardArt {
     return card.Color == Types.CardColor.Red ? ConsoleColor.Red : ConsoleColor.White;
   }
 
-  internal static string GetCharacter(Card card) {
-    if (card.Value == "1") return "A";
-    if (card.Value == "10") return "10";
+  private static char GetSeedIcon(CardSeed seed) {
+    return seed switch
+    {
+      CardSeed.Spades => '♠',
+      CardSeed.Hearts => '♥',
+      CardSeed.Diamonds => '♦',
+      CardSeed.Clubs => '♣',
+      _ => throw new InvalidOperationException("Seme non riconosciuto.")
+    };
+  }
 
-    return card.Value[0].ToString().ToUpper();
+  internal static string GetCharacter(Card card) {
+    if (card.Rank == "10") return "10";
+
+    return card.Rank[0].ToString().ToUpper();
   }
 
   /// <summary>
@@ -26,14 +39,7 @@ internal static class CardArt {
   /// <returns></returns>
   /// <exception cref="InvalidOperationException">Triggerata quando il seme non viene riconosciuto</exception>
   internal static string GetCardArt(Card card) {
-    char icon = card.Seed switch
-    {
-      "spades" => '♠',
-      "hearts" => '♥',
-      "diamonds" => '♦',
-      "clubs" => '♣',
-      _ => throw new InvalidOperationException("Seme non riconosciuto.")
-    };
+    char icon = GetSeedIcon(card.Seed);
 
     string art =
 $@"╔═══════════╗
@@ -50,14 +56,7 @@ $@"╔═══════════╗
   }
 
   internal static string GetShortArt(Card card) {
-    char icon = card.Seed switch
-    {
-      "spades" => '♠',
-      "hearts" => '♥',
-      "diamonds" => '♦',
-      "clubs" => '♣',
-      _ => throw new InvalidOperationException("Seme non riconosciuto.")
-    };
+    char icon = GetSeedIcon(card.Seed);
 
     string artExposed = $@"╔ {GetCharacter(card)}{icon} {(GetCharacter(card).Length > 1 ? "" : "═")}══════╗";
     string artHidden = "╔═══════════╗";

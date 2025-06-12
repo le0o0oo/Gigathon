@@ -1,4 +1,7 @@
-﻿namespace Solitario.Game.Managers;
+﻿using Solitario.Game.Models;
+using Solitario.Game.Types;
+
+namespace Solitario.Game.Managers;
 
 internal class Deck {
   private readonly List<Card> cards = [];
@@ -6,9 +9,9 @@ internal class Deck {
   private static readonly Random rng = new();
 
   private void GenerateCards() {
-    string[] seeds = { "spades", "hearts", "diamonds", "clubs" };
+    CardSeed[] seeds = { CardSeed.Spades, CardSeed.Hearts, CardSeed.Diamonds, CardSeed.Clubs };
 
-    foreach (string seed in seeds) {
+    foreach (var seed in seeds) {
       for (byte i = 1; i <= 13; i++) {
         cards.Add(new Card(seed, i));
       }

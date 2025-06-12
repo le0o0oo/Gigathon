@@ -7,14 +7,16 @@
 
 using Solitario.Game.Types;
 
+namespace Solitario.Game.Models;
+
 class Card {
-  internal readonly string Value; // Valore della carta (A, 2, ..., 10, J, Q, K)
+  internal readonly string Rank; // Valore della carta (A, 2, ..., 10, J, Q, K)
   internal readonly byte NumericValue; // Vero valore numerico della carta (1, 2, ..., 10, 11, 12, 13)
-  internal readonly string Seed; // Seme della carta (spades, hearts, diamonds, clubs)
+  internal readonly CardSeed Seed; // Seme della carta (spades, hearts, diamonds, clubs)
   internal readonly CardColor Color;
   internal bool Revealed;
 
-  public Card(string seed, byte numericValue) {
+  public Card(CardSeed seed, byte numericValue) {
     this.Seed = seed;
     this.NumericValue = numericValue;
     this.Revealed = false;
@@ -22,13 +24,10 @@ class Card {
     if (numericValue < 1 || numericValue > 13) {
       throw new ArgumentOutOfRangeException(nameof(numericValue), "Il valore numerico deve essere compreso tra 1 e 13.");
     }
-    if (string.IsNullOrEmpty(seed) || seed != "spades" && seed != "hearts" && seed != "diamonds" && seed != "clubs") {
-      throw new ArgumentException("Il seme deve essere uno tra: spades, hearts, diamonds, clubs.", nameof(seed));
-    }
 
-    Value = numericValue switch
+    Rank = numericValue switch
     {
-      1 => "1",// Asso
+      1 => "A",// Asso
       11 => "J",// Jack
       12 => "Q",// Regina
       13 => "K",// Re
@@ -37,8 +36,8 @@ class Card {
 
     this.Color = seed switch
     {
-      "clubs" => CardColor.Black,
-      "spades" => CardColor.Black,
+      CardSeed.Clubs => CardColor.Black,
+      CardSeed.Spades => CardColor.Black,
 
       _ => CardColor.Red,
     };

@@ -1,4 +1,5 @@
 ﻿using Solitario.Game.Managers;
+using Solitario.Game.Models;
 using Solitario.Game.Rendering;
 using Solitario.Game.Types;
 
@@ -128,7 +129,7 @@ internal class Game {
           // If a move was just completed (selection is now inactive)
           if (wasActive && !selection.active) {
             // Redraw the source and destination areas
-            var destArea = cursor.CurrentArea == CursorArea.Tableau ? Areas.Tableau : Areas.Foundation;
+            var destArea = cursor.CurrentArea;
             renderer.DrawBasedOnArea(sourceAreaBeforeMove);
             renderer.DrawBasedOnArea(destArea);
           }
@@ -166,7 +167,7 @@ internal class Game {
       var targetPileIndex = cursor.CurrentItemIndex;
 
       // Convert the cursor area to a selection area (they are logically the same)
-      var selectionTargetArea = targetArea == CursorArea.Tableau ? Areas.Tableau : Areas.Foundation;
+      var selectionTargetArea = targetArea;
 
       // 1. Controlla se mossa valida
       if (!Validator.ValidateCardMove(selection.selectedCards[0], GetPile(selectionTargetArea, targetPileIndex), selectionTargetArea)) {
@@ -184,7 +185,7 @@ internal class Game {
     }
     else {
       // Prendi le carte da tableau
-      if (cursor.CurrentArea == CursorArea.Tableau) {
+      if (cursor.CurrentArea == Areas.Tableau) {
         var pile = tableau.GetPile(cursor.CurrentItemIndex);
         if (pile.Count == 0 || cursor.CurrentCardPileIndex >= pile.Count) return;
 

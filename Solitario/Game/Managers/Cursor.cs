@@ -4,19 +4,15 @@ using Solitario.Game.Types;
 namespace Solitario.Game.Managers;
 
 internal class Cursor {
-
-
-  internal static readonly ConsoleColor color = ConsoleColor.DarkGreen;
-  internal static readonly char cursorChar = '❮';
-  readonly static Dictionary<CursorArea, byte> areaMax = new()
+  readonly static Dictionary<Areas, byte> areaMax = new()
   {
-    { CursorArea.Foundation, 4 }, // Numero di fondazioni
-    { CursorArea.Tableau, 7 } // Numero di pile nel tableau
+    { Areas.Foundation, 4 }, // Numero di fondazioni
+    { Areas.Tableau, 7 } // Numero di pile nel tableau
   };
 
   private readonly Tableau tableau;
 
-  internal CursorArea CurrentArea { get; private set; } = CursorArea.Tableau;
+  internal Areas CurrentArea { get; private set; } = Areas.Tableau;
   /*Indica l'elemento corrente della selezione in base all'area, e vale solo per tableau e foundation.
    * Per esempio, se l'area corrente è Tableau, currentItemIndex indica l'indice della pila di carte selezionata.
    * Se invece è foundation, currentItemIndex indica l'indice della pila di fondazione selezionata.
@@ -54,7 +50,7 @@ internal class Cursor {
   }
 
   private void UpdatePosition() {
-    if (CurrentArea == CursorArea.Foundation) {
+    if (CurrentArea == Areas.Foundation) {
       SetPosition(CardArt.cardWidth * (4 + CurrentItemIndex) - 2, 1);
     }
     else { // Nel tableau
@@ -65,14 +61,14 @@ internal class Cursor {
   }
 
   internal void MoveUp() {
-    if (CurrentArea == CursorArea.Foundation) return;
+    if (CurrentArea == Areas.Foundation) return;
     bool canGoUp = CurrentCardPileIndex == 0 || !tableau.GetCard(CurrentItemIndex, CurrentCardPileIndex - 1).Revealed;
 
 
     // Vai su
     if (canGoUp) {
       CurrentItemIndex = CurrentItemIndex - 3 < 0 ? 0 : CurrentItemIndex - 3;
-      CurrentArea = CursorArea.Foundation;
+      CurrentArea = Areas.Foundation;
       UpdatePosition();
       return;
     }
@@ -84,10 +80,10 @@ internal class Cursor {
 
   internal void MoveDown() {
     // Vai giù
-    if (CurrentArea == CursorArea.Foundation) {
+    if (CurrentArea == Areas.Foundation) {
       CurrentItemIndex = CurrentItemIndex + 3;
       CurrentCardPileIndex = tableau.GetPile(CurrentItemIndex).Count - 1;
-      CurrentArea = CursorArea.Tableau;
+      CurrentArea = Areas.Tableau;
       UpdatePosition();
       return;
     }
@@ -99,7 +95,7 @@ internal class Cursor {
 
   internal void MoveLeft() {
     if (CurrentItemIndex <= 0) return;
-    if (CurrentArea == CursorArea.Foundation) {
+    if (CurrentArea == Areas.Foundation) {
       CurrentItemIndex--;
       UpdatePosition();
     }
@@ -113,7 +109,7 @@ internal class Cursor {
   internal void MoveRight() {
     if (CurrentItemIndex >= areaMax[CurrentArea] - 1) return;
 
-    if (CurrentArea == CursorArea.Foundation) {
+    if (CurrentArea == Areas.Foundation) {
       CurrentItemIndex++;
 
       UpdatePosition();
