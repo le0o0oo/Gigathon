@@ -1,9 +1,11 @@
-﻿namespace Solitario.Game.Managers;
+﻿using Solitario.Game.Models;
+
+namespace Solitario.Game.Managers;
 
 internal class Tableau {
   private static readonly Random rng = new();
 
-  List<List<Card>> tableau = [];
+  internal List<List<Card>> tableau { get; private set; } = [];
 
   public Tableau(Deck deck) {
     for (byte i = 0; i < 7; i++) { // i = indice della colonna
@@ -11,7 +13,7 @@ internal class Tableau {
       for (byte j = 0; j <= i; j++) { // j = indice della carta nella colonna
         var card = deck.TakeCardAt(0);
         tableau[i].Add(card);
-        if (j == i) card.revealed = true;
+        if (j == i) card.Revealed = true;
       }
     }
   }
@@ -31,10 +33,6 @@ internal class Tableau {
 
   internal List<Card> GetPile(int index) {
     return tableau[index];
-  }
-
-  internal List<List<Card>> GetRawTableau() {
-    return tableau;
   }
 
   internal List<Card> TakeCards(int column, int startIndex) {
@@ -62,18 +60,5 @@ internal class Tableau {
     Card card = tableau[column][index];
     tableau[column].RemoveAt(index);
     return card;
-  }
-
-  internal Card GetCardAt(int column, int index = -1) {
-    if (column < 0 || column >= tableau.Count) {
-      throw new ArgumentOutOfRangeException(nameof(column), "Colonna fuori dai limiti del tableau.");
-    }
-    if (index == -1) {
-      index = tableau[column].Count - 1; // Prendi l'ultima carta della colonna
-    }
-    if (index < 0 || index >= tableau[column].Count) {
-      throw new ArgumentOutOfRangeException(nameof(index), "Indice fuori dai limiti della colonna.");
-    }
-    return tableau[column][index];
   }
 }

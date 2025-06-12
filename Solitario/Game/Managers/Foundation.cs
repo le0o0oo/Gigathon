@@ -1,4 +1,7 @@
-﻿namespace Solitario.Game.Managers;
+﻿using Solitario.Game.Models;
+using Solitario.Game.Types;
+
+namespace Solitario.Game.Managers;
 
 /*
  * Clubs - Fiori - 0
@@ -8,11 +11,11 @@
 */
 internal class Foundation {
   private readonly List<Card>[] piles = { new List<Card>(), new List<Card>(), new List<Card>(), new List<Card>() };
-  static internal readonly Dictionary<string, int> seedIndexMap = new Dictionary<string, int> {
-    { "clubs", 0 },
-    { "hearts", 1 },
-    { "spades", 2 },
-    { "diamonds", 3 }
+  static internal readonly Dictionary<CardSeed, int> seedIndexMap = new Dictionary<CardSeed, int> {
+    { CardSeed.Clubs, 0 },
+    { CardSeed.Hearts, 1 },
+    { CardSeed.Spades, 2 },
+    { CardSeed.Diamonds, 3 }
   };
 
   public Foundation() {
@@ -20,54 +23,9 @@ internal class Foundation {
   }
 
   internal void AddCard(Card card) {
-    if (!ValidateCard(card, seedIndexMap[card.seed])) {
-      throw new ArgumentException("Carta non valida per questa fondazione.", nameof(card));
-    }
+    var pile = piles[seedIndexMap[card.Seed]];
 
-    piles[seedIndexMap[card.seed]].Add(card);
-  }
-
-  private bool ValidateCard(Card card, int pileIndex) {
-    int lastCardVal = piles[pileIndex].Count > 0 ? piles[pileIndex][^1].numericValue : 0;
-
-    bool result = false;
-    if (card.numericValue == lastCardVal + 1) result = true;
-
-    return result;
-  }
-
-  internal string GetFoundationArt(int index) {
-    string art;
-    string cardIcon = index switch
-    {
-      0 => "♣", // Clubs
-      1 => "♥", // Hearts
-      2 => "♠", // Spades
-      3 => "♦", // Diamonds
-      _ => throw new ArgumentOutOfRangeException(nameof(index), "Indice della fondazione non valido.")
-    };
-
-    if (piles[index].Count == 0) {
-      art =
-$@"╔ ═ ═ ═ ═ ═ ╗
-           
-║           ║
-           
-║     {cardIcon}     ║
-           
-║           ║
-           
-╚ ═ ═ ═ ═ ═ ╝";
-    }
-    else {
-      art = piles[index][^1].GetCardArt();
-    }
-
-    return art;
-  }
-  internal ConsoleColor GetFoundationColor(int index) {
-    if (piles[index].Count == 0) return ConsoleColor.DarkGray;
-    return piles[index][^1].GetColor();
+    piles[seedIndexMap[card.Seed]].Add(card);
   }
 
   internal List<Card> GetCards(int index) {
@@ -89,28 +47,6 @@ $@"╔ ═ ═ ═ ═ ═ ╗
     return piles[pileIndex][index];
   }
 
-  /// <summary>
-  /// Takes the cards from a pile from a starting index. For example, if pile is of length 7, and we give it index 3, it will return all cards starting from that index all the way to 6
-  /// </summary>
-  /// <param name="index"></param>
-  /// <returns></returns>
-  /// <remarks>Mutates the pile, removing the cards from that pile</remarks>
-  /// <exception cref="ArgumentOutOfRangeException"></exception>
-  internal List<Card> TakeCards(int index) {
-    if (index < 0 || index >= piles.Length) {
-      throw new ArgumentOutOfRangeException(nameof(index), "Indice fuori dai limiti della fondazione.");
-    }
-
-    if (piles[index].Count == 0) return new List<Card>(); // Se la pila è vuota, ritorna una lista vuota
-
-    var cards = new List<Card>();
-    for (int i = index; i < piles[index].Count; i++) {
-      cards.Add(piles[index][i]);
-    }
-
-    return cards;
-  }
-
   internal Card TakeCardAt(int pileIndex, int index = -1) {
     if (pileIndex < 0 || pileIndex >= piles.Length) {
       throw new ArgumentOutOfRangeException(nameof(pileIndex), "Indice della pila fuori dai limiti della fondazione.");
@@ -127,10 +63,6 @@ $@"╔ ═ ═ ═ ═ ═ ╗
     Card card = piles[pileIndex][index];
     piles[pileIndex].RemoveAt(index);
     return card;
-  }
-
-  internal List<Card>[] GetRawFoundation() {
-    return piles;
   }
 
   internal List<Card> GetPile(int index) {

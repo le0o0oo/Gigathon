@@ -1,4 +1,7 @@
-﻿namespace Solitario.Game.Managers;
+﻿using Solitario.Game.Models;
+using Solitario.Game.Types;
+
+namespace Solitario.Game.Managers;
 
 internal class Deck {
   private readonly List<Card> cards = [];
@@ -6,9 +9,9 @@ internal class Deck {
   private static readonly Random rng = new();
 
   private void GenerateCards() {
-    string[] seeds = { "spades", "hearts", "diamonds", "clubs" };
+    CardSeed[] seeds = { CardSeed.Spades, CardSeed.Hearts, CardSeed.Diamonds, CardSeed.Clubs };
 
-    foreach (string seed in seeds) {
+    foreach (var seed in seeds) {
       for (byte i = 1; i <= 13; i++) {
         cards.Add(new Card(seed, i));
       }
@@ -44,9 +47,10 @@ internal class Deck {
     return card;
   }
 
-  internal List<Card> GetCards() {
-    return cards;
+  public IReadOnlyList<Card> GetCards() {
+    return cards.AsReadOnly();
   }
+
   internal List<Card> GetWaste() {
     return waste;
   }
@@ -68,22 +72,10 @@ internal class Deck {
     waste.Add(card);
   }
 
-  internal string GetWasteArt() {
-    string art;
+  internal Card? GetTopWaste() {
+    if (waste.Count == 0) return null;
 
-    if (waste.Count == 0) {
-      art = Utils.GetEmptyCardArt();
-    }
-    else {
-      art = GetWasteCardAt(-1).GetCardArt();
-    }
-
-    return art;
-  }
-
-  internal ConsoleColor GetWasteColor() {
-    if (waste.Count == 0) return ConsoleColor.DarkGray;
-    return GetWasteCardAt(-1).GetColor(true);
+    return waste[^1];
   }
 
   internal Card GetWasteCardAt(int index = -1) {
