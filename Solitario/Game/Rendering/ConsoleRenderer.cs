@@ -1,5 +1,4 @@
 ﻿using Solitario.Game.Managers;
-using Solitario.Game.Types;
 
 namespace Solitario.Game.Rendering;
 internal class ConsoleRenderer {

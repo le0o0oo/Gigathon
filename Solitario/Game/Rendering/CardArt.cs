@@ -1,5 +1,4 @@
 ﻿using Solitario.Game.Models;
-using Solitario.Game.Types;
 
 namespace Solitario.Game.Rendering;
 internal static class CardArt {
@@ -13,7 +12,7 @@ internal static class CardArt {
   internal static ConsoleColor GetColor(Card card, bool force = false) {
     if (!card.Revealed && !force) return ConsoleColor.DarkGray;
 
-    return card.Color == Types.CardColor.Red ? ConsoleColor.Red : ConsoleColor.White;
+    return card.Color == CardColor.Red ? ConsoleColor.Red : ConsoleColor.White;
   }
 
   private static char GetSeedIcon(CardSeed seed) {

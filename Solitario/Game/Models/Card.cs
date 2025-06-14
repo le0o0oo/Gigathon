@@ -5,8 +5,6 @@
  * Clubs - Fiori
 */
 
-using Solitario.Game.Types;
-
 namespace Solitario.Game.Models;
 
 class Card {

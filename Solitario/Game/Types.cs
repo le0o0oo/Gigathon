@@ -1,4 +1,6 @@
-﻿namespace Solitario.Game.Types;
+﻿// Types only for the game
+
+namespace Solitario.Game;
 
 internal enum Areas {
   Waste,

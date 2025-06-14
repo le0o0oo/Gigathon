@@ -1,7 +1,6 @@
 ﻿using Solitario.Game.Managers;
 using Solitario.Game.Models;
 using Solitario.Game.Rendering;
-using Solitario.Game.Types;
 
 namespace Solitario.Game;
 
@@ -17,8 +16,6 @@ internal class Game {
 
   private readonly ConsoleRenderer renderer;
 
-  private readonly Thread resizeThread;
-
   public Game() {
     deck = new Deck(); // Create a new deck of cards
     tableau = new Tableau(deck); // Create a new tableau with the deck
@@ -28,39 +25,12 @@ internal class Game {
     cursor = new Cursor(tableau); // Initialize the cursor for card selection
 
     renderer = new ConsoleRenderer(deck, tableau, foundation, cursor, legend, selection);
-
-    Draw();
-
-    // Gestisce ridimensionamento spawnando un nuovo thread in background
-    resizeThread = new Thread(() => {
-      int lastWidth = Console.WindowWidth;
-      int lastHeight = Console.WindowHeight;
-
-      while (true) {
-        int currentWidth = Console.WindowWidth;
-        int currentHeight = Console.WindowHeight;
-
-        if (currentWidth != lastWidth || currentHeight != lastHeight) {
-          Draw();
-
-          lastWidth = currentWidth;
-          lastHeight = currentHeight;
-        }
-
-        Thread.Sleep(200);
-      }
-    });
-
-    resizeThread.IsBackground = true;
-    resizeThread.Start();
-
-    Input();
   }
 
   /// <summary>
   /// "Disegna" il gioco nella console da zero.
   /// </summary>
-  private void Draw() {
+  internal void Draw() {
     Console.Clear();
 
     renderer.DrawDeck();
@@ -82,80 +52,77 @@ internal class Game {
     };
   }
 
-  private void Input() {
-    while (true) {
-      ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+  internal void Input(ConsoleKeyInfo keyInfo) {
 
-      switch (keyInfo.Key) {
-        case ConsoleKey.Escape:
-          return; // Exit the game
+    switch (keyInfo.Key) {
+      case ConsoleKey.Escape:
+        return; // Exit the game
 
-        case ConsoleKey.UpArrow:
-          cursor.MoveUp();
-          renderer.DrawCursor();
-          break;
-        case ConsoleKey.DownArrow:
-          cursor.MoveDown();
-          renderer.DrawCursor();
-          break;
-        case ConsoleKey.LeftArrow:
-          cursor.MoveLeft();
-          renderer.DrawCursor();
-          break;
-        case ConsoleKey.RightArrow:
-          cursor.MoveRight();
-          renderer.DrawCursor();
-          break;
+      case ConsoleKey.UpArrow:
+        cursor.MoveUp();
+        renderer.DrawCursor();
+        break;
+      case ConsoleKey.DownArrow:
+        cursor.MoveDown();
+        renderer.DrawCursor();
+        break;
+      case ConsoleKey.LeftArrow:
+        cursor.MoveLeft();
+        renderer.DrawCursor();
+        break;
+      case ConsoleKey.RightArrow:
+        cursor.MoveRight();
+        renderer.DrawCursor();
+        break;
 
-        case ConsoleKey.R:
-          if (selection.active) break;
-          deck.PickCard();
-          renderer.DrawDeck();
-          break;
+      case ConsoleKey.R:
+        if (selection.active) break;
+        deck.PickCard();
+        renderer.DrawDeck();
+        break;
 
-        case ConsoleKey.E:
-          if (selection.active || deck.GetWaste().Count == 0) break;
-          selection.SetSelection(Areas.Waste, 0, [deck.GetWasteCardAt(-1)]);
+      case ConsoleKey.E:
+        if (selection.active || deck.GetWaste().Count == 0) break;
+        selection.SetSelection(Areas.Waste, 0, [deck.GetWasteCardAt(-1)]);
+        renderer.DrawSelection();
+        legend.SetSelected(true);
+        break;
+
+      case ConsoleKey.Spacebar:
+        var wasActive = selection.active;
+        var sourceAreaBeforeMove = selection.sourceArea;
+
+        HandleSelectAction();
+
+        // If a move was just completed (selection is now inactive)
+        if (wasActive && !selection.active) {
+          // Redraw the source and destination areas
+          var destArea = cursor.CurrentArea;
+          renderer.DrawBasedOnArea(sourceAreaBeforeMove);
+          renderer.DrawBasedOnArea(destArea);
+        }
+        // If a selection was just made
+        else if (!wasActive && selection.active) {
           renderer.DrawSelection();
-          legend.SetSelected(true);
-          break;
+        }
 
-        case ConsoleKey.Spacebar:
-          var wasActive = selection.active;
-          var sourceAreaBeforeMove = selection.sourceArea;
+        legend.SetSelected(selection.active);
+        renderer.DrawLegend();
+        renderer.DrawCursor();
+        break;
 
-          HandleSelectAction();
+      case ConsoleKey.X:
+        if (!selection.active) break;
+        selection.ClearSelection();
+        legend.SetSelected(false);
+        renderer.DrawLegend();
 
-          // If a move was just completed (selection is now inactive)
-          if (wasActive && !selection.active) {
-            // Redraw the source and destination areas
-            var destArea = cursor.CurrentArea;
-            renderer.DrawBasedOnArea(sourceAreaBeforeMove);
-            renderer.DrawBasedOnArea(destArea);
-          }
-          // If a selection was just made
-          else if (!wasActive && selection.active) {
-            renderer.DrawSelection();
-          }
+        if (selection.sourceArea == Areas.Tableau) renderer.DrawTableau();
+        else if (selection.sourceArea == Areas.Foundation) renderer.DrawFoundations();
+        else if (selection.sourceArea == Areas.Waste) renderer.DrawDeck();
 
-          legend.SetSelected(selection.active);
-          renderer.DrawLegend();
-          renderer.DrawCursor();
-          break;
-
-        case ConsoleKey.X:
-          if (!selection.active) break;
-          selection.ClearSelection();
-          legend.SetSelected(false);
-          renderer.DrawLegend();
-
-          if (selection.sourceArea == Areas.Tableau) renderer.DrawTableau();
-          else if (selection.sourceArea == Areas.Foundation) renderer.DrawFoundations();
-          else if (selection.sourceArea == Areas.Waste) renderer.DrawDeck();
-
-          renderer.DrawCursor();
-          break;
-      }
+        renderer.DrawCursor();
+        break;
     }
   }
 

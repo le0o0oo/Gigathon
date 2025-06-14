@@ -1,7 +1,6 @@
 ﻿using Solitario.Game.Managers;
 using Solitario.Game.Models;
-using Solitario.Game.Rendering.Utils;
-using Solitario.Game.Types;
+using Solitario.Utils;
 using System.Text.RegularExpressions;
 
 namespace Solitario.Game.Rendering;
@@ -96,16 +95,16 @@ internal class UIRenderer {
     Console.SetCursorPosition(0, ConsoleRenderer.legendStartHeight);
 
     // Determine dynamic colors and text before drawing.
-    string pickActionColor = legend.selectTextIndex == 0 ? AnsiColors.BoldCyan : AnsiColors.DarkGray;
-    string deselectActionColor = legend.selectTextIndex == 0 ? AnsiColors.DarkGray : AnsiColors.BoldCyan;
+    string pickActionColor = legend.selectTextIndex == 0 ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
+    string deselectActionColor = legend.selectTextIndex == 0 ? AnsiColors.Foreground.DarkGray : AnsiColors.Foreground.BoldCyan;
     string dynamicSelectText = Legend.selectTexts[legend.selectTextIndex];
 
     // This is much easier to read and modify.
-    string line1 = $"{AnsiColors.BoldGreen}Usa le freccie per muovere il cursore";
-    string line2 = $"{AnsiColors.BoldYellow}(R){AnsiColors.Reset} {pickActionColor}{Legend.pickCardText}";
-    string line3 = $"{AnsiColors.BoldYellow}(E){AnsiColors.Reset} {pickActionColor}{Legend.pickWasteText}";
-    string line4 = $"{AnsiColors.BoldYellow}(Spazio){AnsiColors.Reset} {AnsiColors.BoldCyan}{dynamicSelectText}";
-    string line5 = $"{AnsiColors.BoldYellow}(X){AnsiColors.Reset} {deselectActionColor}{Legend.deselectText}";
+    string line1 = $"{AnsiColors.Foreground.BoldGreen}Usa le freccie per muovere il cursore";
+    string line2 = $"{AnsiColors.Foreground.BoldYellow}(R){AnsiColors.Reset} {pickActionColor}{Legend.pickCardText}";
+    string line3 = $"{AnsiColors.Foreground.BoldYellow}(E){AnsiColors.Reset} {pickActionColor}{Legend.pickWasteText}";
+    string line4 = $"{AnsiColors.Foreground.BoldYellow}(Spazio){AnsiColors.Reset} {AnsiColors.Foreground.BoldCyan}{dynamicSelectText}";
+    string line5 = $"{AnsiColors.Foreground.BoldYellow}(X){AnsiColors.Reset} {deselectActionColor}{Legend.deselectText}";
 
     DrawBoxTop();
     DrawBoxLine(line1);
@@ -120,7 +119,7 @@ internal class UIRenderer {
   /// Draws the top border of the box.
   /// </summary>
   private void DrawBoxTop() {
-    Console.WriteLine($"{AnsiColors.BoldBlue}╔{new string('═', ConsoleRenderer.legendWidth - 2)}╗{AnsiColors.Reset}");
+    Console.WriteLine($"{AnsiColors.Foreground.BoldBlue}╔{new string('═', ConsoleRenderer.legendWidth - 2)}╗{AnsiColors.Reset}");
   }
 
   /// <summary>
@@ -128,7 +127,7 @@ internal class UIRenderer {
   /// </summary>
   private void DrawBoxBottom() {
     // Use Write instead of WriteLine to prevent an extra newline at the end.
-    Console.Write($"{AnsiColors.BoldBlue}╚{new string('═', ConsoleRenderer.legendWidth - 2)}╝{AnsiColors.Reset}");
+    Console.Write($"{AnsiColors.Foreground.BoldBlue}╚{new string('═', ConsoleRenderer.legendWidth - 2)}╝{AnsiColors.Reset}");
   }
 
   /// <summary>
@@ -148,7 +147,7 @@ internal class UIRenderer {
     }
 
     Console.WriteLine(
-        $"{AnsiColors.BoldBlue}║{AnsiColors.Reset}  {formattedContent}{AnsiColors.Reset}{new string(' ', padding)}{AnsiColors.BoldBlue}║{AnsiColors.Reset}"
+        $"{AnsiColors.Foreground.BoldBlue}║{AnsiColors.Reset}  {formattedContent}{AnsiColors.Reset}{new string(' ', padding)}{AnsiColors.Foreground.BoldBlue}║{AnsiColors.Reset}"
     );
   }
 
