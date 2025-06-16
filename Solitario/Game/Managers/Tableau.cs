@@ -35,6 +35,13 @@ internal class Tableau {
     return tableau[index];
   }
 
+  /// <summary>
+  /// Remove cards from a starting index
+  /// </summary>
+  /// <param name="column"></param>
+  /// <param name="startIndex"></param>
+  /// <returns></returns>
+  /// <exception cref="ArgumentOutOfRangeException"></exception>
   internal List<Card> TakeCards(int column, int startIndex) {
     if (column < 0 || column >= tableau.Count) {
       throw new ArgumentOutOfRangeException(nameof(column), "Colonna fuori dai limiti del tableau.");

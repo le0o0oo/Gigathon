@@ -19,8 +19,8 @@ internal class MenuActivity : IActivity {
     _activityManager = activityManager;
 
     _buttons = [
-      new("New Game", () => _activityManager.SwitchTo(new GameActivity())),
-      new("Settings", () => _activityManager.SwitchTo(new SettingsActivity())),
+      new("New Game", () => _activityManager.Launch(new GameActivity())),
+      new("Settings", () => _activityManager.Launch(new SettingsActivity(activityManager))),
       new("Restore game", () => Console.Write("restore settings")),
 
       new("Exit", () => _activityManager.Stop())
@@ -58,7 +58,9 @@ internal class MenuActivity : IActivity {
 
   public void DrawTitle() {
     const int startY = 5;
-    Pencil.DrawCentered(titleArt, startY);
+    const string titleArtShort = "Solitario";
+    bool canDrawTitle = Console.WindowWidth >= titleArt.Split('\n')[0].Length;
+    Pencil.DrawCentered(canDrawTitle ? titleArt : titleArtShort, startY);
   }
 
   public void DrawButtons() {

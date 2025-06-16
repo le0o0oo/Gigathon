@@ -92,26 +92,28 @@ internal class UIRenderer {
   /// Disegna la legenda in base allo stato attuale
   /// </summary>
   internal void DrawLegend() {
-    Console.SetCursorPosition(0, ConsoleRenderer.legendStartHeight);
+    Console.SetCursorPosition(0, ConsoleRenderer.legendStartY);
 
     // Determine dynamic colors and text before drawing.
     string pickActionColor = legend.selectTextIndex == 0 ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
+    string undoActionColor = legend.CanUndo && legend.selectTextIndex == 0 ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
     string deselectActionColor = legend.selectTextIndex == 0 ? AnsiColors.Foreground.DarkGray : AnsiColors.Foreground.BoldCyan;
     string dynamicSelectText = Legend.selectTexts[legend.selectTextIndex];
 
-    // This is much easier to read and modify.
-    string line1 = $"{AnsiColors.Foreground.BoldGreen}Usa le freccie per muovere il cursore";
-    string line2 = $"{AnsiColors.Foreground.BoldYellow}(R){AnsiColors.Reset} {pickActionColor}{Legend.pickCardText}";
-    string line3 = $"{AnsiColors.Foreground.BoldYellow}(E){AnsiColors.Reset} {pickActionColor}{Legend.pickWasteText}";
-    string line4 = $"{AnsiColors.Foreground.BoldYellow}(Spazio){AnsiColors.Reset} {AnsiColors.Foreground.BoldCyan}{dynamicSelectText}";
-    string line5 = $"{AnsiColors.Foreground.BoldYellow}(X){AnsiColors.Reset} {deselectActionColor}{Legend.deselectText}";
+    string[] lines =
+    {
+      $"{AnsiColors.Foreground.BoldGreen}Usa le freccie per muovere il cursore",
+      $"{AnsiColors.Foreground.BoldYellow}(R){AnsiColors.Reset} {pickActionColor}{Legend.pickCardText}",
+      $"{AnsiColors.Foreground.BoldYellow}(E){AnsiColors.Reset} {pickActionColor}{Legend.pickWasteText}",
+      $"{AnsiColors.Foreground.BoldYellow}(Spazio){AnsiColors.Reset} {AnsiColors.Foreground.BoldCyan}{dynamicSelectText}",
+      $"{AnsiColors.Foreground.BoldYellow}(X){AnsiColors.Reset} {deselectActionColor}{Legend.deselectText}",
+      $"{AnsiColors.Foreground.BoldYellow}(Z){AnsiColors.Reset} {undoActionColor}{Legend.undoText}",
+    };
 
     DrawBoxTop();
-    DrawBoxLine(line1);
-    DrawBoxLine(line2);
-    DrawBoxLine(line3);
-    DrawBoxLine(line4);
-    DrawBoxLine(line5);
+    foreach (var line in lines) {
+      DrawBoxLine(line);
+    }
     DrawBoxBottom();
   }
 

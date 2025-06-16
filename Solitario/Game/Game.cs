@@ -1,5 +1,6 @@
 ﻿using Solitario.Game.Managers;
 using Solitario.Game.Models;
+using Solitario.Game.Models.Actions;
 using Solitario.Game.Rendering;
 
 namespace Solitario.Game;
@@ -15,6 +16,9 @@ internal class Game {
   private readonly Selection selection;
 
   private readonly ConsoleRenderer renderer;
+  private readonly Actions actionsManager;
+
+  internal record GameManagers(Deck Deck, Tableau Tableau, Foundation Foundation, Selection Selection);
 
   public Game() {
     deck = new Deck(); // Create a new deck of cards
@@ -25,6 +29,9 @@ internal class Game {
     cursor = new Cursor(tableau); // Initialize the cursor for card selection
 
     renderer = new ConsoleRenderer(deck, tableau, foundation, cursor, legend, selection);
+
+    actionsManager = new Actions();
+
   }
 
   /// <summary>
@@ -32,6 +39,14 @@ internal class Game {
   /// </summary>
   internal void Draw() {
     Console.Clear();
+    if (!ConsoleRenderer.CanDraw()) {
+      Console.SetCursorPosition(0, 0);
+      Console.WriteLine($"Please resize your console window to at least {ConsoleRenderer.minWidth}x{ConsoleRenderer.minHeight}");
+      Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
+      return;
+    }
+
+    legend.SetCanUndo(actionsManager.CanUndo());
 
     renderer.DrawDeck();
     renderer.DrawFoundations();
@@ -77,8 +92,11 @@ internal class Game {
 
       case ConsoleKey.R:
         if (selection.active) break;
-        deck.PickCard();
+        actionsManager.Execute(new DrawCardAction(deck));
+
+        legend.SetCanUndo(actionsManager.CanUndo());
         renderer.DrawDeck();
+        renderer.DrawLegend();
         break;
 
       case ConsoleKey.E:
@@ -115,13 +133,28 @@ internal class Game {
         if (!selection.active) break;
         selection.ClearSelection();
         legend.SetSelected(false);
-        renderer.DrawLegend();
 
         if (selection.sourceArea == Areas.Tableau) renderer.DrawTableau();
         else if (selection.sourceArea == Areas.Foundation) renderer.DrawFoundations();
         else if (selection.sourceArea == Areas.Waste) renderer.DrawDeck();
 
+        renderer.DrawLegend();
         renderer.DrawCursor();
+        break;
+
+      case ConsoleKey.Z:
+        if (selection.active) break;
+        if (!actionsManager.CanUndo()) break;
+
+        var action = actionsManager.Undo();
+        legend.SetCanUndo(actionsManager.CanUndo());
+
+        if (action is DrawCardAction) {
+          renderer.DrawDeck();
+        }
+        else Draw();
+
+        renderer.DrawLegend();
         break;
     }
   }
@@ -147,8 +180,6 @@ internal class Game {
       // 3. Cleanup
       selection.ClearSelection();
       legend.SetSelected(false);
-
-
     }
     else {
       // Prendi le carte da tableau
@@ -179,40 +210,16 @@ internal class Game {
         legend.SetSelected(true);
       }
     }
+
+    legend.SetCanUndo(actionsManager.CanUndo());
+
   }
 
   // This method now receives all information it needs as parameters.
   private void PlaceSelectedCards(Areas sourceArea, int sourceIndex, Areas destArea, int destIndex) {
-    // From tableau
-    if (sourceArea == Areas.Tableau) {
-      var cardsToMove = tableau.TakeCards(sourceIndex, tableau.GetPile(sourceIndex).Count - selection.selectedCards.Count);
-      if (tableau.GetPile(sourceIndex).Count > 0) {
-        tableau.GetPile(sourceIndex)[^1].Revealed = true;
-      }
+    var managers = new GameManagers(deck, tableau, foundation, selection);
 
-      if (destArea == Areas.Tableau) {
-        tableau.GetPile(destIndex).AddRange(cardsToMove);
-      }
-      else { // To Foundation
-        foundation.AddCard(cardsToMove[0]);
-      }
-    }
-    // From waste
-    else if (sourceArea == Areas.Waste) {
-      var cardToMove = deck.TakeWasteCardAt(-1);
-      cardToMove.Revealed = true;
-      if (destArea == Areas.Tableau) {
-        tableau.GetPile(destIndex).Add(cardToMove);
-      }
-      else { // To Foundation
-        foundation.AddCard(cardToMove);
-      }
-    }
-    // From foundation
-    else if (sourceArea == Areas.Foundation) {
-      var cardToMove = foundation.TakeCardAt(sourceIndex);
-      tableau.GetPile(destIndex).Add(cardToMove);
-    }
+    actionsManager.Execute(new MoveCardsAction(managers, sourceArea, sourceIndex, destArea, destIndex));
   }
 }
 

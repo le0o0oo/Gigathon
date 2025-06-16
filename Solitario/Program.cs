@@ -8,13 +8,12 @@ internal class Program {
     Console.OutputEncoding = System.Text.Encoding.UTF8;
     Console.CursorVisible = false;
     Console.Title = "Solitario";
-
     //var settings = Settings.Settings.Load();
 
     var activityManager = new ActivityManager();
 
     // Carica il menu principale
-    activityManager.SwitchTo(new Activities.Screens.MenuActivity(activityManager));
+    activityManager.Launch(new Activities.Screens.MenuActivity(activityManager));
 
     var resizeThread = new Thread(() => {
       int lastWidth = Console.WindowWidth;

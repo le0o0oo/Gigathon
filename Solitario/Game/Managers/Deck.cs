@@ -46,8 +46,8 @@ internal class Deck {
     return card;
   }
 
-  public IReadOnlyList<Card> GetCards() {
-    return cards.AsReadOnly();
+  public List<Card> GetCards() {
+    return cards;
   }
 
   internal List<Card> GetWaste() {
@@ -68,6 +68,14 @@ internal class Deck {
     }
     Card card = cards[0];
     cards.RemoveAt(0);
+    waste.Add(card);
+  }
+
+  internal void AddToDeckAt(Card card, int index) {
+    cards.Insert(index, card);
+  }
+
+  internal void AddToWaste(Card card) {
     waste.Add(card);
   }
 

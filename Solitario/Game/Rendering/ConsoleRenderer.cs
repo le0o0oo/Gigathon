@@ -15,13 +15,17 @@ internal class ConsoleRenderer {
   #endregion
 
   #region Costanti
-  protected internal static readonly int tableauHeight = CardArt.cardHeight + 6;
+  protected internal static readonly int tableauHeight = CardArt.cardHeight + 19;
 
-  protected internal static readonly int legendWidth = 61;
-  protected internal static readonly int legendStartHeight = CardArt.cardHeight * 3;
+  protected internal static readonly int legendWidth = 50;
+  protected internal static readonly int legenStartX = 0;
+  protected internal static readonly int legendStartY = CardArt.cardHeight + 3 + (tableauHeight - 6);
 
   internal static readonly ConsoleColor color = ConsoleColor.DarkGreen;
   internal static readonly char cursorChar = '❮';
+
+  internal static readonly int minWidth = CardArt.cardWidth * 7;
+  internal static readonly int minHeight = 1 + CardArt.cardHeight + 1 + tableauHeight + 7;
   #endregion
 
   #region Variabili di stato
@@ -37,8 +41,8 @@ internal class ConsoleRenderer {
     Console.ResetColor();
     Console.SetCursorPosition(prevLeft, prevTop);
   }
-  protected internal static void ClearRectangle(int left, int top, int width, int height) {
-    string blankLine = new string(' ', width);
+  protected internal static void ClearRectangle(int left, int top, int width, int height, char debugChar = ' ') {
+    string blankLine = new string(debugChar, width);
     for (int y = top; y < top + height; y++) {
       Console.SetCursorPosition(left, y);
       Console.Write(blankLine);
@@ -75,6 +79,10 @@ internal class ConsoleRenderer {
         DrawDeck();
         break;
     }
+  }
+
+  static internal bool CanDraw() {
+    return (Console.WindowWidth >= minWidth) && (Console.WindowHeight >= minHeight);
   }
   #endregion
 

@@ -9,7 +9,8 @@ internal static class Pencil {
 
     for (int i = 0; i < textLines.Length; i++) {
       var noAnsiLine = AnsiRegex.Replace(textLines[i], "");
-      Console.SetCursorPosition((Console.WindowWidth - noAnsiLine.Length) / 2, i + top);
+      var startPos = Math.Abs((Console.WindowWidth - noAnsiLine.Length) / 2);
+      Console.SetCursorPosition(startPos, i + top);
       Console.Write(textLines[i]);
     }
   }

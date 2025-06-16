@@ -5,23 +5,34 @@ using Solitario.Utils;
 
 namespace Solitario.Activities.Screens;
 internal class SettingsActivity : IActivity {
-  private BaseComponent[] _elements = new BaseComponent[2];
+  private static readonly BaseComponent[] baseComponents = new BaseComponent[3];
+  private readonly BaseComponent[] _elements = baseComponents;
   private int _selectedIndex = 1;
 
-  internal SettingsActivity() {
-    var btn = new Button("◄ Indietro", () => { });
-    var checkbox = new Checkbox("test", null);
+  private readonly Checkbox autoplay_cb, useHints_cb;
 
-    checkbox.OnClick = () => {
-      checkbox.Toggle();
+  internal SettingsActivity(ActivityManager _activityManager) {
+    var backBtn = new Button("◄ Indietro", () => {
+      _activityManager.Back();
+    });
+    autoplay_cb = new Checkbox("Autoplay", () => {
+      CurrentSettings.Autoplay = autoplay_cb!.Checked;
       DrawUI();
-    };
+    });
+    useHints_cb = new Checkbox("Enable hints", () => {
+      CurrentSettings.UseHints = useHints_cb!.Checked;
+      DrawUI();
+    });
 
-    _elements[0] = btn;
-    _elements[1] = checkbox;
+    _elements[0] = backBtn;
+    _elements[1] = autoplay_cb;
+    _elements[2] = useHints_cb;
   }
 
   public void OnEnter() {
+    autoplay_cb.Checked = CurrentSettings.Autoplay;
+    useHints_cb.Checked = CurrentSettings.UseHints;
+
     Draw();
   }
 
@@ -38,28 +49,30 @@ internal class SettingsActivity : IActivity {
         DrawUI();
         break;
       case ConsoleKey.Enter:
-        _elements[_selectedIndex].OnClick();
+        if (_elements[_selectedIndex] is Checkbox checkbox) {
+          checkbox.Toggle();
+        }
+        _elements[_selectedIndex]?.OnClick();
         break;
     }
   }
 
   public void Draw() {
     Console.Clear();
-
-
     DrawUI();
-
   }
 
   private void DrawUI() {
     const int startY = 5;
-    const int spacing = 1;
+    const int spacing = 2;
 
     Pencil.DrawArt(ComponentRenderer.GetButtonArt((Button)_elements[0], _selectedIndex == 0), 1, 0);
 
     for (int i = 1; i < _elements.Length; i++) {
       var el = _elements[i];
-      Pencil.DrawCentered(ComponentRenderer.GetCheckboxArt((Checkbox)el, _selectedIndex == i), startY + (i * spacing));
+      if (el != null) {
+        Pencil.DrawCentered(ComponentRenderer.GetCheckboxArt((Checkbox)el, _selectedIndex == i), startY + (i * spacing));
+      }
     }
   }
 }
