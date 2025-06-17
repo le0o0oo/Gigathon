@@ -96,14 +96,14 @@ internal class Game {
 
         legend.SetCanUndo(actionsManager.CanUndo());
         renderer.DrawDeck();
-        renderer.DrawLegend();
         break;
 
       case ConsoleKey.E:
         if (selection.active || deck.GetWaste().Count == 0) break;
         selection.SetSelection(Areas.Waste, 0, [deck.GetWasteCardAt(-1)]);
-        renderer.DrawSelection();
         legend.SetSelected(true);
+
+        renderer.DrawSelection();
         break;
 
       case ConsoleKey.Spacebar:
@@ -125,7 +125,6 @@ internal class Game {
         }
 
         legend.SetSelected(selection.active);
-        renderer.DrawLegend();
         renderer.DrawCursor();
         break;
 
@@ -138,7 +137,6 @@ internal class Game {
         else if (selection.sourceArea == Areas.Foundation) renderer.DrawFoundations();
         else if (selection.sourceArea == Areas.Waste) renderer.DrawDeck();
 
-        renderer.DrawLegend();
         renderer.DrawCursor();
         break;
 
@@ -157,6 +155,8 @@ internal class Game {
         renderer.DrawLegend();
         break;
     }
+
+    renderer.DrawLegend();
   }
 
 
@@ -170,7 +170,7 @@ internal class Game {
       var selectionTargetArea = targetArea;
 
       // 1. Controlla se mossa valida
-      if (!Validator.ValidateCardMove(selection.selectedCards[0], GetPile(selectionTargetArea, targetPileIndex), selectionTargetArea)) {
+      if (!Validator.ValidateCardMove(selection.selectedCards[0], GetPile(selectionTargetArea, targetPileIndex), selectionTargetArea, targetPileIndex)) {
         return; // Invalid move, do nothing.
       }
 

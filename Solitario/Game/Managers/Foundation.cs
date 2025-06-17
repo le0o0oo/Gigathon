@@ -10,7 +10,8 @@ namespace Solitario.Game.Managers;
 */
 internal class Foundation {
   private readonly List<Card>[] piles = { new List<Card>(), new List<Card>(), new List<Card>(), new List<Card>() };
-  static internal readonly Dictionary<CardSeed, int> seedIndexMap = new Dictionary<CardSeed, int> {
+  static internal readonly Dictionary<CardSeed, int> seedIndexMap = new()
+  {
     { CardSeed.Clubs, 0 },
     { CardSeed.Hearts, 1 },
     { CardSeed.Spades, 2 },

@@ -2,7 +2,7 @@
 
 namespace Solitario.Game;
 internal static class Validator {
-  internal static bool ValidateCardMove(Card sourceCard, List<Card> targetPile, Areas targetArea) {
+  internal static bool ValidateCardMove(Card sourceCard, List<Card> targetPile, Areas targetArea, int targetIndex = -1) {
     if (targetArea == Areas.Tableau) {
       // Se è un re
       if (targetPile.Count == 0) {
@@ -15,12 +15,16 @@ internal static class Validator {
     }
     else if (targetArea == Areas.Foundation) {
       // Caso dell'asso
+      if (Managers.Foundation.seedIndexMap[sourceCard.Seed] != targetIndex) return false;
+
       if (targetPile.Count == 0) {
         return sourceCard.NumericValue == 1;
       }
       if (sourceCard.Seed != targetPile[0].Seed) return false; // Seme diverso, non valido
 
       if (sourceCard.NumericValue == targetPile[^1].NumericValue + 1) return true;
+
+
       return false;
     }
 

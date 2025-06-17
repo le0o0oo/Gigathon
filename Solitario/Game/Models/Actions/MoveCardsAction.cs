@@ -78,7 +78,7 @@ internal class MoveCardsAction : IAction {
         tableau.TakeCards(destIndex, tableau.GetPile(destIndex).Count - _cardsSelection.Count);
       }
       else { // Remove from foundation
-        foundation.GetPile(destIndex).Remove(_cardsSelection[0]);
+        foundation.GetPile(destIndex).RemoveAt(foundation.GetPile(destIndex).Count - 1);
       }
     }
     // From waste
