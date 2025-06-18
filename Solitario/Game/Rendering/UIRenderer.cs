@@ -108,6 +108,7 @@ internal class UIRenderer {
       $"{AnsiColors.Foreground.BoldYellow}(Spazio){AnsiColors.Reset} {AnsiColors.Foreground.BoldCyan}{dynamicSelectText}",
       $"{AnsiColors.Foreground.BoldYellow}(X){AnsiColors.Reset} {deselectActionColor}{Legend.deselectText}",
       $"{AnsiColors.Foreground.BoldYellow}(Z){AnsiColors.Reset} {undoActionColor}{Legend.undoText}",
+      $"{AnsiColors.Foreground.BoldYellow}(H){AnsiColors.Reset} {undoActionColor}{Legend.hintText}",
     };
 
     DrawBoxTop();

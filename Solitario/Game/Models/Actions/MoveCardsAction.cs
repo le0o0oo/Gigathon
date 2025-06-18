@@ -6,17 +6,20 @@ namespace Solitario.Game.Models.Actions;
 /// Gestisce il movimento delle carte.
 /// </summary>
 internal class MoveCardsAction : IAction {
-  private readonly Areas sourceArea, destArea;
-  private readonly int sourceIndex, destIndex;
+  internal readonly Areas sourceArea, destArea;
+  internal readonly int sourceIndex, destIndex;
 
   private readonly Tableau tableau;
   private readonly Foundation foundation;
   private readonly Deck deck;
   private readonly Selection selection;
 
-  List<Card> _cardsSelection;
+  private readonly List<Card> _cardsSelection;
+  internal IReadOnlyList<Card> CardsSelection => _cardsSelection;
 
-  internal MoveCardsAction(Game.GameManagers managers, Areas sourceArea, int sourceIndex, Areas destArea, int destIndex) {
+  private bool? _prevCardRevealed;
+
+  internal MoveCardsAction(Game.GameManagers managers, Areas sourceArea, int sourceIndex, Areas destArea, int destIndex, Selection? customSelection = null) {
     this.sourceArea = sourceArea;
     this.sourceIndex = sourceIndex;
     this.destArea = destArea;
@@ -25,7 +28,7 @@ internal class MoveCardsAction : IAction {
     this.tableau = managers.Tableau;
     this.foundation = managers.Foundation;
     this.deck = managers.Deck;
-    this.selection = managers.Selection;
+    this.selection = customSelection == null ? managers.Selection : customSelection;
 
     _cardsSelection = [.. selection.selectedCards];
   }
@@ -36,6 +39,7 @@ internal class MoveCardsAction : IAction {
       // Take cards from tableau
       var cardsToMove = tableau.TakeCards(sourceIndex, tableau.GetPile(sourceIndex).Count - selection.selectedCards.Count);
       if (tableau.GetPile(sourceIndex).Count > 0) {
+        _prevCardRevealed = tableau.GetPile(sourceIndex)[^1].Revealed;
         tableau.GetPile(sourceIndex)[^1].Revealed = true;
       }
 
@@ -67,8 +71,8 @@ internal class MoveCardsAction : IAction {
   public void Undo() {
     if (sourceArea == Areas.Tableau) {
       // Hide the last card
-      if (tableau.GetPile(sourceIndex).Count > 0) {
-        tableau.GetPile(sourceIndex)[^1].Revealed = false;
+      if (tableau.GetPile(sourceIndex).Count > 0 && _prevCardRevealed != null) {
+        tableau.GetPile(sourceIndex)[^1].Revealed = (bool)_prevCardRevealed;
       }
 
       // Put cards back into tableau

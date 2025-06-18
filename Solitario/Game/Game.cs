@@ -70,9 +70,6 @@ internal class Game {
   internal void Input(ConsoleKeyInfo keyInfo) {
 
     switch (keyInfo.Key) {
-      case ConsoleKey.Escape:
-        return; // Exit the game
-
       case ConsoleKey.UpArrow:
         cursor.MoveUp();
         renderer.DrawCursor();
@@ -153,6 +150,16 @@ internal class Game {
         else Draw();
 
         renderer.DrawLegend();
+        break;
+
+      case ConsoleKey.H:
+        if (selection.active) break;
+
+        var hint = Hints.FindHint(new GameManagers(deck, tableau, foundation, selection));
+        if (hint == null) break;
+
+        actionsManager.Execute(hint);
+        Draw();
         break;
     }
 
