@@ -1,4 +1,5 @@
 ﻿using Solitario.Game.Managers;
+using Solitario.Game.Models.Actions;
 
 namespace Solitario.Game.Rendering;
 internal class ConsoleRenderer {
@@ -9,6 +10,7 @@ internal class ConsoleRenderer {
   private readonly Cursor cursor;
   private readonly Legend legend;
   private readonly Selection selection;
+  private readonly Managers.Hint hintManager;
 
   private readonly BoardRenderer boardRenderer;
   private readonly UIRenderer uiRenderer;
@@ -86,17 +88,18 @@ internal class ConsoleRenderer {
   }
   #endregion
 
-  internal ConsoleRenderer(Deck deck, Tableau tableau, Foundation foundation, Cursor cursor, Legend legend, Selection selection) {
+  internal ConsoleRenderer(Deck deck, Tableau tableau, Foundation foundation, Cursor cursor, Legend legend, Selection selection, Hint hintManager) {
     this.deck = deck;
     this.tableau = tableau;
     this.foundation = foundation;
     this.cursor = cursor;
     this.legend = legend;
     this.selection = selection;
+    this.hintManager = hintManager;
 
     // Create the specialized renderers, giving them only what they need.
     this.boardRenderer = new BoardRenderer(deck, tableau, foundation);
-    this.uiRenderer = new UIRenderer(cursor, selection, legend);
+    this.uiRenderer = new UIRenderer(cursor, selection, legend, hintManager);
   }
 
   #region Methods
@@ -107,6 +110,7 @@ internal class ConsoleRenderer {
   internal void DrawCursor() => uiRenderer.DrawCursor();
   internal void DrawSelection(bool useInitialPosition = false) => uiRenderer.DrawSelection(useInitialPosition);
   internal void DrawLegend() => uiRenderer.DrawLegend();
+  internal void DrawAction(Game.GameManagers managers, IAction action) => uiRenderer.DrawAction(managers, action);
 
   #endregion
 }

@@ -24,6 +24,7 @@ internal static class AnsiColors {
   }
 
   internal static class Background {
+    internal const string White = "\u001b[48;5;255m";
     internal const string DarkGreen = "\u001b[48;5;22m";
   }
 }

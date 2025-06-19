@@ -66,13 +66,13 @@ $@"╔═══════════╗
   internal static string GetEmptyArt() {
     return
 @"╔ ═ ═ ═ ═ ═ ╗
-           
+             
 ║           ║
-           
+             
 ║           ║
-           
+             
 ║           ║
-           
+             
 ╚ ═ ═ ═ ═ ═ ╝";
   }
 
@@ -102,13 +102,13 @@ $@"╔═══════════╗
     if (foundation.GetPile(index).Count == 0) {
       art =
 $@"╔ ═ ═ ═ ═ ═ ╗
-           
+             
 ║           ║
-           
+             
 ║     {cardIcon}     ║
-           
+             
 ║           ║
-           
+             
 ╚ ═ ═ ═ ═ ═ ╝";
     }
     else {

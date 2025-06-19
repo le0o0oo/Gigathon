@@ -1,5 +1,5 @@
 ﻿namespace Solitario.Activities.Components;
-internal class Checkbox : BaseComponent {
+internal class Checkbox : InputComponent {
   internal bool Checked = false;
 
   internal Checkbox(string text, Action onClick) : base(text, onClick) { }

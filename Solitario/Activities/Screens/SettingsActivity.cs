@@ -5,8 +5,8 @@ using Solitario.Utils;
 
 namespace Solitario.Activities.Screens;
 internal class SettingsActivity : IActivity {
-  private static readonly BaseComponent[] baseComponents = new BaseComponent[3];
-  private readonly BaseComponent[] _elements = baseComponents;
+  private static readonly InputComponent[] baseComponents = new InputComponent[3];
+  private readonly InputComponent[] _elements = baseComponents;
   private int _selectedIndex = 1;
 
   private readonly Checkbox autoplay_cb, useHints_cb;

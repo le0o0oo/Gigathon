@@ -1,15 +1,35 @@
-﻿namespace Solitario.Activities;
+﻿using Solitario.Activities.Components;
+
+namespace Solitario.Activities;
 
 internal class ActivityManager {
   private IActivity? _currentActivity;
   public bool IsRunning { get; private set; } = true;
 
   private List<IActivity> _activities = [];
+  private Modal? currentModal;
 
   public void Launch(IActivity newActivity) {
     _currentActivity = newActivity;
     _activities.Add(newActivity);
     _currentActivity.OnEnter();
+  }
+
+  public void ShowModal(Modal modal) {
+    if (currentModal != null) throw new Exception("Another modal is currently active");
+
+    this.currentModal = modal;
+    if (currentModal.OnClose == null) currentModal.OnClose = () => HideModal();
+
+    currentModal.Draw();
+  }
+
+  public void HideModal() {
+    if (currentModal == null) return;
+
+    this.currentModal = null;
+
+    _currentActivity?.Draw();
   }
 
   public void Back() {
@@ -21,11 +41,18 @@ internal class ActivityManager {
   }
 
   public void HandleInput(ConsoleKeyInfo keyInfo) {
+    if (currentModal != null) {
+      currentModal.HandleInput(keyInfo);
+      return;
+    }
+
     _currentActivity?.HandleInput(keyInfo);
   }
 
   public void Draw() {
     _currentActivity?.Draw();
+
+    if (currentModal != null) currentModal.Draw();
   }
 
   public void Stop() {

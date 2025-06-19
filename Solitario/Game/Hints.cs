@@ -30,8 +30,8 @@ internal static class Hints {
 
     candidates.Add(PickTableauMove(tableau, GetTableauMoves(managers)));
     candidates.Add(GetWasteMove(managers));
-    candidates.Add(new(new DrawCardAction(deck), 1));
     candidates.Add(TableauToFoundation(managers));
+    if (deck.GetCards().Count > 0 || deck.GetWaste().Count > 0) candidates.Add(new(new DrawCardAction(deck), 1));
 
 
     var bestAction = candidates
@@ -65,7 +65,7 @@ internal static class Hints {
       bool otherCases = false;
 
       // if a king
-      if (action.CardsSelection[0].NumericValue == 13) {
+      if (action.CardsSelection.Count > 0 && action.CardsSelection[0].NumericValue == 13) {
         // Check if king is already top card
         if (tableau.GetPile(action.sourceIndex).Count == 0) { // Prevent errors
           if (tableau.GetPile(action.sourceIndex)[0].NumericValue != 13) {
@@ -160,20 +160,21 @@ internal static class Hints {
 
     // Itera per ogni pila
     for (int cPileIndex = 0; cPileIndex < 7; cPileIndex++) {
+      int cardIndex = tableau.GetPile(cPileIndex).Count - 1;
+      if (cardIndex < 0) continue;
 
       // Itera per ogni carta
-      for (int cardIndex = 0; cardIndex < tableau.GetPile(cPileIndex).Count; cardIndex++) {
-        var currentCard = tableau.GetCard(cPileIndex, cardIndex);
+      var currentCard = tableau.GetCard(cPileIndex, cardIndex);
 
-        // Se nascosta, skippa
-        if (!currentCard.Revealed) continue;
+      // Se nascosta, skippa
+      if (!currentCard.Revealed) continue;
 
-        int pileIndex = Foundation.seedIndexMap[currentCard.Seed];
-        if (Validator.ValidateCardMove(currentCard, foundation.GetPile(pileIndex), Areas.Foundation, pileIndex)) {
-          Selection selection = new();
-          selection.SetSelection(Areas.Tableau, cPileIndex, [currentCard]);
-          return new(new MoveCardsAction(managers, Areas.Tableau, cPileIndex, Areas.Foundation, pileIndex, selection), 100);
-        }
+      int pileIndex = Foundation.seedIndexMap[currentCard.Seed];
+      if (Validator.ValidateCardMove(currentCard, foundation.GetPile(pileIndex), Areas.Foundation, pileIndex)) {
+        Selection selection = new();
+        selection.SetSelection(Areas.Tableau, cPileIndex, [currentCard]);
+        return new(new MoveCardsAction(managers, Areas.Tableau, cPileIndex, Areas.Foundation, pileIndex, selection), 100);
+
       }
     }
 

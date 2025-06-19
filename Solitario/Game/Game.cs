@@ -14,11 +14,14 @@ internal class Game {
   private readonly Cursor cursor;
   private readonly Legend legend;
   private readonly Selection selection;
+  private readonly Managers.Hint hintManager;
 
   private readonly ConsoleRenderer renderer;
   private readonly Actions actionsManager;
 
-  internal record GameManagers(Deck Deck, Tableau Tableau, Foundation Foundation, Selection Selection);
+  internal record GameManagers(Deck Deck, Tableau Tableau, Foundation Foundation, Selection Selection, Cursor cursor);
+
+  internal Action? OnWin;
 
   public Game() {
     deck = new Deck(); // Create a new deck of cards
@@ -27,8 +30,9 @@ internal class Game {
     foundation = new Foundation(); // Create a new foundation
     selection = new Selection();
     cursor = new Cursor(tableau); // Initialize the cursor for card selection
+    hintManager = new Managers.Hint();
 
-    renderer = new ConsoleRenderer(deck, tableau, foundation, cursor, legend, selection);
+    renderer = new ConsoleRenderer(deck, tableau, foundation, cursor, legend, selection, hintManager);
 
     actionsManager = new Actions();
 
@@ -67,24 +71,57 @@ internal class Game {
     };
   }
 
-  internal void Input(ConsoleKeyInfo keyInfo) {
-
-    switch (keyInfo.Key) {
+  #region Input handlers
+  private void HandleKeyPress(ConsoleKey key) {
+    switch (key) {
       case ConsoleKey.UpArrow:
         cursor.MoveUp();
-        renderer.DrawCursor();
         break;
       case ConsoleKey.DownArrow:
         cursor.MoveDown();
-        renderer.DrawCursor();
         break;
       case ConsoleKey.LeftArrow:
         cursor.MoveLeft();
-        renderer.DrawCursor();
         break;
       case ConsoleKey.RightArrow:
         cursor.MoveRight();
-        renderer.DrawCursor();
+        break;
+    }
+    renderer.DrawCursor();
+  }
+
+  private void HandleSelection() {
+    var wasActive = selection.active;
+    var sourceAreaBeforeMove = selection.sourceArea;
+
+    HandleSelectAction();
+
+    // If a move was just completed (selection is now inactive)
+    if (wasActive && !selection.active) {
+      // Redraw the source and destination areas
+      var destArea = cursor.CurrentArea;
+      renderer.DrawBasedOnArea(sourceAreaBeforeMove);
+      renderer.DrawBasedOnArea(destArea);
+    }
+    // If a selection was just made
+    else if (!wasActive && selection.active) {
+      renderer.DrawSelection();
+    }
+
+    legend.SetSelected(selection.active);
+    renderer.DrawCursor();
+  }
+  #endregion
+
+  internal void Input(ConsoleKeyInfo keyInfo) {
+    bool changedHintState = false;
+
+    switch (keyInfo.Key) {
+      case ConsoleKey.UpArrow:
+      case ConsoleKey.DownArrow:
+      case ConsoleKey.LeftArrow:
+      case ConsoleKey.RightArrow:
+        HandleKeyPress(keyInfo.Key);
         break;
 
       case ConsoleKey.R:
@@ -104,25 +141,7 @@ internal class Game {
         break;
 
       case ConsoleKey.Spacebar:
-        var wasActive = selection.active;
-        var sourceAreaBeforeMove = selection.sourceArea;
-
-        HandleSelectAction();
-
-        // If a move was just completed (selection is now inactive)
-        if (wasActive && !selection.active) {
-          // Redraw the source and destination areas
-          var destArea = cursor.CurrentArea;
-          renderer.DrawBasedOnArea(sourceAreaBeforeMove);
-          renderer.DrawBasedOnArea(destArea);
-        }
-        // If a selection was just made
-        else if (!wasActive && selection.active) {
-          renderer.DrawSelection();
-        }
-
-        legend.SetSelected(selection.active);
-        renderer.DrawCursor();
+        HandleSelection();
         break;
 
       case ConsoleKey.X:
@@ -130,10 +149,7 @@ internal class Game {
         selection.ClearSelection();
         legend.SetSelected(false);
 
-        if (selection.sourceArea == Areas.Tableau) renderer.DrawTableau();
-        else if (selection.sourceArea == Areas.Foundation) renderer.DrawFoundations();
-        else if (selection.sourceArea == Areas.Waste) renderer.DrawDeck();
-
+        renderer.DrawBasedOnArea(selection.sourceArea);
         renderer.DrawCursor();
         break;
 
@@ -154,18 +170,52 @@ internal class Game {
 
       case ConsoleKey.H:
         if (selection.active) break;
+        var managers = new GameManagers(deck, tableau, foundation, selection, cursor);
 
-        var hint = Hints.FindHint(new GameManagers(deck, tableau, foundation, selection));
+        var hint = Hints.FindHint(managers);
         if (hint == null) break;
 
-        actionsManager.Execute(hint);
-        Draw();
+        if (!hintManager.ShowingHint) {
+          hintManager.SetLastAction(hint);
+          renderer.DrawAction(managers, hint);
+          hintManager.ShowingHint = true;
+          changedHintState = true;
+        }
+        else if (hintManager.LastAction != null) {
+          // Non ricacolare hint
+          actionsManager.Execute(hintManager.LastAction);
+        }
         break;
     }
 
+    if (hintManager.ShowingHint && !changedHintState) {
+      hintManager.ShowingHint = false;
+
+      if (hintManager.LastAction is MoveCardsAction action) {
+        renderer.DrawBasedOnArea(action.sourceArea);
+        renderer.DrawBasedOnArea(action.destArea);
+      }
+      else if (hintManager.LastAction is DrawCardAction) {
+        renderer.DrawDeck();
+      }
+
+      renderer.DrawCursor();
+      if (selection.active) renderer.DrawSelection();
+    }
+
     renderer.DrawLegend();
+
+    if (HasWon()) {
+      OnWin?.Invoke();
+    }
   }
 
+  private bool HasWon() {
+    return foundation.GetPile(0).Count == 13 &&
+       foundation.GetPile(1).Count == 13 &&
+       foundation.GetPile(2).Count == 13 &&
+       foundation.GetPile(3).Count == 13;
+  }
 
   private void HandleSelectAction() {
     if (selection.active) {
@@ -224,7 +274,7 @@ internal class Game {
 
   // This method now receives all information it needs as parameters.
   private void PlaceSelectedCards(Areas sourceArea, int sourceIndex, Areas destArea, int destIndex) {
-    var managers = new GameManagers(deck, tableau, foundation, selection);
+    var managers = new GameManagers(deck, tableau, foundation, selection, cursor);
 
     actionsManager.Execute(new MoveCardsAction(managers, sourceArea, sourceIndex, destArea, destIndex));
   }

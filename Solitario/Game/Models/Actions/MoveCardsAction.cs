@@ -9,6 +9,8 @@ internal class MoveCardsAction : IAction {
   internal readonly Areas sourceArea, destArea;
   internal readonly int sourceIndex, destIndex;
 
+  internal readonly int[] SelectionPosition;
+
   private readonly Tableau tableau;
   private readonly Foundation foundation;
   private readonly Deck deck;
@@ -31,6 +33,8 @@ internal class MoveCardsAction : IAction {
     this.selection = customSelection == null ? managers.Selection : customSelection;
 
     _cardsSelection = [.. selection.selectedCards];
+
+    SelectionPosition = managers.cursor.SelectionPosition;
   }
 
   public void Execute() {
@@ -70,7 +74,7 @@ internal class MoveCardsAction : IAction {
 
   public void Undo() {
     if (sourceArea == Areas.Tableau) {
-      // Hide the last card
+      // Reset hide state to the last card
       if (tableau.GetPile(sourceIndex).Count > 0 && _prevCardRevealed != null) {
         tableau.GetPile(sourceIndex)[^1].Revealed = (bool)_prevCardRevealed;
       }

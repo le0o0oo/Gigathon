@@ -19,7 +19,7 @@ internal class MenuActivity : IActivity {
     _activityManager = activityManager;
 
     _buttons = [
-      new("New Game", () => _activityManager.Launch(new GameActivity())),
+      new("New Game", () => _activityManager.Launch(new GameActivity(activityManager))),
       new("Settings", () => _activityManager.Launch(new SettingsActivity(activityManager))),
       new("Restore game", () => Console.Write("restore settings")),
 
