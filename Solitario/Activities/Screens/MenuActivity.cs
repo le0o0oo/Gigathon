@@ -27,7 +27,7 @@ internal class MenuActivity : IActivity {
     _buttons = [
       new("Nuova partita", () => _activityManager.Launch(new GameActivity(activityManager))),
       new("Opzioni", () => _activityManager.Launch(new SettingsActivity(activityManager))),
-      new("Ripristina partita", () => {
+      new("Ripristina sessione", () => {
         var deserializedGame = Serializer.LoadFromFile(Config.SaveFilename);
         _activityManager.Launch(new GameActivity(activityManager, deserializedGame));
       }),
