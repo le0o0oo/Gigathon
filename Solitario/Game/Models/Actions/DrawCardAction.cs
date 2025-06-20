@@ -2,13 +2,21 @@
 
 namespace Solitario.Game.Models.Actions;
 internal class DrawCardAction : IAction {
-  Deck deck;
+  private readonly Deck deck;
+
+  // Usato solo se ShuffleEmptyDeck è true
+  private List<Card>? wasteCards;
 
   internal DrawCardAction(Deck deck) {
     this.deck = deck;
   }
 
   public void Execute() {
+    // Salva lo stato del mazzo
+    if (deck.GetCards().Count == 0 && CurrentSettings.ShuffleEmptyDeck) {
+      wasteCards = [.. deck.GetWaste()];
+    }
+
     deck.PickCard();
   }
 
@@ -22,7 +30,8 @@ internal class DrawCardAction : IAction {
       var waste = deck.GetWaste();
       var cards = deck.GetCards();
 
-      waste.AddRange(deck.GetCards().AsEnumerable());
+      if (wasteCards == null) waste.AddRange(deck.GetCards().AsEnumerable());
+      else waste.AddRange(wasteCards.AsEnumerable());
       cards.Clear();
     }
   }

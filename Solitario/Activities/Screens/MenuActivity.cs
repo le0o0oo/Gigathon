@@ -28,8 +28,13 @@ internal class MenuActivity : IActivity {
       new("Nuova partita", () => _activityManager.Launch(new GameActivity(activityManager))),
       new("Opzioni", () => _activityManager.Launch(new SettingsActivity(activityManager))),
       new("Ripristina sessione", () => {
-        var deserializedGame = Serializer.LoadFromFile(Config.SaveFilename);
-        _activityManager.Launch(new GameActivity(activityManager, deserializedGame));
+        try {
+          var deserializedGame = Serializer.LoadFromFile(Config.SaveFilename);
+          _activityManager.Launch(new GameActivity(activityManager, deserializedGame));
+        } catch (Exception) {
+          var errorModal = new Modal("Errore", "Impossibile caricare la partita.\nIl file di salvataggio potrebbe essere corrotto.", [new("OK", () => _activityManager.CloseModal())]);
+          _activityManager.ShowModal(errorModal);
+        }
       }),
 
       new("Esci", () => _activityManager.Stop())

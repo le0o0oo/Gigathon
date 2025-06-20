@@ -11,7 +11,7 @@ internal class SettingsActivity : IActivity {
 
   private int _selectedIndex = 1;
 
-  private readonly Checkbox autoplay_cb, useHints_cb;
+  private readonly Checkbox shuffle_cb, useHints_cb;
 
   internal SettingsActivity(ActivityManager activityManager) {
     this._activityManager = activityManager;
@@ -19,8 +19,8 @@ internal class SettingsActivity : IActivity {
     var backBtn = new Button("◄ Indietro (Esc)", () => {
       activityManager.Back();
     });
-    autoplay_cb = new Checkbox("Autoplay", () => {
-      CurrentSettings.Autoplay = autoplay_cb!.Checked;
+    shuffle_cb = new Checkbox("Rimescola carte quando il mazzo si svuota ", () => {
+      CurrentSettings.ShuffleEmptyDeck = shuffle_cb!.Checked;
       DrawUI();
     });
     useHints_cb = new Checkbox("Abilita suggerimenti", () => {
@@ -29,12 +29,12 @@ internal class SettingsActivity : IActivity {
     });
 
     _elements[0] = backBtn;
-    _elements[1] = autoplay_cb;
+    _elements[1] = shuffle_cb;
     _elements[2] = useHints_cb;
   }
 
   public void OnEnter() {
-    autoplay_cb.Checked = CurrentSettings.Autoplay;
+    shuffle_cb.Checked = CurrentSettings.ShuffleEmptyDeck;
     useHints_cb.Checked = CurrentSettings.UseHints;
 
     //Draw();
@@ -73,7 +73,7 @@ internal class SettingsActivity : IActivity {
   }
 
   public (int, int) GetMinSize() {
-    return (2, 3);
+    return (46, 20);
   }
 
   private void DrawUI() {

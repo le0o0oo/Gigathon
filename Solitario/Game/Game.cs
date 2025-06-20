@@ -104,7 +104,7 @@ internal class Game {
         break;
 
       case ConsoleKey.H:
-        if (selection.active) break;
+        if (selection.active || !CurrentSettings.UseHints) break;
         var managers = new GameManagers(deck, tableau, foundation, selection, cursor);
 
         var hint = Hints.FindHint(managers);

@@ -106,18 +106,19 @@ internal class UIRenderer {
 
     int hintTextIndex = hintManager.ShowingHint ? 1 : 0;
 
-    string[] lines =
-    {
+    List<string> lines =
+    [
       $"{AnsiColors.Foreground.BoldGreen}Usa le freccie per muovere il cursore",
       $"{AnsiColors.Foreground.BoldYellow}(R){AnsiColors.Reset} {pickActionColor}{Legend.pickCardText}",
       $"{AnsiColors.Foreground.BoldYellow}(E){AnsiColors.Reset} {pickActionColor}{Legend.pickWasteText}",
       $"{AnsiColors.Foreground.BoldYellow}(Spazio){AnsiColors.Reset} {AnsiColors.Foreground.BoldCyan}{dynamicSelectText}",
       $"{AnsiColors.Foreground.BoldYellow}(X){AnsiColors.Reset} {deselectActionColor}{Legend.deselectText}",
       $"{AnsiColors.Foreground.BoldYellow}(Z){AnsiColors.Reset} {undoActionColor}{Legend.undoText}",
-      $"{AnsiColors.Foreground.BoldYellow}(H){AnsiColors.Reset} {pickActionColor}{Legend.hintText[hintTextIndex]}",
       $"{AnsiColors.Foreground.BoldYellow}(Esc){AnsiColors.Reset} {AnsiColors.Foreground.BoldCyan}{Legend.menuText}",
-    };
-
+    ];
+    if (CurrentSettings.UseHints) {
+      lines.Insert(6, $"{AnsiColors.Foreground.BoldYellow}(H){AnsiColors.Reset} {pickActionColor}{Legend.hintText[hintTextIndex]}");
+    }
     DrawBoxTop();
     foreach (var line in lines) {
       DrawBoxLine(line);

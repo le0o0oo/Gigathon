@@ -68,7 +68,7 @@ internal class Deck {
     if (cards.Count == 0) {
       cards.AddRange(waste);
       waste.Clear();
-      //Shuffle();
+      if (CurrentSettings.ShuffleEmptyDeck) Shuffle();
       return;
     }
     Card card = cards[0];
