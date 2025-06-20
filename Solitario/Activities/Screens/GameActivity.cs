@@ -15,7 +15,7 @@ internal class GameActivity : IActivity {
   }
 
   public void OnEnter() {
-    Draw();
+    //Draw();
   }
 
   public void HandleInput(ConsoleKeyInfo keyInfo) {

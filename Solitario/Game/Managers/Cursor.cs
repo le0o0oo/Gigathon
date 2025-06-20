@@ -18,7 +18,7 @@ internal class Cursor {
    * Se invece è foundation, currentItemIndex indica l'indice della pila di fondazione selezionata.
   */
   internal int CurrentItemIndex { get; private set; } = 0;
-  internal int CurrentCardPileIndex { get; private set; } = 0; // Indice della carta nella pla corrente (solo per tableau). Parte della carta più in basso della pila corrente.
+  internal int CurrentCardIndex { get; private set; } = 0; // Indice della carta nella pla corrente (solo per tableau). Parte della carta più in basso della pila corrente.
 
 
   internal ConsolePoint Position { get; private set; } = new(CardArt.cardWidth - 2, CardArt.cardHeight + 2); // Posizione iniziale del cursore (colonna, riga)
@@ -52,15 +52,20 @@ internal class Cursor {
       SetPosition(CardArt.cardWidth * (4 + CurrentItemIndex) - 2, 1);
     }
     else { // Nel tableau
-      if (CurrentCardPileIndex < 0) CurrentCardPileIndex = 0;
-      SetPosition(CardArt.cardWidth * (CurrentItemIndex + 1) - 2, CardArt.cardHeight + 2 + CurrentCardPileIndex);
+      if (CurrentCardIndex < 0) CurrentCardIndex = 0;
+      SetPosition(CardArt.cardWidth * (CurrentItemIndex + 1) - 2, CardArt.cardHeight + 2 + CurrentCardIndex);
     }
 
   }
 
   internal void MoveUp() {
     if (CurrentArea == Areas.Foundation) return;
-    bool canGoUp = CurrentCardPileIndex == 0 || !tableau.GetCard(CurrentItemIndex, CurrentCardPileIndex - 1).Revealed;
+    if (CurrentCardIndex > tableau.GetPile(CurrentItemIndex).Count - 1) {
+      CurrentCardIndex = tableau.GetPile(CurrentItemIndex).Count - 1 > 0 ? tableau.GetPile(CurrentItemIndex).Count - 1 : 0;
+      //UpdatePosition();
+      //return;
+    }
+    bool canGoUp = CurrentCardIndex == 0 || !tableau.GetCard(CurrentItemIndex, CurrentCardIndex - 1).Revealed;
 
 
     // Vai su
@@ -72,7 +77,7 @@ internal class Cursor {
     }
 
     // Seleziona carta tra la pila
-    CurrentCardPileIndex--;
+    CurrentCardIndex--;
     UpdatePosition();
   }
 
@@ -80,14 +85,15 @@ internal class Cursor {
     // Vai giù
     if (CurrentArea == Areas.Foundation) {
       CurrentItemIndex = CurrentItemIndex + 3;
-      CurrentCardPileIndex = tableau.GetPile(CurrentItemIndex).Count - 1;
+      CurrentCardIndex = tableau.GetPile(CurrentItemIndex).Count - 1;
       CurrentArea = Areas.Tableau;
       UpdatePosition();
       return;
     }
 
-    if (tableau.GetPile(CurrentItemIndex).Count - 1 == CurrentCardPileIndex) return;
-    CurrentCardPileIndex++;
+    if (tableau.GetPile(CurrentItemIndex).Count - 1 <= CurrentCardIndex ||
+      tableau.GetPile(CurrentItemIndex).Count == 0) return;
+    CurrentCardIndex++;
     UpdatePosition();
   }
 
@@ -99,7 +105,7 @@ internal class Cursor {
     }
     else {
       CurrentItemIndex--;
-      CurrentCardPileIndex = tableau.GetPile(CurrentItemIndex).Count - 1;
+      CurrentCardIndex = tableau.GetPile(CurrentItemIndex).Count - 1;
       UpdatePosition();
     }
   }
@@ -114,7 +120,7 @@ internal class Cursor {
     }
     else {
       CurrentItemIndex++;
-      CurrentCardPileIndex = tableau.GetPile(CurrentItemIndex).Count - 1;
+      CurrentCardIndex = tableau.GetPile(CurrentItemIndex).Count - 1;
       UpdatePosition();
     }
   }

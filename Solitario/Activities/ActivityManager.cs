@@ -13,6 +13,9 @@ internal class ActivityManager {
     _currentActivity = newActivity;
     _activities.Add(newActivity);
     _currentActivity.OnEnter();
+
+    Console.Clear();
+    Draw();
   }
 
   public void ShowModal(Modal modal) {
@@ -38,6 +41,8 @@ internal class ActivityManager {
     _activities.RemoveAt(_activities.Count - 1);
     _currentActivity = _activities[^1];
     _currentActivity.OnEnter();
+
+    Draw();
   }
 
   public void HandleInput(ConsoleKeyInfo keyInfo) {

@@ -33,7 +33,7 @@ internal class MenuActivity : IActivity {
   }
 
   public void OnEnter() {
-    Draw();
+    //Draw();
   }
 
   public void HandleInput(ConsoleKeyInfo keyInfo) {

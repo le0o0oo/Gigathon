@@ -59,7 +59,7 @@ internal class UIRenderer {
     ConsoleRenderer.SaveCursorPosition();
 
     int selectionItemIndex = redraw ? cursor.SelectionPosition[0] : cursor.CurrentItemIndex;
-    int selectionCardPileIndex = redraw ? cursor.SelectionPosition[1] : cursor.CurrentCardPileIndex;
+    int selectionCardPileIndex = redraw ? cursor.SelectionPosition[1] : cursor.CurrentCardIndex;
 
     Console.BackgroundColor = ConsoleColor.White;
 

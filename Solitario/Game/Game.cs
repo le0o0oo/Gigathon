@@ -42,7 +42,7 @@ internal class Game {
   /// </summary>
   internal void Draw() {
     Console.Clear();
-    
+
     legend.SetCanUndo(actionsManager.CanUndo());
 
     renderer.DrawDeck();
@@ -65,7 +65,7 @@ internal class Game {
   }
 
   #region Input handlers
-  private void HandleKeyPress(ConsoleKey key) {
+  private void HandleCursorMovement(ConsoleKey key) {
     switch (key) {
       case ConsoleKey.UpArrow:
         cursor.MoveUp();
@@ -118,7 +118,7 @@ internal class Game {
       case ConsoleKey.DownArrow:
       case ConsoleKey.LeftArrow:
       case ConsoleKey.RightArrow:
-        HandleKeyPress(keyInfo.Key);
+        HandleCursorMovement(keyInfo.Key);
         break;
 
       case ConsoleKey.R:
@@ -240,16 +240,16 @@ internal class Game {
       // Prendi le carte da tableau
       if (cursor.CurrentArea == Areas.Tableau) {
         var pile = tableau.GetPile(cursor.CurrentItemIndex);
-        if (pile.Count == 0 || cursor.CurrentCardPileIndex >= pile.Count) return;
+        if (pile.Count == 0 || cursor.CurrentCardIndex >= pile.Count) return;
 
         var cardsToSelect = new List<Card>();
-        for (int i = cursor.CurrentCardPileIndex; i < pile.Count; i++) {
+        for (int i = cursor.CurrentCardIndex; i < pile.Count; i++) {
           cardsToSelect.Add(pile[i]);
         }
         if (!cardsToSelect[0].Revealed) return; // Carte non rivelate, non prenderle
 
         cursor.SelectionPosition[0] = cursor.CurrentItemIndex;
-        cursor.SelectionPosition[1] = cursor.CurrentCardPileIndex;
+        cursor.SelectionPosition[1] = cursor.CurrentCardIndex;
 
         selection.SetSelection(Areas.Tableau, cursor.CurrentItemIndex, cardsToSelect);
         legend.SetSelected(true);
@@ -259,7 +259,7 @@ internal class Game {
         if (pile.Count == 0) return;
 
         cursor.SelectionPosition[0] = cursor.CurrentItemIndex;
-        cursor.SelectionPosition[1] = cursor.CurrentCardPileIndex;
+        cursor.SelectionPosition[1] = cursor.CurrentCardIndex;
 
         selection.SetSelection(Areas.Foundation, cursor.CurrentItemIndex, [pile[^1]]);
         legend.SetSelected(true);

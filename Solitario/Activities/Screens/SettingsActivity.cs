@@ -37,7 +37,7 @@ internal class SettingsActivity : IActivity {
     autoplay_cb.Checked = CurrentSettings.Autoplay;
     useHints_cb.Checked = CurrentSettings.UseHints;
 
-    Draw();
+    //Draw();
   }
 
   public void HandleInput(ConsoleKeyInfo keyInfo) {

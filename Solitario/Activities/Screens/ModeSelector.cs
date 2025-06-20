@@ -21,7 +21,7 @@ internal class ModeSelector : IActivity {
   }
 
   public void OnEnter() {
-    Draw();
+    //Draw();
   }
 
   public void Draw() {
