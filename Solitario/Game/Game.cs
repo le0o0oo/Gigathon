@@ -6,8 +6,6 @@ using Solitario.Game.Rendering;
 namespace Solitario.Game;
 
 internal class Game {
-  private bool autoplay = false;
-
   private readonly Deck deck;
   private readonly Tableau tableau;
   private readonly Foundation foundation;
@@ -44,13 +42,7 @@ internal class Game {
   /// </summary>
   internal void Draw() {
     Console.Clear();
-    if (!ConsoleRenderer.CanDraw()) {
-      Console.SetCursorPosition(0, 0);
-      Console.WriteLine($"Please resize your console window to at least {ConsoleRenderer.minWidth}x{ConsoleRenderer.minHeight}");
-      Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
-      return;
-    }
-
+    
     legend.SetCanUndo(actionsManager.CanUndo());
 
     renderer.DrawDeck();
