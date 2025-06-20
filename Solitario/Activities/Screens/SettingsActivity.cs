@@ -7,13 +7,17 @@ namespace Solitario.Activities.Screens;
 internal class SettingsActivity : IActivity {
   private static readonly InputComponent[] baseComponents = new InputComponent[3];
   private readonly InputComponent[] _elements = baseComponents;
+  private readonly ActivityManager _activityManager;
+
   private int _selectedIndex = 1;
 
   private readonly Checkbox autoplay_cb, useHints_cb;
 
-  internal SettingsActivity(ActivityManager _activityManager) {
-    var backBtn = new Button("◄ Indietro", () => {
-      _activityManager.Back();
+  internal SettingsActivity(ActivityManager activityManager) {
+    this._activityManager = activityManager;
+
+    var backBtn = new Button("◄ Indietro (Esc)", () => {
+      activityManager.Back();
     });
     autoplay_cb = new Checkbox("Autoplay", () => {
       CurrentSettings.Autoplay = autoplay_cb!.Checked;
@@ -38,6 +42,10 @@ internal class SettingsActivity : IActivity {
 
   public void HandleInput(ConsoleKeyInfo keyInfo) {
     switch (keyInfo.Key) {
+      case ConsoleKey.Escape:
+        _activityManager.Back();
+        break;
+
       case ConsoleKey.UpArrow:
         if (_selectedIndex <= 0) break;
         _selectedIndex--;
@@ -48,6 +56,8 @@ internal class SettingsActivity : IActivity {
         _selectedIndex++;
         DrawUI();
         break;
+
+      case ConsoleKey.Spacebar:
       case ConsoleKey.Enter:
         if (_elements[_selectedIndex] is Checkbox checkbox) {
           checkbox.Toggle();

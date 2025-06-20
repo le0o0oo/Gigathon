@@ -115,6 +115,7 @@ internal class UIRenderer {
       $"{AnsiColors.Foreground.BoldYellow}(X){AnsiColors.Reset} {deselectActionColor}{Legend.deselectText}",
       $"{AnsiColors.Foreground.BoldYellow}(Z){AnsiColors.Reset} {undoActionColor}{Legend.undoText}",
       $"{AnsiColors.Foreground.BoldYellow}(H){AnsiColors.Reset} {pickActionColor}{Legend.hintText[hintTextIndex]}",
+      $"{AnsiColors.Foreground.BoldYellow}(Esc){AnsiColors.Reset} {AnsiColors.Foreground.BoldCyan}{Legend.menuText}",
     };
 
     DrawBoxTop();

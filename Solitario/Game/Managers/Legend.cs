@@ -6,7 +6,8 @@ internal class Legend {
   internal static readonly string pickWasteText = "Seleziona carta di riserva";
   internal static readonly string deselectText = "Annulla selezione";
   internal static readonly string undoText = "Annulla azione";
-  internal static readonly string[] hintText = { "Hint", "Apply hint" };
+  internal static readonly string[] hintText = { "Suggerimento", "Applica suggerimento" };
+  internal static readonly string menuText = "Menu";
 
   // Variabili di stato
   internal int selectTextIndex { get; private set; } = 0; // Indice per il testo di selezione corrente

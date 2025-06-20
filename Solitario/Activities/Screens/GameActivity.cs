@@ -1,16 +1,16 @@
 ﻿using Solitario.Activities.Components;
+using Solitario.Utils;
 
 namespace Solitario.Activities.Screens;
 internal class GameActivity : IActivity {
-  private readonly Game.Game game;
+  private Game.Game game;
   private readonly ActivityManager _activityManager;
 
   internal GameActivity(ActivityManager activityManager) {
     _activityManager = activityManager;
 
     game = new Game.Game();
-
-    game.OnWin = () => HandleWin();
+    AttachActions();
   }
 
   public void OnEnter() {
@@ -25,12 +25,39 @@ internal class GameActivity : IActivity {
     game.Draw();
   }
 
+  private void AttachActions() {
+    game.OnWin = () => HandleWin();
+    game.OnEsc = () => EscMenu();
+  }
+
   private void HandleWin() {
     var modal = new Modal("Congratulazioni", "Hai vinto!");
     modal.OnClose = () => {
-      _activityManager.HideModal();
+      _activityManager.CloseModal();
       _activityManager.Back();
     };
+
+    _activityManager.ShowModal(modal);
+  }
+
+  private void EscMenu() {
+    Tuple<string, Action>[] btns = [
+    new("Salva", () => {}),
+    new("Rigioca", () => {
+      game = new Game.Game();
+      AttachActions();
+      Draw();
+
+      GC.Collect();
+      _activityManager.CloseModal();
+    }),
+    new("Menu principale", () => {
+      _activityManager.CloseModal();
+      _activityManager.Back();
+    })
+    ];
+
+    var modal = new Modal("Menu", $"Scegli una azione... o fai una pausa\nPremi {AnsiColors.Foreground.BoldYellow}(ESC){AnsiColors.Reset} per chiudere il menu", btns);
 
     _activityManager.ShowModal(modal);
   }

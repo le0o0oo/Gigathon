@@ -1,4 +1,5 @@
-﻿using Solitario.Activities.Models;
+﻿using Solitario.Activities.Components;
+using Solitario.Activities.Models;
 using Solitario.Activities.Rendering;
 using Solitario.Utils;
 
@@ -33,6 +34,20 @@ internal class MenuActivity : IActivity {
 
   public void HandleInput(ConsoleKeyInfo keyInfo) {
     switch (keyInfo.Key) {
+      case ConsoleKey.Escape:
+        Tuple<string, Action>[] btns = [
+         new("No", () => {
+           _activityManager.CloseModal();
+         }),
+         new("Sì", () => {
+           _activityManager.Stop();
+         })
+        ];
+
+        var modal = new Modal("Esci", "Sei sicuro di voler uscire?", btns);
+        _activityManager.ShowModal(modal);
+        break;
+
       case ConsoleKey.UpArrow:
         if (_selectedIndex <= 0) break;
         _selectedIndex--;
@@ -43,6 +58,8 @@ internal class MenuActivity : IActivity {
         _selectedIndex++;
         DrawButtons();
         break;
+
+      case ConsoleKey.Spacebar:
       case ConsoleKey.Enter:
         _buttons[_selectedIndex].OnClick();
         break;

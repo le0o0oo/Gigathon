@@ -22,6 +22,7 @@ internal class Game {
   internal record GameManagers(Deck Deck, Tableau Tableau, Foundation Foundation, Selection Selection, Cursor cursor);
 
   internal Action? OnWin;
+  internal Action? OnEsc;
 
   public Game() {
     deck = new Deck(); // Create a new deck of cards
@@ -117,6 +118,10 @@ internal class Game {
     bool changedHintState = false;
 
     switch (keyInfo.Key) {
+      case ConsoleKey.Escape:
+        OnEsc?.Invoke();
+        break;
+
       case ConsoleKey.UpArrow:
       case ConsoleKey.DownArrow:
       case ConsoleKey.LeftArrow:
@@ -140,6 +145,7 @@ internal class Game {
         renderer.DrawSelection();
         break;
 
+      case ConsoleKey.Enter:
       case ConsoleKey.Spacebar:
         HandleSelection();
         break;
