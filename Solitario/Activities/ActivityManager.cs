@@ -41,6 +41,8 @@ internal class ActivityManager {
   }
 
   public void HandleInput(ConsoleKeyInfo keyInfo) {
+    if (!CanDraw()) return;
+
     if (currentModal != null) {
       currentModal.HandleInput(keyInfo);
       return;
@@ -49,7 +51,27 @@ internal class ActivityManager {
     _currentActivity?.HandleInput(keyInfo);
   }
 
+  private bool CanDraw() {
+    if (_currentActivity == null) return false;
+
+    (int minW, int minH) = _currentActivity.GetMinSize();
+    bool canDraw = Console.WindowWidth >= minW && Console.WindowHeight >= minH;
+
+    return canDraw;
+  }
+
   public void Draw() {
+    if (_currentActivity == null) return;
+
+    (int minW, int minH) = _currentActivity.GetMinSize();
+
+    if (!CanDraw()) {
+      Console.SetCursorPosition(0, 0);
+      Console.WriteLine($"Please resize your console window to at least {minW}x{minH}");
+      Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
+      return;
+    }
+
     _currentActivity?.Draw();
 
     if (currentModal != null) currentModal.Draw();

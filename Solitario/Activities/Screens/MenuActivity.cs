@@ -9,6 +9,10 @@ internal class MenuActivity : IActivity {
   private readonly List<Button> _buttons;
   private int _selectedIndex = 0;
 
+  private const int startYTitle = 5;
+  private const int startYBtns = 10;
+  private const int btnsOffset = 3;
+
   private string titleArt = @"███████╗ ██████╗ ██╗     ██╗████████╗ █████╗ ██████╗ ██╗ ██████╗ 
 ██╔════╝██╔═══██╗██║     ██║╚══██╔══╝██╔══██╗██╔══██╗██║██╔═══██╗
 ███████╗██║   ██║██║     ██║   ██║   ███████║██████╔╝██║██║   ██║
@@ -73,20 +77,22 @@ internal class MenuActivity : IActivity {
     DrawButtons();
   }
 
+  public (int, int) GetMinSize() {
+    int height = startYBtns + (_buttons.Count * 3) + 3;
+    return (30, height);
+  }
+
   public void DrawTitle() {
-    const int startY = 5;
     const string titleArtShort = "Solitario";
     bool canDrawTitle = Console.WindowWidth >= titleArt.Split('\n')[0].Length;
-    Pencil.DrawCentered(canDrawTitle ? titleArt : titleArtShort, startY);
+    Pencil.DrawCentered(canDrawTitle ? titleArt : titleArtShort, startYTitle);
   }
 
   public void DrawButtons() {
-    const int startY = 10;
-    const int offset = 3;
 
     for (int i = 0; i < _buttons.Count; i++) {
       bool selected = _selectedIndex == i;
-      Pencil.DrawCentered(ComponentRenderer.GetButtonArt(_buttons[i], selected), startY + (offset * (i + 1)));
+      Pencil.DrawCentered(ComponentRenderer.GetButtonArt(_buttons[i], selected), startYBtns + (btnsOffset * (i + 1)));
     }
   }
 }

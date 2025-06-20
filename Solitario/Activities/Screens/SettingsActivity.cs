@@ -72,6 +72,10 @@ internal class SettingsActivity : IActivity {
     DrawUI();
   }
 
+  public (int, int) GetMinSize() {
+    return (2, 3);
+  }
+
   private void DrawUI() {
     const int startY = 5;
     const int spacing = 2;

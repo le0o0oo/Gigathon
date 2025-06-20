@@ -24,7 +24,7 @@ internal class ConsoleRenderer {
   protected internal static readonly int legendStartY = CardArt.cardHeight + 3 + (tableauHeight - 6);
 
   internal static readonly ConsoleColor color = ConsoleColor.DarkGreen;
-  internal static readonly char cursorChar = '❮';
+  internal static readonly char cursorChar = CurrentSettings.UseAnsi ? '❮' : '<';
 
   internal static readonly int minWidth = CardArt.cardWidth * 7;
   internal static readonly int minHeight = 1 + CardArt.cardHeight + 1 + tableauHeight + 7;

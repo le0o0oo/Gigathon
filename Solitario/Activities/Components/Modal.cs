@@ -25,7 +25,16 @@ internal class Modal {
       .OrderByDescending(line => line.Length).FirstOrDefault()?.Length ?? 0;
     int titleWidth = title.Length + 6;
 
-    this.width = Math.Max(contentWidth + 4, titleWidth + 4);
+    int buttonWidth = 0;
+    if (buttons != null && buttons.Length > 0) {
+      // Compose the visual representation of the buttons line
+      var rawButtons = string.Join(" | ", buttons.Select((btn, i) => $"<{btn.Item1}>"));
+      buttonWidth = Pencil.AnsiRegex.Replace(rawButtons, "").Length;
+      // Add surrounding padding
+      buttonWidth += 4; // At least two spaces for borders and some buffer
+    }
+
+    this.width = Math.Max(Math.Max(contentWidth + 4, titleWidth + 4), buttonWidth + 4);
   }
 
   internal void Draw() {

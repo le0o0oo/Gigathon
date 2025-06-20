@@ -7,14 +7,16 @@ internal static class ComponentRenderer {
   internal static string GetButtonArt(Button button, bool selected) {
     string art;
     if (!selected) {
-      art = $@"┌{new string('─', button.Text.Length + 2)}┐
-│ {button.Text} │
-└{new string('─', button.Text.Length + 2)}┘";
+      var btnText = $" {button.Text} ";
+      art = $@"┌{new string('─', btnText.Length + 2)}┐
+│ {btnText} │
+└{new string('─', btnText.Length + 2)}┘";
     }
     else {
-      art = $@"{AnsiColors.Foreground.BoldGreen}┌{new string('─', button.Text.Length + 2)}┐
-│ {AnsiColors.Background.DarkGreen}{AnsiColors.Foreground.Lime}{button.Text}{AnsiColors.Reset} {AnsiColors.Foreground.BoldGreen}│
-└{new string('─', button.Text.Length + 2)}┘{AnsiColors.Reset}";
+      var selectedBtnText = $"<{button.Text}>";
+      art = $@"{AnsiColors.Foreground.BoldGreen}╔{new string('═', selectedBtnText.Length + 2)}╗
+║ {AnsiColors.Background.DarkGreen}{AnsiColors.Foreground.Lime}{selectedBtnText}{AnsiColors.Reset} {AnsiColors.Foreground.BoldGreen}║
+╚{new string('═', selectedBtnText.Length + 2)}╝{AnsiColors.Reset}";
     }
 
     return art;
@@ -24,8 +26,8 @@ internal static class ComponentRenderer {
     string icon = checkbox.Checked ? "🗹" : "☐";
 
     if (!selected)
-      return $"{checkbox.Text} {icon} ";
+      return $"  {checkbox.Text} {icon} ";
 
-    return $"{AnsiColors.Background.DarkGreen}{checkbox.Text} {icon} {AnsiColors.Reset}";
+    return $"{AnsiColors.Background.DarkGreen}> {checkbox.Text} {icon} {AnsiColors.Reset}";
   }
 }

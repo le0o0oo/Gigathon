@@ -1,18 +1,20 @@
 ﻿namespace Solitario.Activities;
 internal interface IActivity {
   /// <summary>
-  /// Handles user input for the activity.
+  /// Called when the activity becomes the active one.
+  /// Use this to perform initial setup or drawing.
   /// </summary>
-  internal void HandleInput(ConsoleKeyInfo keyInfo);
+  void OnEnter();
 
   /// <summary>
   /// Draws the current state of the activity to the console.
   /// </summary>
   void Draw();
 
+  (int, int) GetMinSize();
+
   /// <summary>
-  /// Called when the activity becomes the active one.
-  /// Use this to perform initial setup or drawing.
+  /// Handles user input for the activity.
   /// </summary>
-  void OnEnter();
+  internal void HandleInput(ConsoleKeyInfo keyInfo);
 }
