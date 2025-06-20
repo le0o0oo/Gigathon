@@ -23,7 +23,7 @@ internal class SettingsActivity : IActivity {
       CurrentSettings.Autoplay = autoplay_cb!.Checked;
       DrawUI();
     });
-    useHints_cb = new Checkbox("Enable hints", () => {
+    useHints_cb = new Checkbox("Abilita suggerimenti", () => {
       CurrentSettings.UseHints = useHints_cb!.Checked;
       DrawUI();
     });

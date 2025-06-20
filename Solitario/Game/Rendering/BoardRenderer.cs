@@ -74,7 +74,7 @@ internal class BoardRenderer {
         continue;
       }
 
-      var rawTableau = tableau.tableau;
+      var rawTableau = tableau.Piles;
 
       foreach (Card card in rawTableau[i]) {
 

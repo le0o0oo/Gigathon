@@ -17,6 +17,11 @@ internal class Deck {
     }
   }
 
+  public Deck(List<Card> cards, List<Card> waste) {
+    this.cards = cards;
+    this.waste = waste;
+  }
+
   public Deck() {
     GenerateCards();
     Shuffle();

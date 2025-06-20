@@ -1,4 +1,5 @@
-﻿using Solitario.Game.Managers;
+﻿using Solitario.Game.Helpers;
+using Solitario.Game.Managers;
 using Solitario.Game.Models;
 using Solitario.Game.Models.Actions;
 using Solitario.Game.Rendering;
@@ -6,9 +7,9 @@ using Solitario.Game.Rendering;
 namespace Solitario.Game;
 
 internal class Game {
-  private readonly Deck deck;
-  private readonly Tableau tableau;
-  private readonly Foundation foundation;
+  internal readonly Deck deck;
+  internal readonly Tableau tableau;
+  internal readonly Foundation foundation;
   private readonly Cursor cursor;
   private readonly Legend legend;
   private readonly Selection selection;
@@ -22,11 +23,16 @@ internal class Game {
   internal Action? OnWin;
   internal Action? OnEsc;
 
-  public Game() {
-    deck = new Deck(); // Create a new deck of cards
-    tableau = new Tableau(deck); // Create a new tableau with the deck
+  internal Game(Deck? deck = null, Tableau? tableau = null, Foundation? foundation = null) {
+    deck ??= new Deck();
+    tableau ??= new Tableau(deck);
+    foundation ??= new Foundation();
+
+    this.deck = deck;
+    this.tableau = tableau;
+    this.foundation = foundation;
+
     legend = new Legend(); // Initialize the legend for the game
-    foundation = new Foundation(); // Create a new foundation
     selection = new Selection();
     cursor = new Cursor(tableau); // Initialize the cursor for card selection
     hintManager = new Managers.Hint();
@@ -34,78 +40,9 @@ internal class Game {
     renderer = new ConsoleRenderer(deck, tableau, foundation, cursor, legend, selection, hintManager);
 
     actionsManager = new Actions();
-
   }
 
-  /// <summary>
-  /// "Disegna" il gioco nella console da zero.
-  /// </summary>
-  internal void Draw() {
-    Console.Clear();
-
-    legend.SetCanUndo(actionsManager.CanUndo());
-
-    renderer.DrawDeck();
-    renderer.DrawFoundations();
-    renderer.DrawTableau();
-    renderer.DrawSelection(true);
-
-    renderer.DrawCursor();
-    renderer.DrawLegend();
-  }
-
-  // Ottieni pila da ogni area
-  private List<Card> GetPile(Areas area, int index) {
-    return area switch
-    {
-      Areas.Tableau => tableau.GetPile(index),
-      Areas.Foundation => foundation.GetPile(index),
-      _ => deck.GetWaste()
-    };
-  }
-
-  #region Input handlers
-  private void HandleCursorMovement(ConsoleKey key) {
-    switch (key) {
-      case ConsoleKey.UpArrow:
-        cursor.MoveUp();
-        break;
-      case ConsoleKey.DownArrow:
-        cursor.MoveDown();
-        break;
-      case ConsoleKey.LeftArrow:
-        cursor.MoveLeft();
-        break;
-      case ConsoleKey.RightArrow:
-        cursor.MoveRight();
-        break;
-    }
-    renderer.DrawCursor();
-  }
-
-  private void HandleSelection() {
-    var wasActive = selection.active;
-    var sourceAreaBeforeMove = selection.sourceArea;
-
-    HandleSelectAction();
-
-    // If a move was just completed (selection is now inactive)
-    if (wasActive && !selection.active) {
-      // Redraw the source and destination areas
-      var destArea = cursor.CurrentArea;
-      renderer.DrawBasedOnArea(sourceAreaBeforeMove);
-      renderer.DrawBasedOnArea(destArea);
-    }
-    // If a selection was just made
-    else if (!wasActive && selection.active) {
-      renderer.DrawSelection();
-    }
-
-    legend.SetSelected(selection.active);
-    renderer.DrawCursor();
-  }
-  #endregion
-
+  #region Public methods
   internal void Input(ConsoleKeyInfo keyInfo) {
     bool changedHintState = false;
 
@@ -208,6 +145,77 @@ internal class Game {
     }
   }
 
+  /// <summary>
+  /// "Disegna" il gioco nella console da zero.
+  /// </summary>
+  internal void Draw() {
+    Console.Clear();
+
+    legend.SetCanUndo(actionsManager.CanUndo());
+
+    renderer.DrawDeck();
+    renderer.DrawFoundations();
+    renderer.DrawTableau();
+    renderer.DrawSelection(true);
+
+    renderer.DrawCursor();
+    renderer.DrawLegend();
+  }
+  #endregion
+
+  #region Private methods
+  // Ottieni pila da ogni area
+  private List<Card> GetPile(Areas area, int index) {
+    return area switch
+    {
+      Areas.Tableau => tableau.GetPile(index),
+      Areas.Foundation => foundation.GetPile(index),
+      _ => deck.GetWaste()
+    };
+  }
+
+  #region Input handlers
+  private void HandleCursorMovement(ConsoleKey key) {
+    switch (key) {
+      case ConsoleKey.UpArrow:
+        cursor.MoveUp();
+        break;
+      case ConsoleKey.DownArrow:
+        cursor.MoveDown();
+        break;
+      case ConsoleKey.LeftArrow:
+        cursor.MoveLeft();
+        break;
+      case ConsoleKey.RightArrow:
+        cursor.MoveRight();
+        break;
+    }
+    renderer.DrawCursor();
+  }
+
+  private void HandleSelection() {
+    var wasActive = selection.active;
+    var sourceAreaBeforeMove = selection.sourceArea;
+
+    HandleSelectAction();
+
+    // If a move was just completed (selection is now inactive)
+    if (wasActive && !selection.active) {
+      // Redraw the source and destination areas
+      var destArea = cursor.CurrentArea;
+      renderer.DrawBasedOnArea(sourceAreaBeforeMove);
+      renderer.DrawBasedOnArea(destArea);
+    }
+    // If a selection was just made
+    else if (!wasActive && selection.active) {
+      renderer.DrawSelection();
+    }
+
+    legend.SetSelected(selection.active);
+    renderer.DrawCursor();
+  }
+  #endregion
+
   private bool HasWon() {
     return foundation.GetPile(0).Count == 13 &&
        foundation.GetPile(1).Count == 13 &&
@@ -276,5 +284,7 @@ internal class Game {
 
     actionsManager.Execute(new MoveCardsAction(managers, sourceArea, sourceIndex, destArea, destIndex));
   }
+
+  #endregion
 }
 

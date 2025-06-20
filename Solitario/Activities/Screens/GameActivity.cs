@@ -1,4 +1,5 @@
 ﻿using Solitario.Activities.Components;
+using Solitario.Game.Helpers;
 using Solitario.Game.Rendering;
 using Solitario.Utils;
 
@@ -7,10 +8,15 @@ internal class GameActivity : IActivity {
   private Game.Game game;
   private readonly ActivityManager _activityManager;
 
-  internal GameActivity(ActivityManager activityManager) {
+  internal GameActivity(ActivityManager activityManager, Game.Game? initialGame = null) {
     _activityManager = activityManager;
 
-    game = new Game.Game();
+    if (initialGame == null) {
+      game = new Game.Game();
+    }
+    else {
+      game = initialGame;
+    }
     AttachActions();
   }
 
@@ -57,7 +63,15 @@ internal class GameActivity : IActivity {
       new("Chiudi", () => {
         _activityManager.CloseModal();
       }),
-      new("Salva", () => {}),
+      new("Salva partita", () => {
+        var serializer = new Serializer(game.deck, game.foundation, game.tableau);
+        serializer.SaveAsFile(Config.SaveFilename);
+
+        var feedbackModal = new Modal("Salva", "Partita salvata con successo", [new("OK", () => _activityManager.CloseModal())]);
+
+        _activityManager.CloseModal();
+        _activityManager.ShowModal(feedbackModal);
+      }),
       new("Rigioca", () => {
         game = new Game.Game();
         AttachActions();

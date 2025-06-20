@@ -12,7 +12,7 @@ using Solitario.Game.Models.Actions;
  * 6. Draw card from stock - 1
 */
 
-namespace Solitario.Game;
+namespace Solitario.Game.Helpers;
 internal static class Hints {
   // Calcola il suggerimento
   /*

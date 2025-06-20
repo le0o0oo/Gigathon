@@ -1,6 +1,6 @@
 ﻿using Solitario.Game.Models;
 
-namespace Solitario.Game;
+namespace Solitario.Game.Helpers;
 internal static class Validator {
   internal static bool ValidateCardMove(Card sourceCard, List<Card> targetPile, Areas targetArea, int targetIndex = -1) {
     if (targetArea == Areas.Tableau) {

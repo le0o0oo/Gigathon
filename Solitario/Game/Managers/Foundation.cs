@@ -18,6 +18,10 @@ internal class Foundation {
     { CardSeed.Diamonds, 3 }
   };
 
+  public Foundation(List<Card>[] piles) {
+    this.piles = piles;
+  }
+
   public Foundation() {
 
   }

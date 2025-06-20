@@ -1,6 +1,7 @@
 ﻿using Solitario.Activities.Components;
 using Solitario.Activities.Models;
 using Solitario.Activities.Rendering;
+using Solitario.Game.Helpers;
 using Solitario.Utils;
 
 namespace Solitario.Activities.Screens;
@@ -24,16 +25,20 @@ internal class MenuActivity : IActivity {
     _activityManager = activityManager;
 
     _buttons = [
-      new("New Game", () => _activityManager.Launch(new GameActivity(activityManager))),
-      new("Settings", () => _activityManager.Launch(new SettingsActivity(activityManager))),
-      new("Restore game", () => Console.Write("restore settings")),
+      new("Nuova partita", () => _activityManager.Launch(new GameActivity(activityManager))),
+      new("Opzioni", () => _activityManager.Launch(new SettingsActivity(activityManager))),
+      new("Ripristina partita", () => {
+        var deserializedGame = Serializer.LoadFromFile(Config.SaveFilename);
+        _activityManager.Launch(new GameActivity(activityManager, deserializedGame));
+      }),
 
-      new("Exit", () => _activityManager.Stop())
+      new("Esci", () => _activityManager.Stop())
     ];
   }
 
   public void OnEnter() {
     //Draw();
+    _buttons[2].Disabled = !File.Exists(Config.SaveFilename);
   }
 
   public void HandleInput(ConsoleKeyInfo keyInfo) {
@@ -55,11 +60,13 @@ internal class MenuActivity : IActivity {
       case ConsoleKey.UpArrow:
         if (_selectedIndex <= 0) break;
         _selectedIndex--;
+        if (_buttons[_selectedIndex].Disabled) _selectedIndex--;
         DrawButtons();
         break;
       case ConsoleKey.DownArrow:
         if (_selectedIndex >= _buttons.Count - 1) break;
         _selectedIndex++;
+        if (_buttons[_selectedIndex].Disabled) _selectedIndex++;
         DrawButtons();
         break;
 
@@ -89,10 +96,11 @@ internal class MenuActivity : IActivity {
   }
 
   public void DrawButtons() {
-
     for (int i = 0; i < _buttons.Count; i++) {
+      if (_buttons[i].Disabled) Console.ForegroundColor = ConsoleColor.DarkGray;
       bool selected = _selectedIndex == i;
       Pencil.DrawCentered(ComponentRenderer.GetButtonArt(_buttons[i], selected), startYBtns + (btnsOffset * (i + 1)));
+      Console.ResetColor();
     }
   }
 }
