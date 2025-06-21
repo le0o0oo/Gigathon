@@ -34,7 +34,7 @@ internal class MoveCardsAction : IAction {
 
     _cardsSelection = [.. selection.SelectedCards];
 
-    SelectionPosition = managers.cursor.SelectionPosition;
+    SelectionPosition = managers.Cursor.SelectionPosition;
   }
 
   public void Execute() {

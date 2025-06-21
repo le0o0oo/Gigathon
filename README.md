@@ -12,6 +12,7 @@ Questo è un classico gioco di Solitario (Klondike) sviluppato in C# per la cons
 - [Comandi](#comandi)
 - [Architettura](#architettura)
 - [Note](#note)
+- [Aggiunte](#aggiunte)
 
 ## Features
 - ✅ **Zero dipendenze**: non è richiesta alcuna installazione di dipendenze esterne
@@ -66,3 +67,12 @@ Nel solitario classico però la pila degli scarti va capovolta **senza rimescola
 
 Di conseguenza sono andato per una via di mezzo, implementando entrambe le logiche.
 Ho aggiungo una voce al menu "Opzioni", disabilitata di default, per abilitare il rimescolo come suggerito nel documento
+
+## Aggiunte
+Un insieme di cose che mi piacerebbe mettere ma ho rinunciato
+### Rilevazione di Game Over
+Il modo per implementare Game Over è utilizzare l'algoritmo delle Hint, ma esso è fatto per trovare una mossa immediata e non è in grado di "pensare" a mosse future derivate da essa.
+
+L'altra opzione sarebbe controllare se l'utente ha pescato continuamente le carte dal mazzo, e se nessuna è valida mostrare un messaggio appropriato, il problema con questo approccio è che l'algoritmo delle hint è già abbastanza "pesante" di suo perché fa varie iterazioni, e esegurlo in background all'insaputa dell'utente potrebbe rallentare il programma. Potrei utilizzare i thread ma dopo diventa troppo complesso sincronizzare gli stati.
+
+Per questi motivi, ho deciso di lasciare l'idea

@@ -3,6 +3,8 @@ using Solitario.Activities;
 
 namespace Solitario;
 internal class Program {
+  // Utilizzato per evitare race condition tra il thread di resize e il draw() dopo l'interrupt nel loop
+  private static readonly object ConsoleLock = new();
 
   static void Main(string[] args) {
     Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -25,8 +27,10 @@ internal class Program {
         int currentHeight = Console.WindowHeight;
 
         if (currentWidth != lastWidth || currentHeight != lastHeight) {
-          Console.Clear();
-          activityManager.Draw();
+          lock (ConsoleLock) {
+            Console.Clear();
+            activityManager.Draw();
+          }
 
           lastWidth = currentWidth;
           lastHeight = currentHeight;
@@ -45,17 +49,12 @@ internal class Program {
     while (activityManager.IsRunning) {
       // Blocca fino a prossimo tasto per non far esplodere la cpu
       ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-      activityManager.HandleInput(keyInfo);
+
+      lock (ConsoleLock) {
+        activityManager.HandleInput(keyInfo);
+      }
 
       FlushInputBuffer();
-
-      /*if (Console.KeyAvailable) {
-        ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-        activityManager.HandleInput(keyInfo);
-      } */
-
-      // ~ 60 volte al secondo
-      //Thread.Sleep(16);
     }
 
     Console.Clear();

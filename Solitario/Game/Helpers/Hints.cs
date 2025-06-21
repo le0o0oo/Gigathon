@@ -75,7 +75,7 @@ internal static class Hints {
         if (tableau.GetPile(action.sourceIndex).Count == 0) { // Previene errori
           // controlla se il re è non è la prima carta della pila
           if (tableau.GetPile(action.sourceIndex)[0].NumericValue != 13) {
-            score += 60;
+            score += HintScores.MoveKingToEmptySpace;
             otherCases = true;
           }
         }
@@ -86,12 +86,12 @@ internal static class Hints {
         int revealedCardCount = tableau.GetPile(action.sourceIndex).Count(card => card.Revealed);
 
         if (revealedCardCount > 0) {
-          score += 75;
+          score += HintScores.RevealTableauCard;
           otherCases = true;
         }
       }
 
-      if (!otherCases) score += 10 + action.CardsSelection[0].NumericValue;
+      if (!otherCases) score += HintScores.BaseTableauToTableauMove + action.CardsSelection[0].NumericValue;
 
       candidates.Add(new(action, score));
       if (score > topScore) topScore = score;
@@ -184,12 +184,12 @@ internal static class Hints {
       if (Validator.ValidateCardMove(currentCard, foundation.GetPile(pileIndex), Areas.Foundation, pileIndex)) {
         Selection selection = new();
         selection.SetSelection(Areas.Tableau, cPileIndex, [currentCard]);
-        return new(new MoveCardsAction(managers, Areas.Tableau, cPileIndex, Areas.Foundation, pileIndex, selection), 100);
+        return new(new MoveCardsAction(managers, Areas.Tableau, cPileIndex, Areas.Foundation, pileIndex, selection), HintScores.MoveToFoundation);
 
       }
     }
 
-    return new(null, 0);
+    return new(null, HintScores.NoMove);
   }
 
   #endregion
@@ -205,7 +205,7 @@ internal static class Hints {
     Foundation foundation = managers.Foundation;
 
     var wasteCard = deck.GetTopWaste();
-    if (wasteCard == null) return new(null, 0);
+    if (wasteCard == null) return new(null, HintScores.NoMove);
 
     var selection = new Selection();
 
@@ -217,7 +217,7 @@ internal static class Hints {
 
       if (Validator.ValidateCardMove(wasteCard, pileData, Areas.Foundation, foundationIndex)) {
         selection.SetSelection(Areas.Deck, 0, [wasteCard]);
-        return new(new MoveCardsAction(managers, Areas.Deck, 0, Areas.Foundation, foundationIndex, selection), 100);
+        return new(new MoveCardsAction(managers, Areas.Deck, 0, Areas.Foundation, foundationIndex, selection), HintScores.MoveToFoundation);
       }
     }
     #endregion
@@ -229,12 +229,12 @@ internal static class Hints {
       var currentPileData = tableau.GetPile(tableauIndex);
       if (Validator.ValidateCardMove(wasteCard, currentPileData, Areas.Tableau)) {
         selection.SetSelection(Areas.Deck, 0, [wasteCard]);
-        return new(new MoveCardsAction(managers, Areas.Deck, 0, Areas.Tableau, tableauIndex, selection), 50);
+        return new(new MoveCardsAction(managers, Areas.Deck, 0, Areas.Tableau, tableauIndex, selection), HintScores.MoveFromWasteToTableau);
       }
     }
     #endregion
 
-    return new(null, 0);
+    return new(null, HintScores.NoMove);
   }
 
 }
