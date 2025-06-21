@@ -100,7 +100,7 @@ internal class InputHandler {
 
         if (!hintManager.ShowingHint) {
           hintManager.SetLastAction(hint);
-          renderer.DrawAction(managers, hint);
+          renderer.DrawAction(hint);
           hintManager.ShowingHint = true;
           changedHintState = true;
         }

@@ -14,6 +14,7 @@ internal class ConsoleRenderer {
 
   private readonly BoardRenderer boardRenderer;
   private readonly UIRenderer uiRenderer;
+  private readonly ActionRenderer actionRenderer;
   #endregion
 
   #region Costanti
@@ -93,6 +94,7 @@ internal class ConsoleRenderer {
     // Create the specialized renderers, giving them only what they need.
     this.boardRenderer = new BoardRenderer(deck, tableau, foundation);
     this.uiRenderer = new UIRenderer(cursor, selection, legend, hintManager);
+    this.actionRenderer = new ActionRenderer(deck, tableau, foundation);
   }
 
   #region Methods
@@ -103,7 +105,7 @@ internal class ConsoleRenderer {
   internal void DrawCursor() => uiRenderer.DrawCursor();
   internal void DrawSelection(bool useInitialPosition = false) => uiRenderer.DrawSelection(useInitialPosition);
   internal void DrawLegend() => uiRenderer.DrawLegend();
-  internal void DrawAction(Game.GameManagers managers, IAction action) => UIRenderer.DrawAction(managers, action);
+  internal void DrawAction(IAction action) => actionRenderer.DrawAction(action);
 
   #endregion
 }

@@ -1,6 +1,5 @@
 ﻿using Solitario.Game.Managers;
 using Solitario.Game.Models;
-using Solitario.Game.Models.Actions;
 using Solitario.Utils;
 
 namespace Solitario.Game.Rendering;
@@ -25,7 +24,7 @@ internal class UIRenderer {
   /// <param name="x">Posizione X iniziale</param>
   /// <param name="y">Posizione Y iniziale</param>
   /// <param name="highlightWhiteAsBlack">Inverte il bianco con il nero</param>
-  private static void DrawCard(Card card, int x, int y, bool highlightWhiteAsBlack = false) {
+  internal static void DrawCard(Card card, int x, int y, bool highlightWhiteAsBlack = false) {
     string cardArt = CardArt.GetCardArt(card);
     string[] artLines = cardArt.Split('\n');
 
@@ -170,111 +169,5 @@ internal class UIRenderer {
     Console.WriteLine(
         $"{AnsiColors.Foreground.BoldBlue}║{AnsiColors.Reset}  {formattedContent}{AnsiColors.Reset}{new string(' ', padding)}{AnsiColors.Foreground.BoldBlue}║{AnsiColors.Reset}"
     );
-  }
-
-  /// <summary>
-  /// Disegna una azione
-  /// </summary>
-  /// <param name="managers"></param>
-  /// <param name="action"></param>
-  internal static void DrawAction(Game.GameManagers managers, IAction action) {
-    const ConsoleColor sourceColor = ConsoleColor.Yellow;
-    const ConsoleColor destColor = ConsoleColor.DarkGreen;
-
-    Deck deck = managers.Deck;
-    Tableau tableau = managers.Tableau;
-    Foundation foundation = managers.Foundation;
-
-    if (action is DrawCardAction) {
-      Console.ForegroundColor = ConsoleColor.Black;
-      Console.BackgroundColor = sourceColor;
-      var artLines = CardArt.GetFlippedArt().Split('\n');
-
-      for (int i = 0; i < artLines.Length; i++) {
-        Console.SetCursorPosition(0, i + 1);
-        Console.Write(artLines[i]);
-      }
-    }
-    else if (action is MoveCardsAction movAction) {
-      switch (movAction.sourceArea) {
-        case Areas.Tableau:
-          int cardPileIndex = movAction.sourceIndex;
-          int startDrawIndex = tableau.GetPile(cardPileIndex).IndexOf(movAction.CardsSelection[0]);
-          var cards = movAction.CardsSelection;
-
-          for (int i = 0; i < cards.Count; i++) {
-            var card = cards[i];
-            string art = i == cards.Count - 1 ? CardArt.GetCardArt(card) : CardArt.GetShortArt(card);
-            string[] lines = art.Split('\n');
-
-            Console.ForegroundColor = CardArt.GetColor(card) == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
-            Console.BackgroundColor = sourceColor;
-
-            for (int j = 0; j < lines.Length; j++) {
-              Console.SetCursorPosition(CardArt.cardWidth * cardPileIndex, CardArt.cardHeight + 2 + j + i + startDrawIndex);
-              Console.WriteLine(lines[j]);
-            }
-          }
-          break;
-
-        case Areas.Deck:
-          Console.BackgroundColor = sourceColor;
-          DrawCard(deck.GetTopWaste()!, CardArt.cardWidth, 1, true);
-          break;
-      }
-
-      Thread.Sleep(360);
-
-      Console.BackgroundColor = destColor;
-      switch (movAction.destArea) {
-        case Areas.Tableau:
-          int cardPileIndex = movAction.destIndex;
-          int startDrawIndex = 0;
-          var cards = tableau.GetPile(cardPileIndex);
-
-          for (int i = 0; i < cards.Count; i++) {
-            var card = cards[i];
-            if (!card.Revealed) continue;
-            string art = i == cards.Count - 1 ? CardArt.GetCardArt(card) : CardArt.GetShortArt(card);
-            string[] lines = art.Split('\n');
-
-            Console.ForegroundColor = CardArt.GetColor(card) == ConsoleColor.White ? ConsoleColor.White : ConsoleColor.DarkRed;
-
-            for (int j = 0; j < lines.Length; j++) {
-              Console.SetCursorPosition(CardArt.cardWidth * cardPileIndex, CardArt.cardHeight + 2 + j + i + startDrawIndex);
-              Console.WriteLine(lines[j]);
-            }
-          }
-
-          if (cards.Count == 0) {
-            var lines = CardArt.GetEmptyArt().Split('\n');
-
-            for (int j = 0; j < lines.Length; j++) {
-              Console.SetCursorPosition(CardArt.cardWidth * cardPileIndex, CardArt.cardHeight + 2 + j + startDrawIndex);
-              Console.WriteLine(lines[j]);
-
-            }
-          }
-          break;
-
-        case Areas.Foundation:
-          string[] foundationLines;
-          if (foundation.GetPile(movAction.destIndex).Count == 0)
-            foundationLines = CardArt.GetFoundationArt(foundation, movAction.destIndex).Split('\n');
-          else
-            foundationLines = CardArt.GetCardArt(foundation.GetCardAt(movAction.destIndex)).Split('\n');
-
-
-          int startXPos = CardArt.cardWidth * (3 + movAction.destIndex);
-
-          for (int j = 0; j < foundationLines.Length; j++) {
-            Console.SetCursorPosition(startXPos, j + 1);
-            Console.Write(foundationLines[j]);
-          }
-          break;
-      }
-    }
-
-    Console.ResetColor();
   }
 }
