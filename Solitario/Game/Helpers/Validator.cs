@@ -2,6 +2,14 @@
 
 namespace Solitario.Game.Helpers;
 internal static class Validator {
+  /// <summary>
+  /// Valida una mossa
+  /// </summary>
+  /// <param name="sourceCard">La carta sorgente</param>
+  /// <param name="targetPile">Una lista di carte che corrisponde alle carte della pila di destinazione</param>
+  /// <param name="targetArea">L'area di destinazione</param>
+  /// <param name="targetIndex">Utilizzato solo se targetArea è Foundation e deve essere l'indice della pila della fondazione</param>
+  /// <returns></returns>
   internal static bool ValidateCardMove(Card sourceCard, List<Card> targetPile, Areas targetArea, int targetIndex = -1) {
     if (targetArea == Areas.Tableau) {
       // Se è un re

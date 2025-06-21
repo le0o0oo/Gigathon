@@ -2,7 +2,6 @@
 using Solitario.Game.Models;
 using Solitario.Game.Models.Actions;
 using Solitario.Utils;
-using System.Text.RegularExpressions;
 
 namespace Solitario.Game.Rendering;
 internal class UIRenderer {
@@ -10,9 +9,6 @@ internal class UIRenderer {
   private readonly Selection selection;
   private readonly Legend legend;
   private readonly Managers.Hint hintManager;
-
-  // Rimuove codici 
-  private static readonly Regex AnsiRegex = new(@"\u001b\[[;\d]*m", RegexOptions.Compiled);
 
   internal UIRenderer(Cursor cursor, Selection selection, Legend legend, Managers.Hint hintManager) {
     this.cursor = cursor;
@@ -22,6 +18,13 @@ internal class UIRenderer {
   }
 
   #region Private helpers
+  /// <summary>
+  /// Disegna una carta
+  /// </summary>
+  /// <param name="card">Oggetto della carta</param>
+  /// <param name="x">Posizione X iniziale</param>
+  /// <param name="y">Posizione Y iniziale</param>
+  /// <param name="highlightWhiteAsBlack">Inverte il bianco con il nero</param>
   private static void DrawCard(Card card, int x, int y, bool highlightWhiteAsBlack = false) {
     string cardArt = CardArt.GetCardArt(card);
     string[] artLines = cardArt.Split('\n');
@@ -38,6 +41,9 @@ internal class UIRenderer {
   }
   #endregion
 
+  /// <summary>
+  /// Disegna il cursore nella sua posizione attuale
+  /// </summary>
   internal void DrawCursor() {
     (int prevLeft, int prevTop) = Console.GetCursorPosition();
 
@@ -54,8 +60,12 @@ internal class UIRenderer {
     Console.SetCursorPosition(prevLeft, prevTop);
   }
 
+  /// <summary>
+  /// Disegna la selezione attuale
+  /// </summary>
+  /// <param name="redraw"></param>
   internal void DrawSelection(bool redraw = false) {
-    if (!selection.active) return;
+    if (!selection.Active) return;
     ConsoleRenderer.SaveCursorPosition();
 
     int selectionItemIndex = redraw ? cursor.SelectionPosition[0] : cursor.CurrentItemIndex;
@@ -63,9 +73,9 @@ internal class UIRenderer {
 
     Console.BackgroundColor = ConsoleColor.White;
 
-    switch (selection.sourceArea) {
+    switch (selection.SourceArea) {
       case Areas.Tableau:
-        var cards = selection.selectedCards;
+        var cards = selection.SelectedCards;
         for (int i = 0; i < cards.Count; i++) {
           var card = cards[i];
           string art = i == cards.Count - 1 ? CardArt.GetCardArt(card) : CardArt.GetShortArt(card);
@@ -81,11 +91,11 @@ internal class UIRenderer {
         break;
 
       case Areas.Foundation:
-        DrawCard(selection.selectedCards[0], CardArt.cardWidth * (3 + selectionItemIndex), 1);
+        DrawCard(selection.SelectedCards[0], CardArt.cardWidth * (3 + selectionItemIndex), 1);
         break;
 
-      case Areas.Waste:
-        DrawCard(selection.selectedCards[0], CardArt.cardWidth, 1, highlightWhiteAsBlack: true);
+      case Areas.Deck:
+        DrawCard(selection.SelectedCards[0], CardArt.cardWidth, 1, highlightWhiteAsBlack: true);
         break;
     }
 
@@ -98,7 +108,7 @@ internal class UIRenderer {
   internal void DrawLegend() {
     Console.SetCursorPosition(0, ConsoleRenderer.legendStartY);
 
-    // Determine dynamic colors and text before drawing.
+    // Determina colori e testo prima di disegnare
     string pickActionColor = legend.selectTextIndex == 0 ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
     string undoActionColor = legend.CanUndo && legend.selectTextIndex == 0 ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
     string deselectActionColor = legend.selectTextIndex == 0 ? AnsiColors.Foreground.DarkGray : AnsiColors.Foreground.BoldCyan;
@@ -127,26 +137,26 @@ internal class UIRenderer {
   }
 
   /// <summary>
-  /// Draws the top border of the box.
+  /// Disegna il bordo superiore del box della legenda
   /// </summary>
-  private void DrawBoxTop() {
+  private static void DrawBoxTop() {
     Console.WriteLine($"{AnsiColors.Foreground.BoldBlue}╔{new string('═', ConsoleRenderer.legendWidth - 2)}╗{AnsiColors.Reset}");
   }
 
   /// <summary>
-  /// Draws the bottom border of the box.
+  /// Disegna il bordo inferiore del box della legenda
   /// </summary>
-  private void DrawBoxBottom() {
+  private static void DrawBoxBottom() {
     // Use Write instead of WriteLine to prevent an extra newline at the end.
     Console.Write($"{AnsiColors.Foreground.BoldBlue}╚{new string('═', ConsoleRenderer.legendWidth - 2)}╝{AnsiColors.Reset}");
   }
 
   /// <summary>
-  /// Draws a line of text inside the box, automatically handling borders and padding.
+  /// Disegna una linea della legenda
   /// </summary>
-  /// <param name="formattedContent">The text to display, which can include ANSI color codes.</param>
+  /// <param name="formattedContent">Il testo da visualizzare, può essere anche ANSI</param>
   private void DrawBoxLine(string formattedContent) {
-    string plainText = AnsiRegex.Replace(formattedContent, string.Empty);
+    string plainText = Pencil.AnsiRegex.Replace(formattedContent, string.Empty);
 
     // Calcola il padding richiesto
     int padding = ConsoleRenderer.legendWidth - 2 // per '║'
@@ -162,7 +172,12 @@ internal class UIRenderer {
     );
   }
 
-  internal void DrawAction(Game.GameManagers managers, IAction action) {
+  /// <summary>
+  /// Disegna una azione
+  /// </summary>
+  /// <param name="managers"></param>
+  /// <param name="action"></param>
+  internal static void DrawAction(Game.GameManagers managers, IAction action) {
     const ConsoleColor sourceColor = ConsoleColor.Yellow;
     const ConsoleColor destColor = ConsoleColor.DarkGreen;
 
@@ -202,7 +217,7 @@ internal class UIRenderer {
           }
           break;
 
-        case Areas.Waste:
+        case Areas.Deck:
           Console.BackgroundColor = sourceColor;
           DrawCard(deck.GetTopWaste()!, CardArt.cardWidth, 1, true);
           break;

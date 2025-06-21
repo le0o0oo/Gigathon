@@ -2,17 +2,19 @@
 
 namespace Solitario.Activities.Components;
 internal class Modal {
-  private readonly string title;
-  private readonly string content;
-  private readonly string[] splittedContent;
-  private readonly int width;
-  private readonly Tuple<string, Action>[]? _buttons;
-  private int startTop;
+  private readonly string title; // Titolo del modal
+  private readonly string content; // Contenuto del modal
+  private readonly string[] splittedContent; // Array del contenuto del modal diviso linea per linea
+  private readonly int width; // Lunghezza del modal
+  private readonly Tuple<string, Action>[]? _buttons; // Array dei bottoni. (Testo, Azione)
 
+  // Variabili di stato utilizzate per disegnare il modal
+  private int startTop;
   private int startTopCounter = 0;
   private int currentButtonIndex = 0;
   private int buttonStartTopIndex = 0;
 
+  // Azione da eseguire quando viene chiuso il modal (Esc)
   internal Action? OnClose;
 
   internal Modal(string title, string content, Tuple<string, Action>[]? buttons = null) {
@@ -27,11 +29,11 @@ internal class Modal {
 
     int buttonWidth = 0;
     if (buttons != null && buttons.Length > 0) {
-      // Compose the visual representation of the buttons line
+      // Crea la rappresentazione visiva dei bottoni
       var rawButtons = string.Join(" | ", buttons.Select((btn, i) => $"<{btn.Item1}>"));
       buttonWidth = Pencil.AnsiRegex.Replace(rawButtons, "").Length;
-      // Add surrounding padding
-      buttonWidth += 4; // At least two spaces for borders and some buffer
+      // Aggiungi il padding
+      buttonWidth += 4; // Almeno due spazi per il bordo e un po' di buffer
     }
 
     this.width = Math.Max(Math.Max(contentWidth + 4, titleWidth + 4), buttonWidth + 4);
@@ -114,9 +116,9 @@ internal class Modal {
         $"{btn.Item1}";
     }
 
-    // Strip ANSI codes to get visual width
+    // Rimuovi i caratteri ANSI per avere la effettiva lunghezza visiva
     int visualLength = Pencil.AnsiRegex.Replace(buttonsArt, "").Length;
-    int paddingTotal = width - 2 - visualLength; // 4 for borders and spaces
+    int paddingTotal = width - 2 - visualLength; // 4 per bordi e spazi
     int paddingLeft = paddingTotal / 2;
     int paddingRight = paddingTotal - paddingLeft;
 

@@ -4,6 +4,10 @@ using Solitario.Game.Rendering;
 using Solitario.Utils;
 
 namespace Solitario.Activities.Screens;
+
+/// <summary>
+/// Una specie di "wrapper" del gioco che gestisce i modal e inoltra gli input
+/// </summary>
 internal class GameActivity : IActivity {
   private Game.Game game;
   private readonly ActivityManager _activityManager;
@@ -36,6 +40,9 @@ internal class GameActivity : IActivity {
     return (ConsoleRenderer.minWidth, ConsoleRenderer.minHeight);
   }
 
+  /// <summary>
+  /// Collega i gestori di eventi alle azioni del gioco per eventi specifici.
+  /// </summary>
   private void AttachActions() {
     game.OnWin = () => HandleWin();
     game.OnEsc = () => EscMenu();

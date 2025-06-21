@@ -3,7 +3,7 @@
 namespace Solitario.Game.Models.Actions;
 
 /// <summary>
-/// Gestisce il movimento delle carte.
+/// Rappresenta l'azione dello spostamento delle carte da e a di diverse carte
 /// </summary>
 internal class MoveCardsAction : IAction {
   internal readonly Areas sourceArea, destArea;
@@ -32,16 +32,16 @@ internal class MoveCardsAction : IAction {
     this.deck = managers.Deck;
     this.selection = customSelection == null ? managers.Selection : customSelection;
 
-    _cardsSelection = [.. selection.selectedCards];
+    _cardsSelection = [.. selection.SelectedCards];
 
     SelectionPosition = managers.cursor.SelectionPosition;
   }
 
   public void Execute() {
-    // From tableau
+    // Dal tableau
     if (sourceArea == Areas.Tableau) {
-      // Take cards from tableau
-      var cardsToMove = tableau.TakeCards(sourceIndex, tableau.GetPile(sourceIndex).Count - selection.selectedCards.Count);
+      // Prende carte dal tableau
+      var cardsToMove = tableau.TakeCards(sourceIndex, tableau.GetPile(sourceIndex).Count - selection.SelectedCards.Count);
       if (tableau.GetPile(sourceIndex).Count > 0) {
         _prevCardRevealed = tableau.GetPile(sourceIndex)[^1].Revealed;
         tableau.GetPile(sourceIndex)[^1].Revealed = true;
@@ -50,22 +50,22 @@ internal class MoveCardsAction : IAction {
       if (destArea == Areas.Tableau) {
         tableau.GetPile(destIndex).AddRange(cardsToMove);
       }
-      else { // To Foundation
+      else { // Alla fondazio e
         foundation.AddCard(cardsToMove[0]);
       }
     }
-    // From waste
-    else if (sourceArea == Areas.Waste) {
+    // Dagli scarti
+    else if (sourceArea == Areas.Deck) {
       var cardToMove = deck.TakeWasteCardAt(-1);
       cardToMove.Revealed = true;
       if (destArea == Areas.Tableau) {
         tableau.GetPile(destIndex).Add(cardToMove);
       }
-      else { // To Foundation
+      else { // Alla fondazione
         foundation.AddCard(cardToMove);
       }
     }
-    // From foundation
+    // Dalla fondazione
     else if (sourceArea == Areas.Foundation) {
       var cardToMove = foundation.TakeCardAt(sourceIndex);
       tableau.GetPile(destIndex).Add(cardToMove);
@@ -74,24 +74,24 @@ internal class MoveCardsAction : IAction {
 
   public void Undo() {
     if (sourceArea == Areas.Tableau) {
-      // Reset hide state to the last card
+      // Ripristina lo stato Revealed dell'ultima carta
       if (tableau.GetPile(sourceIndex).Count > 0 && _prevCardRevealed != null) {
         tableau.GetPile(sourceIndex)[^1].Revealed = (bool)_prevCardRevealed;
       }
 
-      // Put cards back into tableau
+      // Rimetti le carte nel tableau
       tableau.GetPile(sourceIndex).AddRange(_cardsSelection);
 
       if (destArea == Areas.Tableau) {
         tableau.TakeCards(destIndex, tableau.GetPile(destIndex).Count - _cardsSelection.Count);
       }
-      else { // Remove from foundation
+      else { // Rimuove dalla fondazione
         foundation.GetPile(destIndex).RemoveAt(foundation.GetPile(destIndex).Count - 1);
       }
     }
-    // From waste
-    else if (sourceArea == Areas.Waste) {
-      // Put back card into waste
+    // Dagli scarti
+    else if (sourceArea == Areas.Deck) {
+      // Rimetti carta negli scarti
       var card = _cardsSelection[0];
       card.Revealed = false;
       deck.AddToWaste(card);
@@ -99,11 +99,11 @@ internal class MoveCardsAction : IAction {
       if (destArea == Areas.Tableau) {
         tableau.GetPile(destIndex).Remove(_cardsSelection[0]);
       }
-      else { // Remove from Foundation
+      else { // Rimuove dalla fondazione
         foundation.GetPile(destIndex).Remove(_cardsSelection[0]);
       }
     }
-    // From foundation
+    // Dalla fondazione
     else if (sourceArea == Areas.Foundation) {
       foundation.AddCard(_cardsSelection[0]);
       tableau.GetPile(destIndex).Remove(_cardsSelection[0]);

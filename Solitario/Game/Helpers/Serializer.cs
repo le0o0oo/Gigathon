@@ -3,6 +3,10 @@ using Solitario.Game.Models;
 using System.Text.Json;
 
 namespace Solitario.Game.Helpers;
+
+/// <summary>
+/// Classe utilizzata per serializzare/deserializzare lo stato del gioco in json
+/// </summary>
 internal class Serializer {
   private readonly Deck deck;
   private readonly Foundation foundation;
@@ -19,6 +23,10 @@ internal class Serializer {
     this.tableau = tableau;
   }
 
+  /// <summary>
+  /// Salva lo stato del gioco come un file
+  /// </summary>
+  /// <param name="fileName">Nome del file + estensione (per es. save.json)</param>
   public void SaveAsFile(string fileName) {
     var data = Serialize();
 
@@ -27,6 +35,11 @@ internal class Serializer {
     File.WriteAllText(fileName, jsonData);
   }
 
+  /// <summary>
+  /// Restituisce un oggetto di una partita caricata da un file
+  /// </summary>
+  /// <param name="fileName">Nome del file + estensione (per es. save.json)</param>
+  /// <returns></returns>
   public static Game LoadFromFile(string fileName) {
     string content = File.ReadAllText(fileName);
     var data = JsonSerializer.Deserialize<SerializedData>(content, options);
@@ -67,10 +80,20 @@ internal class Serializer {
   }
 
   #region Private helpers
-
+  /// <summary>
+  /// Converte un oggetto Card alla sua relativa struttura serializzabile
+  /// </summary>
+  /// <param name="card"></param>
+  /// <returns></returns>
   private static CardStruct CardToStruct(Card card) {
     return new CardStruct(card.Seed, card.NumericValue, card.Revealed);
   }
+  /// <summary>
+  /// Converte una strutta CardStruct in un oggetto Card utilizzabile
+  /// </summary>
+  /// <param name="serializedCard"></param>
+  /// <returns></returns>
+  /// <exception cref="ArgumentException"></exception>
   private static Card CardFromStruct(CardStruct serializedCard) {
     CardSeed seed = serializedCard.Seed switch
     {
@@ -89,6 +112,10 @@ internal class Serializer {
     return card;
   }
 
+  /// <summary>
+  /// Restituisce la struttura serializzabile della partita
+  /// </summary>
+  /// <returns></returns>
   private SerializedData Serialize() {
     SerializedData data = new();
 

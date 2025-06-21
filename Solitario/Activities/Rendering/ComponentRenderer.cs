@@ -4,6 +4,12 @@ using Solitario.Utils;
 
 namespace Solitario.Activities.Rendering;
 internal static class ComponentRenderer {
+  /// <summary>
+  /// Restituisce una stringa contenente la grafica di un bottone
+  /// </summary>
+  /// <param name="button">Bottone</param>
+  /// <param name="selected">Se deve essere restituita una versione in cui il bottone viene selezionato o no</param>
+  /// <returns></returns>
   internal static string GetButtonArt(Button button, bool selected) {
     string art;
     if (!selected) {
@@ -22,6 +28,12 @@ internal static class ComponentRenderer {
     return art;
   }
 
+  /// <summary>
+  /// Restituisce una stringa contenente la grafica della checkbox
+  /// </summary>
+  /// <param name="checkbox">L'oggetto della checkbox</param>
+  /// <param name="selected">Se deve essere restituita una versione in cui la checkbox viene selezionato o no</param>
+  /// <returns></returns>
   internal static string GetCheckboxArt(Checkbox checkbox, bool selected) {
     string icon = checkbox.Checked ? "🗹" : "☐";
 

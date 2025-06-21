@@ -9,8 +9,8 @@ namespace Solitario.Game.Managers;
  * Quadri - Diamonds - 3
 */
 internal class Foundation {
-  private readonly List<Card>[] piles = { new List<Card>(), new List<Card>(), new List<Card>(), new List<Card>() };
-  static internal readonly Dictionary<CardSeed, int> seedIndexMap = new()
+  private readonly List<Card>[] piles = { [], [], [], [] };
+  static internal readonly Dictionary<CardSeed, int> seedIndexMap = new() // Mappa che rappresenta il corrispettivo indice della pila di una fondazione
   {
     { CardSeed.Clubs, 0 },
     { CardSeed.Hearts, 1 },
@@ -26,18 +26,34 @@ internal class Foundation {
 
   }
 
+  /// <summary>
+  /// Aggiunge una carta alle fondazioni. Non è necessario specificare l'indice perché viene trovato automaticamente
+  /// </summary>
+  /// <param name="card">Carta da aggiungere</param>
   internal void AddCard(Card card) {
-    var pile = piles[seedIndexMap[card.Seed]];
-
     piles[seedIndexMap[card.Seed]].Add(card);
   }
 
+  /// <summary>
+  /// Restituisce la lista delle carte di una pila dato un indice partendo da 0
+  /// </summary>
+  /// <param name="index">Indice</param>
+  /// <returns></returns>
+  /// <exception cref="ArgumentOutOfRangeException">Se l'indice è fuori dai criteri di ricerca</exception>
   internal List<Card> GetCards(int index) {
     if (index < 0 || index >= piles.Length) {
       throw new ArgumentOutOfRangeException(nameof(index), "Indice fuori dai limiti della fondazione.");
     }
     return piles[index];
   }
+
+  /// <summary>
+  /// Restituisce una carta dato l'indice della pila di ricerca e l'indice della carta all'interno della pila
+  /// </summary>
+  /// <param name="pileIndex">Indice della pila</param>
+  /// <param name="index">Indice della carta all'interno della pila</param>
+  /// <returns></returns>
+  /// <exception cref="ArgumentOutOfRangeException">Se uno degli indici è fuori dai criteri di ricerca</exception>
   internal Card GetCardAt(int pileIndex, int index = -1) {
     if (index == -1) {
       index = piles[pileIndex].Count - 1; // Prendi l'ultima carta della pila
@@ -51,6 +67,14 @@ internal class Foundation {
     return piles[pileIndex][index];
   }
 
+  /// <summary>
+  /// Restituisce e rimuove una carta dato l'indice della pila di ricerca e l'indice della carta all'interno della pila
+  /// </summary>
+  /// <param name="pileIndex">Indice della pila</param>
+  /// <param name="index">Indice della carta all'interno della pila</param>
+  /// <returns></returns>
+  /// <exception cref="ArgumentOutOfRangeException">Se uno degli indici non soddisfa i criteri di ricerca</exception>
+  /// <exception cref="InvalidOperationException">Se non ci sono carte nella pila specificata</exception>
   internal Card TakeCardAt(int pileIndex, int index = -1) {
     if (pileIndex < 0 || pileIndex >= piles.Length) {
       throw new ArgumentOutOfRangeException(nameof(pileIndex), "Indice della pila fuori dai limiti della fondazione.");
@@ -69,6 +93,12 @@ internal class Foundation {
     return card;
   }
 
+  /// <summary>
+  /// Restituisce una pila dato l'indice
+  /// </summary>
+  /// <param name="index"></param>
+  /// <returns></returns>
+  /// <exception cref="ArgumentOutOfRangeException">Se l'indice non soddisfa i criteri di ricerca</exception>
   internal List<Card> GetPile(int index) {
     if (index < 0 || index >= piles.Length) {
       throw new ArgumentOutOfRangeException(nameof(index), "Indice della pila fuori dai limiti della fondazione.");

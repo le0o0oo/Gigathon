@@ -3,24 +3,30 @@ using Solitario.Game.Models;
 using Solitario.Game.Models.Actions;
 
 /*
- * Ordine:
- * 1. Move any card to the Foundation - 100
- * 2. Reveal a face-down Tableau card - 75
- * 3. Move a King to an Empty Space - 60
- * 4. Play a card from the Waste pile to the Tableau - 50
- * 5. Tableau-Tableau - 10 + card value
- * 6. Draw card from stock - 1
+ * Questa classe calcola ogni possibile mossa valida e assegna un punteggio a quella puù rilevante
+ * 
+ * Ordine e punteggi:
+ * 1. Muovi qualsiasi carta alla Fondazione - 100
+ * 2. Mossa che rivela una carta nascosta nel Tableau - 75
+ * 3. Muovi un re in uno spazio vuoto - 60
+ * 4. Muovi una carta dagli scarti al Tableau - 50
+ * 5. Mossa Tableau-Tableau - 10 + valore della carta
+ * 6. Pesca carta dal mazzo - 1
 */
 
 namespace Solitario.Game.Helpers;
 internal static class Hints {
-  // Calcola il suggerimento
   /*
    * Ordine:
-   * 1. Move any card to the Foundation - 100
-   * 2. Play a card from the Waste pile to the Tableau - 50
-   * 3. Draw card from stock - 1
+   * 1. Muovi qualsiasi carta alla Fondazione - 100
+   * 2. Muovi una carta dagli scarti al Tableau - 50
+   * 3. Pesca carta dal mazzo - 1
   */
+  /// <summary>
+  /// Trova il suggerimento
+  /// </summary>
+  /// <param name="managers"></param>
+  /// <returns>Un oggetto di azione</returns>
   internal static IAction? FindHint(Game.GameManagers managers) {
     Deck deck = managers.Deck;
     Foundation foundation = managers.Foundation;
@@ -44,7 +50,7 @@ internal static class Hints {
 
   #region Tableau pick
   /// <summary>
-  /// Picks the best move out of all in a list
+  /// Restituisce la mossa migliore data una lista di mosse nel Tableau
   /// </summary>
   /// <param name="actions"></param>
   /// <returns></returns>
@@ -55,19 +61,19 @@ internal static class Hints {
 
     /*
       * Ordine:
-      * 1. Reveal a face-down Tableau card - 75
-      * 2. Move a King to an Empty Space - 60
-      * 3. Any other move - 10 + card value
+      * 1. Mossa che rivela una carta nascosta nel Tableau - 75
+      * 2. Muovi un re in uno spazio vuoto - 60
+      * 3. Qualsiasi altra mossa - 10 + card value
     */
 
     foreach (var action in actions) {
       int score = 0;
       bool otherCases = false;
 
-      // if a king
+      // se è un re
       if (action.CardsSelection.Count > 0 && action.CardsSelection[0].NumericValue == 13) {
-        // Check if king is already top card
-        if (tableau.GetPile(action.sourceIndex).Count == 0) { // Prevent errors
+        if (tableau.GetPile(action.sourceIndex).Count == 0) { // Previene errori
+          // controlla se il re è non è la prima carta della pila
           if (tableau.GetPile(action.sourceIndex)[0].NumericValue != 13) {
             score += 60;
             otherCases = true;
@@ -75,7 +81,7 @@ internal static class Hints {
         }
       }
 
-      // reveal a card
+      // rivela una carta
       if (tableau.GetPile(action.sourceIndex).Count > action.CardsSelection.Count) {
         int revealedCardCount = tableau.GetPile(action.sourceIndex).Count(card => card.Revealed);
 
@@ -99,6 +105,11 @@ internal static class Hints {
     return new(bestAction, topScore);
   }
 
+  /// <summary>
+  /// Calcola tutte le mosse possibili nel tableau
+  /// </summary>
+  /// <param name="managers"></param>
+  /// <returns>Tutte le mosse possibili</returns>
   private static MoveCardsAction[] GetTableauMoves(Game.GameManagers managers) {
     Tableau tableau = managers.Tableau;
 
@@ -185,8 +196,8 @@ internal static class Hints {
 
   /*
     * Ordine:
-    * 1. Move to Foundation - 100
-    * 2. Move to tableau - 50
+    * 1. Muovi a fondazione - 100
+    * 2. Muovi a tableau - 50
    */
   private static Tuple<IAction?, int> GetWasteMove(Game.GameManagers managers) {
     Deck deck = managers.Deck;
@@ -205,8 +216,8 @@ internal static class Hints {
       var pileData = foundation.GetPile(foundationIndex);
 
       if (Validator.ValidateCardMove(wasteCard, pileData, Areas.Foundation, foundationIndex)) {
-        selection.SetSelection(Areas.Waste, 0, [wasteCard]);
-        return new(new MoveCardsAction(managers, Areas.Waste, 0, Areas.Foundation, foundationIndex, selection), 100);
+        selection.SetSelection(Areas.Deck, 0, [wasteCard]);
+        return new(new MoveCardsAction(managers, Areas.Deck, 0, Areas.Foundation, foundationIndex, selection), 100);
       }
     }
     #endregion
@@ -217,8 +228,8 @@ internal static class Hints {
     for (int tableauIndex = 0; tableauIndex < 7; tableauIndex++) {
       var currentPileData = tableau.GetPile(tableauIndex);
       if (Validator.ValidateCardMove(wasteCard, currentPileData, Areas.Tableau)) {
-        selection.SetSelection(Areas.Waste, 0, [wasteCard]);
-        return new(new MoveCardsAction(managers, Areas.Waste, 0, Areas.Tableau, tableauIndex, selection), 50);
+        selection.SetSelection(Areas.Deck, 0, [wasteCard]);
+        return new(new MoveCardsAction(managers, Areas.Deck, 0, Areas.Tableau, tableauIndex, selection), 50);
       }
     }
     #endregion

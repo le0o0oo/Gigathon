@@ -35,7 +35,7 @@ internal class Cursor {
   }
 
   /// <summary>
-  /// Imposta la posizione del cursore nella console.
+  /// Imposta le coordinate della posizione del cursore
   /// </summary>
   /// <param name="top">Numero di righe a partire dall'inizio</param>
   /// <param name="left">Numero di colonne a partire da sinistra</param>
@@ -47,6 +47,9 @@ internal class Cursor {
     Position = new(left, top);
   }
 
+  /// <summary>
+  /// Calcola e aggiorna le coordinate della posizione del cursore nella console in base allo stato attuale
+  /// </summary>
   private void UpdatePosition() {
     if (CurrentArea == Areas.Foundation) {
       SetPosition(CardArt.cardWidth * (4 + CurrentItemIndex) - 2, 1);

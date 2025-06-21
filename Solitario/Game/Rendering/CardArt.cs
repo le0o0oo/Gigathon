@@ -6,8 +6,11 @@ internal static class CardArt {
   internal static readonly byte cardHeight = 9;
 
   /// <summary>
-  /// Get the color of the card based on its seed and revealed state.
+  /// Restituisce il colore della carta dato il suo stato <see cref="Card.Revealed"/>.
+  /// Il colore effettivo può essere forzato impostando force = true
   /// </summary>
+  /// <param name="card">Oggetto della carta</param>
+  /// <param name="force">Se ignorare lo stato di <see cref="Card.Revealed"/> e restituire il suo vero colore</param>
   /// <returns></returns>
   internal static ConsoleColor GetColor(Card card, bool force = false) {
     if (!card.Revealed && !force) return ConsoleColor.DarkGray;
@@ -26,6 +29,11 @@ internal static class CardArt {
     };
   }
 
+  /// <summary>
+  /// Restituisce il rank della carta
+  /// </summary>
+  /// <param name="card"></param>
+  /// <returns></returns>
   internal static string GetCharacter(Card card) {
     if (card.Rank == "10") return "10";
 
@@ -54,6 +62,11 @@ $@"╔═══════════╗
     return art;
   }
 
+  /// <summary>
+  /// Restituisce una immagine della carta non complet in base a <see cref="Card.Revealed"/>
+  /// </summary>
+  /// <param name="card"></param>
+  /// <returns></returns>
   internal static string GetShortArt(Card card) {
     char icon = GetSeedIcon(card.Seed);
 
@@ -63,6 +76,10 @@ $@"╔═══════════╗
     return card.Revealed ? artExposed : artHidden;
   }
 
+  /// <summary>
+  /// Restituisce una immagine di una carta non definita
+  /// </summary>
+  /// <returns></returns>
   internal static string GetEmptyArt() {
     return
 @"╔ ═ ═ ═ ═ ═ ╗
@@ -76,6 +93,10 @@ $@"╔═══════════╗
 ╚ ═ ═ ═ ═ ═ ╝";
   }
 
+  /// <summary>
+  /// Restituisce l'immagine di una carta generica ribaltata
+  /// </summary>
+  /// <returns></returns>
   internal static string GetFlippedArt() {
     return @"╔═══════════╗
 ║░░░░░░░░░░░║
@@ -88,6 +109,13 @@ $@"╔═══════════╗
 ╚═══════════╝";
   }
 
+  /// <summary>
+  /// Restituisce una immagine di una fondazione vuota
+  /// </summary>
+  /// <param name="foundation">L'oggetto del manager delle fondazioni</param>
+  /// <param name="index">Indice della fondazione</param>
+  /// <returns></returns>
+  /// <exception cref="ArgumentOutOfRangeException"></exception>
   internal static string GetFoundationArt(Managers.Foundation foundation, int index) {
     string art;
     string cardIcon = index switch

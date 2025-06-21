@@ -1,5 +1,6 @@
 ﻿using Solitario.Game.Managers;
 using Solitario.Game.Models;
+using Solitario.Utils;
 
 namespace Solitario.Game.Rendering;
 internal class BoardRenderer {
@@ -13,8 +14,11 @@ internal class BoardRenderer {
     this.foundation = foundation;
   }
 
+  /// <summary>
+  /// Disegna la parte di <see cref="Areas.Deck"/>
+  /// </summary>
   internal void DrawDeck() {
-    ConsoleRenderer.ClearRectangle(0, 0, CardArt.cardWidth * 2, CardArt.cardHeight + 2);
+    Pencil.ClearRectangle(0, 0, CardArt.cardWidth * 2, CardArt.cardHeight + 2);
 
     string art = CardArt.GetFlippedArt();
 
@@ -55,11 +59,14 @@ internal class BoardRenderer {
     Console.ResetColor();
   }
 
+  /// <summary>
+  /// Disegna la parte di <see cref="Areas.Tableau"/>
+  /// </summary>
   internal void DrawTableau() {
 
     int startLine = (int)(CardArt.cardHeight + 2);
 
-    ConsoleRenderer.ClearRectangle(0, startLine, CardArt.cardWidth * 7, ConsoleRenderer.tableauHeight);
+    Pencil.ClearRectangle(0, startLine, CardArt.cardWidth * 7, ConsoleRenderer.tableauHeight);
     // Itera per ogni colonna
     for (int i = 0; i < 7; i++) {
       byte j = 0;
@@ -102,9 +109,12 @@ internal class BoardRenderer {
     Console.ResetColor();
   }
 
+  /// <summary>
+  /// Disegna la parte di <see cref="Areas.Foundation"/>
+  /// </summary>
   internal void DrawFoundations() {
     int startXPos = CardArt.cardWidth * 3;
-    ConsoleRenderer.ClearRectangle(startXPos, 0, CardArt.cardWidth * 4, CardArt.cardHeight + 2);
+    Pencil.ClearRectangle(startXPos, 0, CardArt.cardWidth * 4, CardArt.cardHeight + 2);
 
     Console.SetCursorPosition(startXPos, 0);
     Console.Write("Fondazioni");

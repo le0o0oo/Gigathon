@@ -3,12 +3,16 @@
 namespace Solitario.Activities;
 
 internal class ActivityManager {
-  private IActivity? _currentActivity;
+  private IActivity? _currentActivity; // Attività attuale
   public bool IsRunning { get; private set; } = true;
 
-  private List<IActivity> _activities = [];
-  private Modal? currentModal;
+  private readonly List<IActivity> _activities = []; // Lista delle attività
+  private Modal? currentModal; // Finestra modale attualmente aperta (se presente)
 
+  /// <summary>
+  /// Avvia una attività
+  /// </summary>
+  /// <param name="newActivity">Attività da avviare</param>
   public void Launch(IActivity newActivity) {
     _currentActivity = newActivity;
     _activities.Add(newActivity);
@@ -18,6 +22,11 @@ internal class ActivityManager {
     Draw();
   }
 
+  /// <summary>
+  /// Mostra una finestra modale
+  /// </summary>
+  /// <param name="modal">L'oggetto modale</param>
+  /// <exception cref="Exception">Triggerata se un'altra finestra modale è aperta</exception>
   public void ShowModal(Modal modal) {
     if (currentModal != null) throw new Exception("Another modal is currently active");
 
@@ -27,6 +36,9 @@ internal class ActivityManager {
     currentModal.Draw();
   }
 
+  /// <summary>
+  /// Chiude la finestra modale attuale
+  /// </summary>
   public void CloseModal() {
     if (currentModal == null) return;
 
@@ -35,6 +47,9 @@ internal class ActivityManager {
     _currentActivity?.Draw();
   }
 
+  /// <summary>
+  /// Torna alla attività precedente
+  /// </summary>
   public void Back() {
     if (_activities.Count < 2) return;
 
@@ -45,6 +60,10 @@ internal class ActivityManager {
     Draw();
   }
 
+  /// <summary>
+  /// Inoltra le informazioni sul tasto premuto alla attività corrente
+  /// </summary>
+  /// <param name="keyInfo"></param>
   public void HandleInput(ConsoleKeyInfo keyInfo) {
     if (!CanDraw()) return;
 
@@ -56,6 +75,10 @@ internal class ActivityManager {
     _currentActivity?.HandleInput(keyInfo);
   }
 
+  /// <summary>
+  /// Helper private per determinare se la attività attuale può essere disegnata o no
+  /// </summary>
+  /// <returns></returns>
   private bool CanDraw() {
     if (_currentActivity == null) return false;
 
@@ -65,6 +88,10 @@ internal class ActivityManager {
     return canDraw;
   }
 
+  /// <summary>
+  /// Disegna la attività attuale.
+  /// Se il valore restituito da CanDraw() è false, verrà mostrato un messaggio di fallback
+  /// </summary>
   public void Draw() {
     if (_currentActivity == null) return;
 

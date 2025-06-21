@@ -1,6 +1,9 @@
 ﻿using Solitario.Game.Managers;
 
 namespace Solitario.Game.Models.Actions;
+/// <summary>
+/// Rappresenta l'azione di pescare una carta del mazzo
+/// </summary>
 internal class DrawCardAction : IAction {
   private readonly Deck deck;
 

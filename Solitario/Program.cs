@@ -9,7 +9,6 @@ internal class Program {
     Console.CursorVisible = false;
     Console.Title = "Solitario";
     Console.Clear();
-    //var settings = Settings.Settings.Load();
 
     var activityManager = new ActivityManager();
 
@@ -44,6 +43,7 @@ internal class Program {
 
     // Main application loop
     while (activityManager.IsRunning) {
+      // Blocca fino a prossimo tasto per non far esplodere la cpu
       ConsoleKeyInfo keyInfo = Console.ReadKey(true);
       activityManager.HandleInput(keyInfo);
 

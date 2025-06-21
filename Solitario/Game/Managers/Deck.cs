@@ -3,10 +3,13 @@
 namespace Solitario.Game.Managers;
 
 internal class Deck {
-  private readonly List<Card> cards = [];
-  private readonly List<Card> waste = [];
+  private readonly List<Card> cards = []; // Lista che rappresenta le carte del mazzo non prese
+  private readonly List<Card> waste = []; // Lista che rappresenta le carte della pila degli scarti
   private static readonly Random rng = new();
 
+  /// <summary>
+  /// Genera le carte
+  /// </summary>
   private void GenerateCards() {
     CardSeed[] seeds = { CardSeed.Spades, CardSeed.Hearts, CardSeed.Diamonds, CardSeed.Clubs };
 
@@ -27,6 +30,9 @@ internal class Deck {
     Shuffle();
   }
 
+  /// <summary>
+  /// Mischia le carte del mazzo (non degli scarti)
+  /// </summary>
   internal void Shuffle() {
     for (int i = cards.Count - 1; i > 0; i--) {
       int j = rng.Next(i + 1);
@@ -34,6 +40,12 @@ internal class Deck {
     }
   }
 
+  /// <summary>
+  /// Restituisce una carta dato un indice specificato
+  /// </summary>
+  /// <param name="index"></param>
+  /// <returns></returns>
+  /// <exception cref="ArgumentOutOfRangeException"></exception>
   internal Card GetCardAt(int index) {
     if (index < 0 || index >= cards.Count) {
       throw new ArgumentOutOfRangeException(nameof(index), "Indice fuori dai limiti della pila di carte.");
@@ -41,6 +53,12 @@ internal class Deck {
     return cards[index];
   }
 
+  /// <summary>
+  /// Rimuove e restiuisce una carta dato un indice specificato dal mazzo (non dagli scarti)
+  /// </summary>
+  /// <param name="index">Indice della carta da rimuovere</param>
+  /// <returns>L'oggetto <see cref="Card"/> che deve essere rimosso</returns>
+  /// <exception cref="ArgumentOutOfRangeException">Triggerata se <paramref name="index"/> non è tra i limiti della lista</exception>
   internal Card TakeCardAt(int index) {
     if (index < 0 || index >= cards.Count) {
       throw new ArgumentOutOfRangeException(nameof(index), "Indice fuori dai limiti della pila di carte.");
@@ -51,19 +69,26 @@ internal class Deck {
     return card;
   }
 
+  /// <summary>
+  /// Restituisce la lista del mazzo cruda
+  /// </summary>
+  /// <returns></returns>
   public List<Card> GetCards() {
     return cards;
   }
 
+  /// <summary>
+  /// Restituisce la lista degli scarti cruda
+  /// </summary>
+  /// <returns></returns>
   internal List<Card> GetWaste() {
     return waste;
   }
 
   /// <summary>
-  /// Removes the top card from the deck and adds it to the waste pile.
+  /// Rimuove la carta più in alto dal mazzo e la aggiunge alla pila degli scarti
   /// </summary>
-  /// <remarks>This method modifies the state of the deck and waste pile. The top card is removed from the deck
-  /// and added to the waste pile.</remarks>
+  /// <remarks>Viene modificato lo stato del mazzo e della pila degli scarti</remarks>
   internal void PickCard() {
     if (cards.Count == 0) {
       cards.AddRange(waste);
@@ -76,20 +101,40 @@ internal class Deck {
     waste.Add(card);
   }
 
+  /// <summary>
+  /// Aggiunge una carta al mazzo ad un indice specifico
+  /// </summary>
+  /// <param name="card">Carta da inserire</param>
+  /// <param name="index">Indice</param>
   internal void AddToDeckAt(Card card, int index) {
     cards.Insert(index, card);
   }
 
+  /// <summary>
+  /// Aggiunge una carta alla pila degli scarti
+  /// </summary>
+  /// <param name="card">Carta da aggiungere</param>
   internal void AddToWaste(Card card) {
     waste.Add(card);
   }
 
+  /// <summary>
+  /// Restituisce la carta più in alto della pila degli scarti, se esiste.
+  /// </summary>
+  /// <returns></returns>
   internal Card? GetTopWaste() {
     if (waste.Count == 0) return null;
 
     return waste[^1];
   }
 
+  /// <summary>
+  /// Ottiene una carta dalla pila degli scarti dato un indice specificato.
+  /// Se l'indice è -1, restituisce la carta più in alto
+  /// </summary>
+  /// <param name="index"></param>
+  /// <returns></returns>
+  /// <exception cref="ArgumentOutOfRangeException">Se l'indice è fuori dai limiti della pila</exception>
   internal Card GetWasteCardAt(int index = -1) {
     if (index == -1) {
       index = waste.Count - 1; // Prendi l'ultima carta della pila di scarti
@@ -100,6 +145,13 @@ internal class Deck {
     return waste[index];
   }
 
+  /// <summary>
+  /// Rimuove e restituisce una carta dalla pila degli scarti
+  /// </summary>
+  /// <param name="index"></param>
+  /// <returns></returns>
+  /// <remarks>Viene mutata la lista degli scarti</remarks>
+  /// <exception cref="ArgumentOutOfRangeException">Se l'indice è fuori dai limiti della pila</exception>
   internal Card TakeWasteCardAt(int index = -1) {
     if (index == -1) {
       index = waste.Count - 1; // Prendi l'ultima carta della pila di scarti

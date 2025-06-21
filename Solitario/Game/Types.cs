@@ -4,17 +4,35 @@ using System.Text.Json.Serialization;
 
 namespace Solitario.Game;
 
+/// <summary>
+/// Rappresenta le possibili aree del gioco
+/// </summary>
 internal enum Areas {
-  Waste,
+  /// <summary>
+  /// Rappresenta sia le carte da pescare che quelle di scarto
+  /// </summary>
+  Deck,
+  /// <summary>
+  /// Fondazione
+  /// </summary>
   Foundation,
+  /// <summary>
+  /// Rappresenta il Tableau
+  /// </summary>
   Tableau
 }
 
+/// <summary>
+/// Rappresenta il possibile colore di una carta
+/// </summary>
 internal enum CardColor {
   Red,
   Black
 }
 
+/// <summary>
+/// Rappresenta i possibili semi che una carta può avere
+/// </summary>
 internal enum CardSeed {
   Spades,
   Hearts,

@@ -32,9 +32,9 @@ internal class Game {
     this.tableau = tableau;
     this.foundation = foundation;
 
-    legend = new Legend(); // Initialize the legend for the game
+    legend = new Legend();
     selection = new Selection();
-    cursor = new Cursor(tableau); // Initialize the cursor for card selection
+    cursor = new Cursor(tableau);
     hintManager = new Managers.Hint();
 
     renderer = new ConsoleRenderer(deck, tableau, foundation, cursor, legend, selection, hintManager);
@@ -43,6 +43,10 @@ internal class Game {
   }
 
   #region Public methods
+  /// <summary>
+  /// Gestisce input utente
+  /// </summary>
+  /// <param name="keyInfo"></param>
   internal void Input(ConsoleKeyInfo keyInfo) {
     bool changedHintState = false;
 
@@ -59,7 +63,7 @@ internal class Game {
         break;
 
       case ConsoleKey.R:
-        if (selection.active) break;
+        if (selection.Active) break;
         actionsManager.Execute(new DrawCardAction(deck));
 
         legend.SetCanUndo(actionsManager.CanUndo());
@@ -67,8 +71,8 @@ internal class Game {
         break;
 
       case ConsoleKey.E:
-        if (selection.active || deck.GetWaste().Count == 0) break;
-        selection.SetSelection(Areas.Waste, 0, [deck.GetWasteCardAt(-1)]);
+        if (selection.Active || deck.GetWaste().Count == 0) break;
+        selection.SetSelection(Areas.Deck, 0, [deck.GetWasteCardAt(-1)]);
         legend.SetSelected(true);
 
         renderer.DrawSelection();
@@ -80,16 +84,16 @@ internal class Game {
         break;
 
       case ConsoleKey.X:
-        if (!selection.active) break;
+        if (!selection.Active) break;
         selection.ClearSelection();
         legend.SetSelected(false);
 
-        renderer.DrawBasedOnArea(selection.sourceArea);
+        renderer.DrawBasedOnArea(selection.SourceArea);
         renderer.DrawCursor();
         break;
 
       case ConsoleKey.Z:
-        if (selection.active) break;
+        if (selection.Active) break;
         if (!actionsManager.CanUndo()) break;
 
         var action = actionsManager.Undo();
@@ -104,7 +108,7 @@ internal class Game {
         break;
 
       case ConsoleKey.H:
-        if (selection.active || !CurrentSettings.UseHints) break;
+        if (selection.Active || !CurrentSettings.UseHints) break;
         var managers = new GameManagers(deck, tableau, foundation, selection, cursor);
 
         var hint = Hints.FindHint(managers);
@@ -135,7 +139,7 @@ internal class Game {
       }
 
       renderer.DrawCursor();
-      if (selection.active) renderer.DrawSelection();
+      if (selection.Active) renderer.DrawSelection();
     }
 
     renderer.DrawLegend();
@@ -164,7 +168,12 @@ internal class Game {
   #endregion
 
   #region Private methods
-  // Ottieni pila da ogni area
+  /// <summary>
+  /// Ottieni pila da ogni area
+  /// </summary>
+  /// <param name="area"></param>
+  /// <param name="index"></param>
+  /// <returns></returns>
   private List<Card> GetPile(Areas area, int index) {
     return area switch
     {
@@ -194,24 +203,24 @@ internal class Game {
   }
 
   private void HandleSelection() {
-    var wasActive = selection.active;
-    var sourceAreaBeforeMove = selection.sourceArea;
+    var wasActive = selection.Active;
+    var sourceAreaBeforeMove = selection.SourceArea;
 
     HandleSelectAction();
 
     // If a move was just completed (selection is now inactive)
-    if (wasActive && !selection.active) {
+    if (wasActive && !selection.Active) {
       // Redraw the source and destination areas
       var destArea = cursor.CurrentArea;
       renderer.DrawBasedOnArea(sourceAreaBeforeMove);
       renderer.DrawBasedOnArea(destArea);
     }
     // If a selection was just made
-    else if (!wasActive && selection.active) {
+    else if (!wasActive && selection.Active) {
       renderer.DrawSelection();
     }
 
-    legend.SetSelected(selection.active);
+    legend.SetSelected(selection.Active);
     renderer.DrawCursor();
   }
   #endregion
@@ -224,21 +233,18 @@ internal class Game {
   }
 
   private void HandleSelectAction() {
-    if (selection.active) {
+    if (selection.Active) {
       // Piazza le carte
       var targetArea = cursor.CurrentArea; // Tableau o fondazioni
       var targetPileIndex = cursor.CurrentItemIndex;
 
-      // Convert the cursor area to a selection area (they are logically the same)
-      var selectionTargetArea = targetArea;
-
       // 1. Controlla se mossa valida
-      if (!Validator.ValidateCardMove(selection.selectedCards[0], GetPile(selectionTargetArea, targetPileIndex), selectionTargetArea, targetPileIndex)) {
+      if (!Validator.ValidateCardMove(selection.SelectedCards[0], GetPile(targetArea, targetPileIndex), targetArea, targetPileIndex)) {
         return; // Invalid move, do nothing.
       }
 
       // 2. Piazza le carte
-      PlaceSelectedCards(selection.sourceArea, selection.sourceIndex, selectionTargetArea, targetPileIndex);
+      PlaceSelectedCards(selection.SourceArea, selection.SourceIndex, targetArea, targetPileIndex);
 
       // 3. Cleanup
       selection.ClearSelection();
@@ -278,7 +284,7 @@ internal class Game {
 
   }
 
-  // This method now receives all information it needs as parameters.
+  // Piazza le carte della selezione.
   private void PlaceSelectedCards(Areas sourceArea, int sourceIndex, Areas destArea, int destIndex) {
     var managers = new GameManagers(deck, tableau, foundation, selection, cursor);
 

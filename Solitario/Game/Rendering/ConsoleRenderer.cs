@@ -35,33 +35,26 @@ internal class ConsoleRenderer {
   #endregion
 
   #region Private helpers
+  /// <summary>
+  /// Salva la posizione del cursore della console
+  /// </summary>
   protected internal static void SaveCursorPosition() {
     prevLeft = Console.CursorLeft;
     prevTop = Console.CursorTop;
   }
+  /// <summary>
+  /// Ripristina la posizione del cursore della console
+  /// </summary>
   protected internal static void RestoreCursorPosition() {
     Console.ResetColor();
     Console.SetCursorPosition(prevLeft, prevTop);
   }
-  protected internal static void ClearRectangle(int left, int top, int width, int height, char debugChar = ' ') {
-    string blankLine = new string(debugChar, width);
-    for (int y = top; y < top + height; y++) {
-      Console.SetCursorPosition(left, y);
-      Console.Write(blankLine);
-    }
-  }
-  protected internal static void DrawArt(string art) {
-    var startLeft = Console.CursorLeft;
-    var lines = art.Split('\n');
-
-    for (int i = 0; i < lines.Length; i++) {
-      Console.SetCursorPosition(startLeft, Console.CursorTop + i);
-      Console.Write(lines[i]);
-    }
-  }
   #endregion
 
   #region Public helpers
+  /// <summary>
+  /// Disegna tutte le aree
+  /// </summary>
   internal void DrawAll() {
     DrawDeck();
     DrawFoundations();
@@ -69,6 +62,10 @@ internal class ConsoleRenderer {
     DrawCursor();
   }
 
+  /// <summary>
+  /// Disegna una specifica area
+  /// </summary>
+  /// <param name="area">Area da idisegnare</param>
   internal void DrawBasedOnArea(Areas area) {
     switch (area) {
       case Areas.Tableau:
@@ -77,14 +74,10 @@ internal class ConsoleRenderer {
       case Areas.Foundation:
         DrawFoundations();
         break;
-      case Areas.Waste:
+      case Areas.Deck:
         DrawDeck();
         break;
     }
-  }
-
-  static internal bool CanDraw() {
-    return (Console.WindowWidth >= minWidth) && (Console.WindowHeight >= minHeight);
   }
   #endregion
 
@@ -110,7 +103,7 @@ internal class ConsoleRenderer {
   internal void DrawCursor() => uiRenderer.DrawCursor();
   internal void DrawSelection(bool useInitialPosition = false) => uiRenderer.DrawSelection(useInitialPosition);
   internal void DrawLegend() => uiRenderer.DrawLegend();
-  internal void DrawAction(Game.GameManagers managers, IAction action) => uiRenderer.DrawAction(managers, action);
+  internal void DrawAction(Game.GameManagers managers, IAction action) => UIRenderer.DrawAction(managers, action);
 
   #endregion
 }

@@ -11,7 +11,7 @@ internal class Legend {
 
   // Variabili di stato
   internal int selectTextIndex { get; private set; } = 0; // Indice per il testo di selezione corrente
-  internal bool CanUndo { get; private set; } = false;
+  internal bool CanUndo { get; private set; } = false; // Se è possibile annullare l'azione
 
   internal Legend() {
 

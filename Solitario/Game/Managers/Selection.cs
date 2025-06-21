@@ -6,35 +6,34 @@ internal class Selection {
   // Variabili di stato della selezione
 
   // 0 = carta più in alto della pila di selezione
-  internal List<Card> selectedCards { get; private set; } = new List<Card>();
-  internal int sourceIndex { get; private set; } = 0; // Indice della selezione corrente. Valido per tableau e foundation, e si riferisce alla pila della selezione.
-
-  internal Areas sourceArea { get; private set; } = Areas.Waste;
-
-  internal bool active { get; private set; } = false;
+  internal List<Card> SelectedCards { get; private set; } = []; // Lista che rappresenta la selezione attuale
+  internal int SourceIndex { get; private set; } = 0; // Indice della selezione corrente. Valido per tableau e foundation, e si riferisce alla pila della selezione.
+  internal Areas SourceArea { get; private set; } = Areas.Deck;
+  internal bool Active { get; private set; } = false;
 
   internal Selection() {
 
   }
 
   /// <summary>
-  /// Sets the current selection
+  /// Imposta la selezione attuale
   /// </summary>
-  /// <param name="area">The current area of the selection</param>
-  /// <param name="pileIndex">The pile index of the selection</param>
-  /// <param name="cards">An array of the currently selected cards in the current pile</param>
+  /// <param name="area">L'area della selezione</param>
+  /// <param name="pileIndex">L'indice della pila della selezione</param>
+  /// <param name="cards">Una lista contenente tutte le carte della pila</param>
   public void SetSelection(Areas area, int pileIndex, List<Card> cards) {
-    sourceArea = area;
-    sourceIndex = pileIndex;
-    selectedCards = cards;
-    active = true; // Attiva la selezione
-
-    // Evidenzia la selezione
-
+    SourceArea = area;
+    SourceIndex = pileIndex;
+    SelectedCards = cards;
+    Active = true; // Attiva la selezione
   }
+
+  /// <summary>
+  /// Annulla la selezione
+  /// </summary>
   public void ClearSelection() {
-    selectedCards.Clear();
-    active = false; // Disattiva la selezione
+    SelectedCards.Clear();
+    Active = false; // Disattiva la selezione
   }
 
 }

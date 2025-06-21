@@ -7,10 +7,22 @@
 
 namespace Solitario.Game.Models;
 
+/// <summary>
+/// Rappresenta una carta
+/// </summary>
 class Card {
-  internal string Rank { get; }  // Valore della carta (A, 2, ..., 10, J, Q, K)
-  internal byte NumericValue { get; }  // Vero valore numerico della carta (1, 2, ..., 10, 11, 12, 13)
-  internal CardSeed Seed { get; } // Seme della carta (spades, hearts, diamonds, clubs)
+  /// <summary>
+  /// Valore della carta (A, 2, ..., 10, J, Q, K)
+  /// </summary>
+  internal string Rank { get; }
+  /// <summary>
+  /// Vero valore numerico della carta (1, 2, ..., 10, 11, 12, 13)
+  /// </summary>
+  internal byte NumericValue { get; }
+  /// <summary>
+  /// Seme della carta (spades, hearts, diamonds, clubs)
+  /// </summary>
+  internal CardSeed Seed { get; }
   internal CardColor Color { get; }
   internal bool Revealed { get; set; }
 
