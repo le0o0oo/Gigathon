@@ -13,7 +13,7 @@ internal class Game {
   private readonly Managers.Hint hintManager;
   private readonly InputHandler inputHandler;
 
-  private readonly ConsoleRenderer renderer;
+  private readonly Renderer renderer;
   private readonly Actions actionsManager;
 
   internal record GameManagers(Deck Deck, Tableau Tableau, Foundation Foundation, Selection Selection, Cursor Cursor);
@@ -35,7 +35,7 @@ internal class Game {
     cursor = new Cursor(tableau);
     hintManager = new Managers.Hint();
 
-    renderer = new ConsoleRenderer(deck, tableau, foundation, cursor, legend, selection, hintManager);
+    renderer = new Renderer(deck, tableau, foundation, cursor, legend, selection, hintManager);
 
     actionsManager = new Actions();
     inputHandler = new InputHandler(this, cursor, renderer, selection, legend, deck, tableau, foundation, actionsManager, hintManager);

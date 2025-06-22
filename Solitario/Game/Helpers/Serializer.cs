@@ -97,10 +97,10 @@ internal class Serializer {
   private static Card CardFromStruct(CardStruct serializedCard) {
     CardSeed seed = serializedCard.Seed switch
     {
-      "spades" => CardSeed.Spades,
-      "hearts" => CardSeed.Hearts,
-      "diamonds" => CardSeed.Diamonds,
-      "clubs" => CardSeed.Clubs,
+      CardSeedNames.Spades => CardSeed.Spades,
+      CardSeedNames.Hearts => CardSeed.Hearts,
+      CardSeedNames.Diamonds => CardSeed.Diamonds,
+      CardSeedNames.Clubs => CardSeed.Clubs,
       _ => throw new ArgumentException("Invalid card seed")
     };
 

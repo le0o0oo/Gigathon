@@ -66,7 +66,7 @@ internal class BoardRenderer {
 
     int startLine = (int)(CardArt.cardHeight + 2);
 
-    Pencil.ClearRectangle(0, startLine, CardArt.cardWidth * 7, ConsoleRenderer.tableauHeight);
+    Pencil.ClearRectangle(0, startLine, CardArt.cardWidth * 7, Renderer.tableauHeight);
     // Itera per ogni colonna
     for (int i = 0; i < 7; i++) {
       byte j = 0;

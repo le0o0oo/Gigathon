@@ -52,8 +52,8 @@ internal class UIRenderer {
 
     // Imposta la nuova posizione del cursore
     Console.SetCursorPosition(cursor.Position.X, cursor.Position.Y);
-    Console.ForegroundColor = ConsoleRenderer.color;
-    Console.Write(ConsoleRenderer.cursorChar); // Disegna il cursore nella nuova posizione
+    Console.ForegroundColor = Renderer.color;
+    Console.Write(Renderer.cursorChar); // Disegna il cursore nella nuova posizione
 
     Console.ResetColor();
     Console.SetCursorPosition(prevLeft, prevTop);
@@ -65,7 +65,7 @@ internal class UIRenderer {
   /// <param name="redraw"></param>
   internal void DrawSelection(bool redraw = false) {
     if (!selection.Active) return;
-    ConsoleRenderer.SaveCursorPosition();
+    Renderer.SaveCursorPosition();
 
     int selectionItemIndex = redraw ? cursor.SelectionPosition[0] : cursor.CurrentItemIndex;
     int selectionCardPileIndex = redraw ? cursor.SelectionPosition[1] : cursor.CurrentCardIndex;
@@ -98,14 +98,14 @@ internal class UIRenderer {
         break;
     }
 
-    ConsoleRenderer.RestoreCursorPosition();
+    Renderer.RestoreCursorPosition();
   }
 
   /// <summary>
   /// Disegna la legenda in base allo stato attuale
   /// </summary>
   internal void DrawLegend() {
-    Console.SetCursorPosition(0, ConsoleRenderer.legendStartY);
+    Console.SetCursorPosition(0, Renderer.legendStartY);
 
     // Determina colori e testo prima di disegnare
     string pickActionColor = legend.selectTextIndex == 0 ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
@@ -139,7 +139,7 @@ internal class UIRenderer {
   /// Disegna il bordo superiore del box della legenda
   /// </summary>
   private static void DrawBoxTop() {
-    Console.WriteLine($"{AnsiColors.Foreground.BoldBlue}╔{new string('═', ConsoleRenderer.legendWidth - 2)}╗{AnsiColors.Reset}");
+    Console.WriteLine($"{AnsiColors.Foreground.BoldBlue}╔{new string('═', Renderer.legendWidth - 2)}╗{AnsiColors.Reset}");
   }
 
   /// <summary>
@@ -147,7 +147,7 @@ internal class UIRenderer {
   /// </summary>
   private static void DrawBoxBottom() {
     // Use Write instead of WriteLine to prevent an extra newline at the end.
-    Console.Write($"{AnsiColors.Foreground.BoldBlue}╚{new string('═', ConsoleRenderer.legendWidth - 2)}╝{AnsiColors.Reset}");
+    Console.Write($"{AnsiColors.Foreground.BoldBlue}╚{new string('═', Renderer.legendWidth - 2)}╝{AnsiColors.Reset}");
   }
 
   /// <summary>
@@ -158,7 +158,7 @@ internal class UIRenderer {
     string plainText = Pencil.AnsiRegex.Replace(formattedContent, string.Empty);
 
     // Calcola il padding richiesto
-    int padding = ConsoleRenderer.legendWidth - 2 // per '║'
+    int padding = Renderer.legendWidth - 2 // per '║'
                   - 2 // per gli spazi dal margine sinistor
                   - plainText.Length;
 

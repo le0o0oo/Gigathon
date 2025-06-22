@@ -2,7 +2,7 @@
 using Solitario.Game.Models.Actions;
 
 namespace Solitario.Game.Rendering;
-internal class ConsoleRenderer {
+internal class Renderer {
   #region Classi di stato
   private readonly Deck deck;
   private readonly Tableau tableau;
@@ -82,7 +82,7 @@ internal class ConsoleRenderer {
   }
   #endregion
 
-  internal ConsoleRenderer(Deck deck, Tableau tableau, Foundation foundation, Cursor cursor, Legend legend, Selection selection, Hint hintManager) {
+  internal Renderer(Deck deck, Tableau tableau, Foundation foundation, Cursor cursor, Legend legend, Selection selection, Hint hintManager) {
     this.deck = deck;
     this.tableau = tableau;
     this.foundation = foundation;

@@ -9,7 +9,7 @@ namespace Solitario.Game;
 internal class InputHandler {
   private readonly Game game;
   private readonly Cursor cursor;
-  private readonly ConsoleRenderer renderer;
+  private readonly Renderer renderer;
   private readonly Selection selection;
   private readonly Legend legend;
   private readonly Deck deck;
@@ -18,7 +18,7 @@ internal class InputHandler {
   private readonly Actions actionsManager;
   private readonly Managers.Hint hintManager;
 
-  internal InputHandler(Game game, Cursor cursor, ConsoleRenderer renderer, Selection selection, Legend legend, Deck deck, Tableau tableau, Foundation foundation, Actions actions, Managers.Hint hintsManager) {
+  internal InputHandler(Game game, Cursor cursor, Renderer renderer, Selection selection, Legend legend, Deck deck, Tableau tableau, Foundation foundation, Actions actions, Managers.Hint hintsManager) {
     this.game = game;
     this.cursor = cursor;
     this.renderer = renderer;

@@ -37,7 +37,7 @@ internal class GameActivity : IActivity {
   }
 
   public (int, int) GetMinSize() {
-    return (ConsoleRenderer.minWidth, ConsoleRenderer.minHeight);
+    return (Renderer.minWidth, Renderer.minHeight);
   }
 
   /// <summary>
