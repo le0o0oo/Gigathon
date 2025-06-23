@@ -55,11 +55,16 @@ internal class GameActivity : IActivity {
         _activityManager.Back();
       })
     ];
-    var modal = new Modal("Congratulazioni", "Hai vinto!", btns);
-
-    modal.OnClose = () => {
-      _activityManager.CloseModal();
-      _activityManager.Back();
+    var modalText = $"\n{AnsiColors.Foreground.BoldGreen}Hai vinto!{AnsiColors.Reset}\n\n" +
+      "Hai completato il gioco con successo.\n\n" +
+      $"Tempo impiegato: {game.statsManager.TimeElapsed}s\n" +
+      $"Punti totali: {game.statsManager.Value}";
+    var modal = new Modal("Congratulazioni", modalText, btns)
+    {
+      OnClose = () => {
+        _activityManager.CloseModal();
+        _activityManager.Back();
+      }
     };
 
     _activityManager.ShowModal(modal);

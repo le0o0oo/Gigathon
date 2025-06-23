@@ -57,20 +57,20 @@ internal static class ActionScoreCalculator {
 
     // se è un re
     if (action.CardsSelection.Count > 0 && action.CardsSelection[0].NumericValue == 13) {
-      if (tableau.GetPile(action.sourceIndex).Count != 0) { // Previene errori
-                                                            // controlla se il re è non è la prima carta della pila
-        if (tableau.GetPile(action.sourceIndex)[0].NumericValue != 13) {
-          score += ActionScores.MoveKingToEmptySpace;
-          otherCases = true;
-        }
+      // controlla se il re è non è la prima carta della pila
+      if (action.CardsSelection[0].NumericValue == 13 && tableau.GetPile(action.destIndex).Count == 0) {
+        score += ActionScores.MoveKingToEmptySpace;
+        otherCases = true;
       }
     }
 
     // rivela una carta
     if (tableau.GetPile(action.sourceIndex).Count > action.CardsSelection.Count) {
-      int revealedCardCount = tableau.GetPile(action.sourceIndex).Count(card => card.Revealed);
+      // Indice della carta che diventerà la nuova cima della pila di origine
+      int newTopCardIndex = tableau.GetPile(action.sourceIndex).Count - action.CardsSelection.Count - 1;
 
-      if (revealedCardCount > 0) {
+      // Controlla se quella carta era nascosta
+      if (!tableau.GetPile(action.sourceIndex)[newTopCardIndex].Revealed) {
         score += ActionScores.RevealTableauCard;
         otherCases = true;
       }

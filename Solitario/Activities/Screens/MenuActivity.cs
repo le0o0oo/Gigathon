@@ -2,8 +2,6 @@
 using Solitario.Activities.Models;
 using Solitario.Activities.Rendering;
 using Solitario.Game.Helpers;
-using Solitario.Game.Managers;
-using Solitario.Game.Rendering.Helpers;
 using Solitario.Utils;
 
 namespace Solitario.Activities.Screens;
@@ -11,8 +9,6 @@ internal class MenuActivity : IActivity {
   private readonly ActivityManager _activityManager;
   private readonly List<Button> _buttons;
   private int _selectedIndex = 0;
-  private readonly Random rand = new Random();
-  private Deck? deck; // Utilizzato per DrawBackground()
 
   private const int startYTitle = 5;
   private const int startYBtns = 10;
@@ -88,40 +84,8 @@ internal class MenuActivity : IActivity {
 
   public void Draw() {
     Console.Clear();
-    //DrawBackground();
     DrawTitle();
     DrawButtons();
-  }
-
-  /// <summary>
-  /// Disegna lo sfondo
-  /// </summary>
-  /// <remarks>È inefficiente e buggata</remarks>
-  [Obsolete]
-  private void DrawBackground() {
-    if (deck == null) deck = new();
-    (int startX, int length) = Pencil.GetCenteredStartingPoint(titleArt, startYTitle);
-
-    int Xsubdivs = Console.WindowWidth / CardArt.cardWidth;
-    int Ysubdivs = Console.WindowHeight / CardArt.cardHeight;
-
-    for (int i = 0; i < Xsubdivs; i++) {
-      int lastStartY = 1;
-      for (int j = 0; j < Ysubdivs; j++) {
-        int startY = rand.Next(1, 4) + lastStartY;
-        var cardsLen = deck.GetCards().Count;
-        var selectedCard = deck.GetCards()[rand.Next(0, cardsLen)];
-        Console.ForegroundColor = CardArt.GetColor(selectedCard, true);
-        lastStartY = startY + CardArt.cardHeight;
-        bool fulldraw = Pencil.DrawArt(CardArt.GetCardArt(selectedCard), (CardArt.cardWidth * i), startY);
-        if (!fulldraw) break;
-      }
-    }
-
-    Console.ResetColor();
-
-    const int padding = 4;
-    Pencil.ClearRectangle(startX - padding, startYTitle - padding, length + padding, btnsOffset * (_buttons.Count + 2) + 3 + padding);
   }
 
   public (int, int) GetMinSize() {

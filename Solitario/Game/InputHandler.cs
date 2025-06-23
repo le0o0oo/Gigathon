@@ -39,7 +39,7 @@ internal class InputHandler {
     switch (keyInfo.Key) {
       case ConsoleKey.Escape:
         game.OnEsc?.Invoke();
-        break;
+        return;
 
       case ConsoleKey.UpArrow:
       case ConsoleKey.DownArrow:
@@ -51,8 +51,8 @@ internal class InputHandler {
       case ConsoleKey.R:
         if (selection.Active) break;
         var drawAction = new DrawCardAction(deck);
-        actionsManager.Execute(drawAction);
         statsManager.ApplyActionScore(drawAction);
+        actionsManager.Execute(drawAction);
         statsManager.IncMovesCount();
 
         legend.SetCanUndo(actionsManager.CanUndo());
@@ -119,6 +119,7 @@ internal class InputHandler {
         }
         else if (hintManager.LastAction != null) {
           // Non ricacolare hint
+          statsManager.ApplyActionScore(hintManager.LastAction!);
           actionsManager.Execute(hintManager.LastAction);
         }
 
@@ -129,7 +130,6 @@ internal class InputHandler {
     if (hintManager.ShowingHint && !changedHintState) {
       hintManager.ShowingHint = false;
 
-      statsManager.ApplyActionScore(hintManager.LastAction!);
       statsManager.IncMovesCount();
 
       if (hintManager.LastAction is MoveCardsAction action) {
@@ -244,8 +244,8 @@ internal class InputHandler {
   private void PlaceSelectedCards(Areas sourceArea, int sourceIndex, Areas destArea, int destIndex) {
     var managers = new GameManagers(deck, tableau, foundation, selection, cursor);
     var action = new MoveCardsAction(managers, sourceArea, sourceIndex, destArea, destIndex);
-    statsManager.ApplyActionScore(action);
 
+    statsManager.ApplyActionScore(action);
     actionsManager.Execute(action);
   }
 

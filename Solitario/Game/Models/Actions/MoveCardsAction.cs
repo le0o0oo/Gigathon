@@ -8,6 +8,7 @@ namespace Solitario.Game.Models.Actions;
 internal class MoveCardsAction : IAction {
   internal readonly Areas sourceArea, destArea;
   internal readonly int sourceIndex, destIndex;
+  //internal readonly int scoreValue;
 
   internal readonly int[] SelectionPosition;
 
@@ -17,6 +18,9 @@ internal class MoveCardsAction : IAction {
   private readonly Selection selection;
 
   private readonly List<Card> _cardsSelection;
+  /// <summary>
+  /// Selezione attuale delle carte da spostare nella azione.
+  /// </summary>
   internal IReadOnlyList<Card> CardsSelection => _cardsSelection;
 
   private bool? _prevCardRevealed;
@@ -30,7 +34,9 @@ internal class MoveCardsAction : IAction {
     this.tableau = managers.Tableau;
     this.foundation = managers.Foundation;
     this.deck = managers.Deck;
-    this.selection = customSelection == null ? managers.Selection : customSelection;
+    this.selection = customSelection ?? managers.Selection;
+
+    //this.scoreValue = Helpers.ActionScoreCalculator.Calculate(this, tableau);
 
     _cardsSelection = [.. selection.SelectedCards];
 

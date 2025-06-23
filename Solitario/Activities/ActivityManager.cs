@@ -98,9 +98,10 @@ internal class ActivityManager {
     (int minW, int minH) = _currentActivity.GetMinSize();
 
     if (!CanDraw()) {
+      Console.Clear();
       Console.SetCursorPosition(0, 0);
-      Console.WriteLine($"Please resize your console window to at least {minW}x{minH}");
-      Console.WriteLine($"Current size: {Console.WindowWidth}x{Console.WindowHeight}");
+      Console.WriteLine($"Per favore ridimensione la dimensione della tua console a {minW}x{minH}");
+      Console.WriteLine($"Dimensione attuale: {Console.WindowWidth}x{Console.WindowHeight}");
       return;
     }
 

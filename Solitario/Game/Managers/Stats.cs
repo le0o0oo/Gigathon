@@ -27,10 +27,10 @@ internal class Stats {
   }
 
   private static bool ValidateAction(IAction action) {
-    if (action is MoveCardsAction moveAction) {
-      if (moveAction.sourceArea == Areas.Tableau && moveAction.destArea == moveAction.sourceArea) return false;
-    }
-    else if (action is DrawCardAction) return false;
+    //if (action is MoveCardsAction moveAction) {
+    //if (moveAction.sourceArea == Areas.Tableau && moveAction.destArea == moveAction.sourceArea) return false;
+    //}
+    if (action is DrawCardAction) return false;
 
     return true;
   }
@@ -38,7 +38,9 @@ internal class Stats {
   /// <summary>
   /// Applica il punteggio di una azione al punteggio totale.
   /// </summary>
-  /// <remarks>Non vuol dire che il valore del punteggio verrà per forza incrementato! Se il valore dell'azione è negativo, esso verrà decrementato</remarks>
+  /// <remarks>Non vuol dire che il valore del punteggio verrà per forza incrementato! Se il valore dell'azione è negativo, esso verrà decrementato.
+  /// Inoltre, è meglio applicare la funzione PRIMA di eseguire l'azione!
+  /// </remarks>
   /// <param name="action"></param>
   internal void ApplyActionScore(IAction action) {
     if (!ValidateAction(action)) return;
@@ -53,6 +55,8 @@ internal class Stats {
   /// <param name="action"></param>
   internal void RemoveActionScore(IAction action) {
     if (!ValidateAction(action)) return;
+
+
 
     Value -= ActionScoreCalculator.Calculate(action, tableau);
   }
