@@ -1,8 +1,9 @@
 ﻿using Solitario.Game.Managers;
 using Solitario.Game.Models;
+using Solitario.Game.Rendering.Helpers;
 using Solitario.Utils;
 
-namespace Solitario.Game.Rendering;
+namespace Solitario.Game.Rendering.Components;
 internal class BoardRenderer {
   private readonly Deck deck;
   private readonly Tableau tableau;
@@ -64,7 +65,7 @@ internal class BoardRenderer {
   /// </summary>
   internal void DrawTableau() {
 
-    int startLine = (int)(CardArt.cardHeight + 2);
+    int startLine = CardArt.cardHeight + 2;
 
     Pencil.ClearRectangle(0, startLine, CardArt.cardWidth * 7, Renderer.tableauHeight);
     // Itera per ogni colonna

@@ -1,19 +1,22 @@
 ﻿using Solitario.Game.Managers;
 using Solitario.Game.Models;
+using Solitario.Game.Rendering.Helpers;
 using Solitario.Utils;
 
-namespace Solitario.Game.Rendering;
+namespace Solitario.Game.Rendering.Components;
 internal class UIRenderer {
   private readonly Cursor cursor;
   private readonly Selection selection;
   private readonly Legend legend;
-  private readonly Managers.Hint hintManager;
+  private readonly Hint hintManager;
+  private readonly Stats statsManager;
 
-  internal UIRenderer(Cursor cursor, Selection selection, Legend legend, Managers.Hint hintManager) {
+  internal UIRenderer(Cursor cursor, Selection selection, Legend legend, Hint hintManager, Stats statsManager) {
     this.cursor = cursor;
     this.selection = selection;
     this.legend = legend;
     this.hintManager = hintManager;
+    this.statsManager = statsManager;
   }
 
   #region Private helpers
@@ -29,7 +32,7 @@ internal class UIRenderer {
     string[] artLines = cardArt.Split('\n');
 
     var cardConsoleColor = CardArt.GetColor(card, highlightWhiteAsBlack);
-    Console.ForegroundColor = (cardConsoleColor == ConsoleColor.White) ? ConsoleColor.Black : ConsoleColor.Red;
+    Console.ForegroundColor = cardConsoleColor == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
 
     //Console.BackgroundColor = ConsoleColor.Gray;
 
@@ -128,46 +131,23 @@ internal class UIRenderer {
     if (CurrentSettings.UseHints) {
       lines.Insert(6, $"{AnsiColors.Foreground.BoldYellow}(H){AnsiColors.Reset} {pickActionColor}{Legend.hintText[hintTextIndex]}");
     }
-    DrawBoxTop();
+    BoxDraw.DrawBoxTop(Renderer.legendWidth, AnsiColors.Foreground.BoldBlue);
     foreach (var line in lines) {
-      DrawBoxLine(line);
+      BoxDraw.DrawBoxLine(line, Renderer.legendWidth, AnsiColors.Foreground.BoldBlue);
     }
-    DrawBoxBottom();
+    BoxDraw.DrawBoxBottom(Renderer.legendWidth, AnsiColors.Foreground.BoldBlue);
   }
 
   /// <summary>
-  /// Disegna il bordo superiore del box della legenda
+  /// Disegna il box delle stats
   /// </summary>
-  private static void DrawBoxTop() {
-    Console.WriteLine($"{AnsiColors.Foreground.BoldBlue}╔{new string('═', Renderer.legendWidth - 2)}╗{AnsiColors.Reset}");
-  }
-
-  /// <summary>
-  /// Disegna il bordo inferiore del box della legenda
-  /// </summary>
-  private static void DrawBoxBottom() {
-    // Use Write instead of WriteLine to prevent an extra newline at the end.
-    Console.Write($"{AnsiColors.Foreground.BoldBlue}╚{new string('═', Renderer.legendWidth - 2)}╝{AnsiColors.Reset}");
-  }
-
-  /// <summary>
-  /// Disegna una linea della legenda
-  /// </summary>
-  /// <param name="formattedContent">Il testo da visualizzare, può essere anche ANSI</param>
-  private void DrawBoxLine(string formattedContent) {
-    string plainText = Pencil.AnsiRegex.Replace(formattedContent, string.Empty);
-
-    // Calcola il padding richiesto
-    int padding = Renderer.legendWidth - 2 // per '║'
-                  - 2 // per gli spazi dal margine sinistor
-                  - plainText.Length;
-
-    if (padding < 0) {
-      padding = 0;
-    }
-
-    Console.WriteLine(
-        $"{AnsiColors.Foreground.BoldBlue}║{AnsiColors.Reset}  {formattedContent}{AnsiColors.Reset}{new string(' ', padding)}{AnsiColors.Foreground.BoldBlue}║{AnsiColors.Reset}"
-    );
+  internal void DrawStats() {
+    Console.SetCursorPosition(Renderer.statsBoxStartX, Renderer.statsBoxStartY);
+    BoxDraw.DrawBoxTop(Renderer.statsBoxWidth);
+    BoxDraw.DrawBoxLine($"Punteggio: {statsManager.Value}", Renderer.statsBoxWidth);
+    BoxDraw.DrawBoxLine($"Mosse: {statsManager.MovesCount}", Renderer.statsBoxWidth);
+    BoxDraw.DrawBoxLine($"Annullamenti: {statsManager.UndosCount}", Renderer.statsBoxWidth);
+    if (CurrentSettings.UseHints) BoxDraw.DrawBoxLine($"Suggerimenti: {statsManager.HintsCount}", Renderer.statsBoxWidth);
+    BoxDraw.DrawBoxBottom(Renderer.statsBoxWidth);
   }
 }

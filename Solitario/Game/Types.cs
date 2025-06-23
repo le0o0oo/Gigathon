@@ -79,15 +79,34 @@ public struct CardStruct {
     this.Revealed = revealed;
   }
 }
+public struct DeckData {
+  [JsonPropertyName("hiddenCards")]
+  public List<CardStruct> HiddenCards { get; set; }
+
+  [JsonPropertyName("waste")]
+  public List<CardStruct> Waste { get; set; }
+}
+
+public struct StatsData {
+  [JsonPropertyName("score")]
+  public int Score { get; set; }
+
+  [JsonPropertyName("moves")]
+  public int Moves { get; set; }
+
+  [JsonPropertyName("undos")]
+  public int Undos { get; set; }
+
+  [JsonPropertyName("hints")]
+  public int Hints { get; set; }
+}
 
 public struct SerializedData {
-  public struct DeckData {
-    [JsonPropertyName("hiddenCards")]
-    public List<CardStruct> HiddenCards { get; set; }
+  [JsonPropertyName("version")]
+  public int Version { get; set; } = 1;
 
-    [JsonPropertyName("waste")]
-    public List<CardStruct> Waste { get; set; }
-  }
+  [JsonPropertyName("stats")]
+  public StatsData Stats;
 
   [JsonPropertyName("deck")]
   public DeckData Deck;

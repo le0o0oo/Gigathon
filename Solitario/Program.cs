@@ -21,6 +21,7 @@ internal class Program {
     var resizeThread = new Thread(() => {
       int lastWidth = Console.WindowWidth;
       int lastHeight = Console.WindowHeight;
+      bool adjust = false;
 
       while (true) {
         int currentWidth = Console.WindowWidth;

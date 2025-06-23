@@ -1,6 +1,6 @@
 ﻿using Solitario.Game.Models;
 
-namespace Solitario.Game.Rendering;
+namespace Solitario.Game.Rendering.Helpers;
 internal static class CardArt {
   internal static readonly byte cardWidth = 15; // (+ offset)
   internal static readonly byte cardHeight = 9;
@@ -140,7 +140,7 @@ $@"╔ ═ ═ ═ ═ ═ ╗
 ╚ ═ ═ ═ ═ ═ ╝";
     }
     else {
-      art = CardArt.GetCardArt(foundation.GetPile(index)[^1]);
+      art = GetCardArt(foundation.GetPile(index)[^1]);
     }
 
     return art;

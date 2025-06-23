@@ -3,7 +3,7 @@ using Solitario.Activities.Models;
 using Solitario.Activities.Rendering;
 using Solitario.Game.Helpers;
 using Solitario.Game.Managers;
-using Solitario.Game.Rendering;
+using Solitario.Game.Rendering.Helpers;
 using Solitario.Utils;
 
 namespace Solitario.Activities.Screens;

@@ -1,5 +1,5 @@
 ﻿namespace Solitario.Game.Helpers;
-internal static class HintScores {
+internal static class ActionScores {
   public const int MoveToFoundation = 100;
   public const int RevealTableauCard = 75;
   public const int MoveKingToEmptySpace = 60;

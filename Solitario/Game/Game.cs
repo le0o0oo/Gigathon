@@ -12,6 +12,7 @@ internal class Game {
   private readonly Selection selection;
   private readonly Managers.Hint hintManager;
   private readonly InputHandler inputHandler;
+  internal readonly Stats statsManager;
 
   private readonly Renderer renderer;
   private readonly Actions actionsManager;
@@ -21,24 +22,25 @@ internal class Game {
   internal Action? OnWin;
   internal Action? OnEsc;
 
-  internal Game(Deck? deck = null, Tableau? tableau = null, Foundation? foundation = null) {
+  internal Game(Deck? deck = null, Tableau? tableau = null, Foundation? foundation = null, Stats? scoreManager = null) {
     deck ??= new Deck();
     tableau ??= new Tableau(deck);
     foundation ??= new Foundation();
+    scoreManager ??= new Stats(tableau);
 
     this.deck = deck;
     this.tableau = tableau;
     this.foundation = foundation;
+    this.statsManager = scoreManager;
 
     legend = new Legend();
     selection = new Selection();
     cursor = new Cursor(tableau);
     hintManager = new Managers.Hint();
-
-    renderer = new Renderer(deck, tableau, foundation, cursor, legend, selection, hintManager);
-
     actionsManager = new Actions();
-    inputHandler = new InputHandler(this, cursor, renderer, selection, legend, deck, tableau, foundation, actionsManager, hintManager);
+
+    renderer = new Renderer(deck, tableau, foundation, cursor, legend, selection, hintManager, scoreManager);
+    inputHandler = new InputHandler(this, cursor, renderer, selection, legend, deck, tableau, foundation, actionsManager, hintManager, scoreManager);
   }
 
   #region Public methods
@@ -71,6 +73,7 @@ internal class Game {
 
     renderer.DrawCursor();
     renderer.DrawLegend();
+    renderer.DrawStats();
   }
   #endregion
 

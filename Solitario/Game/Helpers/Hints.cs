@@ -56,42 +56,11 @@ internal static class Hints {
   /// <returns></returns>
   private static Tuple<IAction?, int> PickTableauMove(Tableau tableau, MoveCardsAction[] actions) {
     // Una lista con tutte le mosse candidate e i loro punteggi [Azione, punteggio]
-    List<Tuple<MoveCardsAction, int>> candidates = new();
+    List<Tuple<MoveCardsAction, int>> candidates = [];
     int topScore = 0;
 
-    /*
-      * Ordine:
-      * 1. Mossa che rivela una carta nascosta nel Tableau - 75
-      * 2. Muovi un re in uno spazio vuoto - 60
-      * 3. Qualsiasi altra mossa - 10 + card value
-    */
-
     foreach (var action in actions) {
-      int score = 0;
-      bool otherCases = false;
-
-      // se è un re
-      if (action.CardsSelection.Count > 0 && action.CardsSelection[0].NumericValue == 13) {
-        if (tableau.GetPile(action.sourceIndex).Count == 0) { // Previene errori
-          // controlla se il re è non è la prima carta della pila
-          if (tableau.GetPile(action.sourceIndex)[0].NumericValue != 13) {
-            score += HintScores.MoveKingToEmptySpace;
-            otherCases = true;
-          }
-        }
-      }
-
-      // rivela una carta
-      if (tableau.GetPile(action.sourceIndex).Count > action.CardsSelection.Count) {
-        int revealedCardCount = tableau.GetPile(action.sourceIndex).Count(card => card.Revealed);
-
-        if (revealedCardCount > 0) {
-          score += HintScores.RevealTableauCard;
-          otherCases = true;
-        }
-      }
-
-      if (!otherCases) score += HintScores.BaseTableauToTableauMove + action.CardsSelection[0].NumericValue;
+      int score = ActionScoreCalculator.CalculateTableauMove(tableau, action);
 
       candidates.Add(new(action, score));
       if (score > topScore) topScore = score;
@@ -127,7 +96,6 @@ internal static class Hints {
       for (int cardIndex = 0; cardIndex < referencePile.Count; cardIndex++) {
         // Se la carta non è visibile salta iterazione corrente
         if (!tableau.GetCard(cPileIndex, cardIndex).Revealed) continue;
-
 
         // Controlla le altre pile relative alla carta
         for (int pileIndex = 0; pileIndex < 7; pileIndex++) {
@@ -165,6 +133,11 @@ internal static class Hints {
     return [.. potentialActions];
   }
 
+  /// <summary>
+  /// Determina se è possibile spostare una carta dal Tableau alla Fondazione, restutendo un oggetto azione con il suo punteggio in caso positivo.
+  /// </summary>
+  /// <param name="managers"></param>
+  /// <returns></returns>
   private static Tuple<IAction?, int> TableauToFoundation(Game.GameManagers managers) {
     Tableau tableau = managers.Tableau;
     Foundation foundation = managers.Foundation;
@@ -184,12 +157,11 @@ internal static class Hints {
       if (Validator.ValidateCardMove(currentCard, foundation.GetPile(pileIndex), Areas.Foundation, pileIndex)) {
         Selection selection = new();
         selection.SetSelection(Areas.Tableau, cPileIndex, [currentCard]);
-        return new(new MoveCardsAction(managers, Areas.Tableau, cPileIndex, Areas.Foundation, pileIndex, selection), HintScores.MoveToFoundation);
-
+        return new(new MoveCardsAction(managers, Areas.Tableau, cPileIndex, Areas.Foundation, pileIndex, selection), ActionScores.MoveToFoundation);
       }
     }
 
-    return new(null, HintScores.NoMove);
+    return new(null, ActionScores.NoMove);
   }
 
   #endregion
@@ -199,13 +171,18 @@ internal static class Hints {
     * 1. Muovi a fondazione - 100
     * 2. Muovi a tableau - 50
    */
+  /// <summary>
+  /// Determina se è possibile spostare una carta dagli scarti al Tableau o alla Fondazione, restituendo un oggetto azione con il suo punteggio in caso positivo.
+  /// </summary>
+  /// <param name="managers"></param>
+  /// <returns></returns>
   private static Tuple<IAction?, int> GetWasteMove(Game.GameManagers managers) {
     Deck deck = managers.Deck;
     Tableau tableau = managers.Tableau;
     Foundation foundation = managers.Foundation;
 
     var wasteCard = deck.GetTopWaste();
-    if (wasteCard == null) return new(null, HintScores.NoMove);
+    if (wasteCard == null) return new(null, ActionScores.NoMove);
 
     var selection = new Selection();
 
@@ -217,7 +194,7 @@ internal static class Hints {
 
       if (Validator.ValidateCardMove(wasteCard, pileData, Areas.Foundation, foundationIndex)) {
         selection.SetSelection(Areas.Deck, 0, [wasteCard]);
-        return new(new MoveCardsAction(managers, Areas.Deck, 0, Areas.Foundation, foundationIndex, selection), HintScores.MoveToFoundation);
+        return new(new MoveCardsAction(managers, Areas.Deck, 0, Areas.Foundation, foundationIndex, selection), ActionScores.MoveToFoundation);
       }
     }
     #endregion
@@ -229,12 +206,12 @@ internal static class Hints {
       var currentPileData = tableau.GetPile(tableauIndex);
       if (Validator.ValidateCardMove(wasteCard, currentPileData, Areas.Tableau)) {
         selection.SetSelection(Areas.Deck, 0, [wasteCard]);
-        return new(new MoveCardsAction(managers, Areas.Deck, 0, Areas.Tableau, tableauIndex, selection), HintScores.MoveFromWasteToTableau);
+        return new(new MoveCardsAction(managers, Areas.Deck, 0, Areas.Tableau, tableauIndex, selection), ActionScores.MoveFromWasteToTableau);
       }
     }
     #endregion
 
-    return new(null, HintScores.NoMove);
+    return new(null, ActionScores.NoMove);
   }
 
 }

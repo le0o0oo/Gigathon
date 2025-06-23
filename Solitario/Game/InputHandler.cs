@@ -17,8 +17,9 @@ internal class InputHandler {
   private readonly Foundation foundation;
   private readonly Actions actionsManager;
   private readonly Managers.Hint hintManager;
+  private readonly Stats statsManager;
 
-  internal InputHandler(Game game, Cursor cursor, Renderer renderer, Selection selection, Legend legend, Deck deck, Tableau tableau, Foundation foundation, Actions actions, Managers.Hint hintsManager) {
+  internal InputHandler(Game game, Cursor cursor, Renderer renderer, Selection selection, Legend legend, Deck deck, Tableau tableau, Foundation foundation, Actions actions, Managers.Hint hintsManager, Stats statsManager) {
     this.game = game;
     this.cursor = cursor;
     this.renderer = renderer;
@@ -29,6 +30,7 @@ internal class InputHandler {
     this.foundation = foundation;
     this.actionsManager = actions;
     this.hintManager = hintsManager;
+    this.statsManager = statsManager;
   }
 
   internal void ProcessInput(ConsoleKeyInfo keyInfo) {
@@ -48,10 +50,14 @@ internal class InputHandler {
 
       case ConsoleKey.R:
         if (selection.Active) break;
-        actionsManager.Execute(new DrawCardAction(deck));
+        var drawAction = new DrawCardAction(deck);
+        actionsManager.Execute(drawAction);
+        statsManager.ApplyActionScore(drawAction);
+        statsManager.IncMovesCount();
 
         legend.SetCanUndo(actionsManager.CanUndo());
         renderer.DrawDeck();
+        renderer.DrawStats();
         break;
 
       case ConsoleKey.E:
@@ -65,6 +71,7 @@ internal class InputHandler {
       case ConsoleKey.Enter:
       case ConsoleKey.Spacebar:
         HandleSelection();
+        renderer.DrawStats();
         break;
 
       case ConsoleKey.X:
@@ -80,15 +87,20 @@ internal class InputHandler {
         if (selection.Active) break;
         if (!actionsManager.CanUndo()) break;
 
-        var action = actionsManager.Undo();
+        var undoAction = actionsManager.Undo();
+        statsManager.RemoveActionScore(undoAction);
+        statsManager.IncUndosCount();
+        statsManager.DecMovesCount();
+
         legend.SetCanUndo(actionsManager.CanUndo());
 
-        if (action is DrawCardAction) {
+        if (undoAction is DrawCardAction) {
           renderer.DrawDeck();
         }
         else game.Draw();
 
         renderer.DrawLegend();
+        renderer.DrawStats();
         break;
 
       case ConsoleKey.H:
@@ -99,6 +111,7 @@ internal class InputHandler {
         if (hint == null) break;
 
         if (!hintManager.ShowingHint) {
+          statsManager.IncHintsCount();
           hintManager.SetLastAction(hint);
           renderer.DrawAction(hint);
           hintManager.ShowingHint = true;
@@ -108,11 +121,16 @@ internal class InputHandler {
           // Non ricacolare hint
           actionsManager.Execute(hintManager.LastAction);
         }
+
+        renderer.DrawStats();
         break;
     }
 
     if (hintManager.ShowingHint && !changedHintState) {
       hintManager.ShowingHint = false;
+
+      statsManager.ApplyActionScore(hintManager.LastAction!);
+      statsManager.IncMovesCount();
 
       if (hintManager.LastAction is MoveCardsAction action) {
         renderer.DrawBasedOnArea(action.sourceArea);
@@ -124,6 +142,7 @@ internal class InputHandler {
 
       renderer.DrawCursor();
       if (selection.Active) renderer.DrawSelection();
+      renderer.DrawStats();
     }
 
   }
@@ -158,6 +177,7 @@ internal class InputHandler {
       var destArea = cursor.CurrentArea;
       renderer.DrawBasedOnArea(sourceAreaBeforeMove);
       renderer.DrawBasedOnArea(destArea);
+      statsManager.IncMovesCount();
     }
     // If a selection was just made
     else if (!wasActive && selection.Active) {
@@ -223,8 +243,10 @@ internal class InputHandler {
   // Piazza le carte della selezione.
   private void PlaceSelectedCards(Areas sourceArea, int sourceIndex, Areas destArea, int destIndex) {
     var managers = new GameManagers(deck, tableau, foundation, selection, cursor);
+    var action = new MoveCardsAction(managers, sourceArea, sourceIndex, destArea, destIndex);
+    statsManager.ApplyActionScore(action);
 
-    actionsManager.Execute(new MoveCardsAction(managers, sourceArea, sourceIndex, destArea, destIndex));
+    actionsManager.Execute(action);
   }
 
   /// <summary>

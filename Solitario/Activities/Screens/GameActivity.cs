@@ -71,7 +71,7 @@ internal class GameActivity : IActivity {
         _activityManager.CloseModal();
       }),
       new("Salva partita", () => {
-        var serializer = new Serializer(game.deck, game.foundation, game.tableau);
+        var serializer = new Serializer(game.deck, game.foundation, game.tableau, game.statsManager);
         serializer.SaveAsFile(Config.SaveFilename);
 
         var feedbackModal = new Modal("Salva", "Partita salvata con successo", [new("OK", () => _activityManager.CloseModal())]);

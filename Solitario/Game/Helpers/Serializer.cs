@@ -11,16 +11,18 @@ internal class Serializer {
   private readonly Deck deck;
   private readonly Foundation foundation;
   private readonly Tableau tableau;
+  private readonly Stats statsManager;
 
   private static readonly JsonSerializerOptions options = new()
   {
     IncludeFields = true
   };
 
-  internal Serializer(Deck deck, Foundation foundation, Tableau tableau) {
+  internal Serializer(Deck deck, Foundation foundation, Tableau tableau, Stats statsManager) {
     this.deck = deck;
     this.foundation = foundation;
     this.tableau = tableau;
+    this.statsManager = statsManager;
   }
 
   /// <summary>
@@ -47,6 +49,7 @@ internal class Serializer {
     Deck deck;
     Foundation foundation;
     Tableau tableau;
+    Stats statsManager;
 
     #region Load deck
     List<Card> deckCards = [.. data.Deck.HiddenCards.Select(CardFromStruct)];
@@ -74,7 +77,11 @@ internal class Serializer {
     tableau = new(newTableau);
     #endregion
 
-    var game = new Game(deck, tableau, foundation);
+    #region Load stats
+    statsManager = new(tableau, data.Stats.Score, data.Stats.Moves, data.Stats.Undos, data.Stats.Hints);
+    #endregion
+
+    var game = new Game(deck, tableau, foundation, statsManager);
 
     return game;
   }
@@ -118,6 +125,13 @@ internal class Serializer {
   /// <returns></returns>
   private SerializedData Serialize() {
     SerializedData data = new();
+
+    #region Stats
+    data.Stats.Score = statsManager.Value;
+    data.Stats.Moves = statsManager.MovesCount;
+    data.Stats.Undos = statsManager.UndosCount;
+    data.Stats.Hints = statsManager.HintsCount;
+    #endregion
 
     #region Deck
     data.Deck.HiddenCards = [.. deck.GetCards().Select(CardToStruct)];

@@ -1,7 +1,8 @@
 ﻿using Solitario.Game.Managers;
 using Solitario.Game.Models.Actions;
+using Solitario.Game.Rendering.Helpers;
 
-namespace Solitario.Game.Rendering;
+namespace Solitario.Game.Rendering.Components;
 internal class ActionRenderer {
   Deck deck;
   Tableau tableau;

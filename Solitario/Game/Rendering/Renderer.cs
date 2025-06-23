@@ -1,5 +1,7 @@
 ﻿using Solitario.Game.Managers;
 using Solitario.Game.Models.Actions;
+using Solitario.Game.Rendering.Components;
+using Solitario.Game.Rendering.Helpers;
 
 namespace Solitario.Game.Rendering;
 internal class Renderer {
@@ -11,6 +13,7 @@ internal class Renderer {
   private readonly Legend legend;
   private readonly Selection selection;
   private readonly Managers.Hint hintManager;
+  private readonly Stats statsManager;
 
   private readonly BoardRenderer boardRenderer;
   private readonly UIRenderer uiRenderer;
@@ -24,10 +27,14 @@ internal class Renderer {
   protected internal static readonly int legenStartX = 0;
   protected internal static readonly int legendStartY = CardArt.cardHeight + 3 + (tableauHeight - 6);
 
+  protected internal static readonly int statsBoxWidth = 25;
+  protected internal static readonly int statsBoxStartX = CardArt.cardWidth * 7;
+  protected internal static readonly int statsBoxStartY = 1;
+
   internal static readonly ConsoleColor color = ConsoleColor.DarkGreen;
   internal static readonly char cursorChar = CurrentSettings.UseAnsi ? '❮' : '<';
 
-  internal static readonly int minWidth = CardArt.cardWidth * 7;
+  internal static readonly int minWidth = statsBoxStartX + statsBoxWidth;
   internal static readonly int minHeight = 1 + CardArt.cardHeight + 1 + tableauHeight + 7;
   #endregion
 
@@ -54,16 +61,6 @@ internal class Renderer {
 
   #region Public helpers
   /// <summary>
-  /// Disegna tutte le aree
-  /// </summary>
-  internal void DrawAll() {
-    DrawDeck();
-    DrawFoundations();
-    DrawTableau();
-    DrawCursor();
-  }
-
-  /// <summary>
   /// Disegna una specifica area
   /// </summary>
   /// <param name="area">Area da idisegnare</param>
@@ -82,7 +79,7 @@ internal class Renderer {
   }
   #endregion
 
-  internal Renderer(Deck deck, Tableau tableau, Foundation foundation, Cursor cursor, Legend legend, Selection selection, Hint hintManager) {
+  internal Renderer(Deck deck, Tableau tableau, Foundation foundation, Cursor cursor, Legend legend, Selection selection, Hint hintManager, Stats scoreManager) {
     this.deck = deck;
     this.tableau = tableau;
     this.foundation = foundation;
@@ -90,10 +87,11 @@ internal class Renderer {
     this.legend = legend;
     this.selection = selection;
     this.hintManager = hintManager;
+    this.statsManager = scoreManager;
 
     // Create the specialized renderers, giving them only what they need.
     this.boardRenderer = new BoardRenderer(deck, tableau, foundation);
-    this.uiRenderer = new UIRenderer(cursor, selection, legend, hintManager);
+    this.uiRenderer = new UIRenderer(cursor, selection, legend, hintManager, scoreManager);
     this.actionRenderer = new ActionRenderer(deck, tableau, foundation);
   }
 
@@ -106,6 +104,7 @@ internal class Renderer {
   internal void DrawSelection(bool useInitialPosition = false) => uiRenderer.DrawSelection(useInitialPosition);
   internal void DrawLegend() => uiRenderer.DrawLegend();
   internal void DrawAction(IAction action) => actionRenderer.DrawAction(action);
+  internal void DrawStats() => uiRenderer.DrawStats();
 
   #endregion
 }
