@@ -29,6 +29,8 @@ internal class ModeSelector : IActivity {
   }
 
   public void Draw() {
+    Console.Clear();
+
     Pencil.DrawCentered("Seleziona modalità di visualizzazione", 9);
     Pencil.DrawCentered("Usa le freccie per selezionare", 10);
 

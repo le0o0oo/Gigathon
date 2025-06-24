@@ -1,6 +1,5 @@
 ﻿
 using Solitario.Activities;
-using Solitario.Utils;
 
 namespace Solitario;
 internal class Program {
@@ -17,7 +16,6 @@ internal class Program {
 
     // Carica il menu principale
     activityManager.Launch(new Activities.Screens.ModeSelector(activityManager));
-    ConsoleBuffer.UpdateMatrixSize();
 
     #region Resize thread
     var resizeThread = new Thread(() => {
@@ -30,7 +28,6 @@ internal class Program {
 
         if (currentWidth != lastWidth || currentHeight != lastHeight) {
           lock (ConsoleLock) {
-            ConsoleBuffer.UpdateMatrixSize();
             //Console.Clear();
             activityManager.Draw();
           }

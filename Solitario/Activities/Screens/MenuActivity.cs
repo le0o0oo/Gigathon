@@ -26,7 +26,6 @@ internal class MenuActivity : IActivity {
 
     _buttons = [
       new("Nuova partita", () => _activityManager.Launch(new GameActivity(activityManager))),
-      new("Opzioni", () => _activityManager.Launch(new SettingsActivity(activityManager))),
       new("Ripristina sessione", () => {
         try {
           var deserializedGame = Serializer.LoadFromFile(Config.SaveFilename);
@@ -36,6 +35,7 @@ internal class MenuActivity : IActivity {
           _activityManager.ShowModal(errorModal);
         }
       }),
+      new("Opzioni", () => _activityManager.Launch(new SettingsActivity(activityManager))),
 
       new("Esci", () => _activityManager.Stop())
     ];
@@ -43,7 +43,7 @@ internal class MenuActivity : IActivity {
 
   public void OnEnter() {
     //Draw();
-    _buttons[2].Disabled = !File.Exists(Config.SaveFilename);
+    _buttons[1].Disabled = !File.Exists(Config.SaveFilename);
   }
 
   public void HandleInput(ConsoleKeyInfo keyInfo) {
