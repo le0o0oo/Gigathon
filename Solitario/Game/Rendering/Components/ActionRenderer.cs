@@ -19,7 +19,7 @@ internal class ActionRenderer {
   /// </summary>
   /// <param name="managers"></param>
   /// <param name="action"></param>
-  internal void DrawAction(IAction action) {
+  internal void DrawAction(IAction action, bool animate) {
     const ConsoleColor sourceColor = ConsoleColor.Yellow;
     const ConsoleColor destColor = ConsoleColor.DarkGreen;
 
@@ -61,7 +61,7 @@ internal class ActionRenderer {
           break;
       }
 
-      Thread.Sleep(360);
+      if (animate) Thread.Sleep(360);
 
       Console.BackgroundColor = destColor;
       switch (movAction.destArea) {

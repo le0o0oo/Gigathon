@@ -70,6 +70,7 @@ internal class Game {
     renderer.DrawFoundations();
     renderer.DrawTableau();
     renderer.DrawSelection(true);
+    if (hintManager.ShowingHint && hintManager.LastAction != null) renderer.DrawAction(hintManager.LastAction, false);
 
     renderer.DrawCursor();
     renderer.DrawLegend();

@@ -2,7 +2,7 @@
 
 Questo è un classico gioco di Solitario (Klondike) sviluppato in C# per la console, come progetto per la sfida di programmazione Gigathon (fascia 16-18 anni).
 
-![Anteprima](media/Hero.png)
+![Anteprima](media/preview.gif)
 
 ## Indice
 - [Features](#features)
@@ -65,4 +65,4 @@ Il documento specificava che "Se il mazzo si svuota, deve essere mescolato e uti
 Nel solitario classico però la pila degli scarti va capovolta **senza rimescolarla**.
 
 Di conseguenza sono andato per una via di mezzo, implementando entrambe le logiche.
-Ho aggiungo una voce al menu "Opzioni", disabilitata di default, per abilitare il rimescolo come suggerito nel documento
+Ho aggiungo una voce al menu "Opzioni", disabilitata di default, per abilitare il rimescolo come detto nel documento

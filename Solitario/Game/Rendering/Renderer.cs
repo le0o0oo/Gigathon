@@ -103,7 +103,7 @@ internal class Renderer {
   internal void DrawCursor() => uiRenderer.DrawCursor();
   internal void DrawSelection(bool useInitialPosition = false) => uiRenderer.DrawSelection(useInitialPosition);
   internal void DrawLegend() => uiRenderer.DrawLegend();
-  internal void DrawAction(IAction action) => actionRenderer.DrawAction(action);
+  internal void DrawAction(IAction action, bool animate = true) => actionRenderer.DrawAction(action, animate);
   internal void DrawStats() => uiRenderer.DrawStats();
 
   #endregion
