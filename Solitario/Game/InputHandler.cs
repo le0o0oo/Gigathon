@@ -83,6 +83,10 @@ internal class InputHandler {
         renderer.DrawCursor();
         break;
 
+      case ConsoleKey.F:
+        ToFoundation();
+        break;
+
       case ConsoleKey.Z:
         if (selection.Active) break;
         if (!actionsManager.CanUndo()) break;
@@ -147,6 +151,36 @@ internal class InputHandler {
 
   }
 
+  private void ToFoundation() {
+    if (selection.Active) return;
+
+    if (cursor.CurrentArea != Areas.Tableau) return; // Non puoi piazzare in fondazione se non hai selezionato dal tableau
+    if (cursor.CurrentCardIndex != tableau.GetPile(cursor.CurrentItemIndex).Count - 1) return; // Non puoi piazzare in fondazione se non hai selezionato l'ultima carta
+
+    var card = tableau.GetCard(cursor.CurrentItemIndex);
+    var foundationPileIndex = Foundation.seedIndexMap[card.Seed];
+    if (!Validator.ValidateCardMove(card, foundation.GetPile(foundationPileIndex), Areas.Foundation, foundationPileIndex)) return; // Non puoi piazzare in fondazione se non è valida
+
+    var managers = new GameManagers(deck, tableau, foundation, selection, cursor);
+    var movSelection = new Selection();
+    movSelection.SetSelection(Areas.Tableau, cursor.CurrentItemIndex, [card]);
+    var action = new MoveCardsAction(managers, Areas.Tableau, cursor.CurrentItemIndex, Areas.Foundation, foundationPileIndex, movSelection);
+
+    var pile = tableau.GetPile(cursor.CurrentItemIndex);
+
+    statsManager.IncMovesCount();
+    statsManager.ApplyActionScore(action);
+    actionsManager.Execute(action);
+
+    if (pile.Count > 0) {
+      cursor.MoveUp();
+    }
+
+    renderer.DrawTableau();
+    renderer.DrawFoundations();
+    renderer.DrawStats();
+    renderer.DrawCursor();
+  }
   private void HandleCursorMovement(ConsoleKey key) {
     switch (key) {
       case ConsoleKey.UpArrow:

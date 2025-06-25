@@ -13,12 +13,18 @@ internal class Cursor {
   private readonly Tableau tableau;
 
   internal Areas CurrentArea { get; private set; } = Areas.Tableau;
-  /*Indica l'elemento corrente della selezione in base all'area, e vale solo per tableau e foundation.
-   * Per esempio, se l'area corrente è Tableau, currentItemIndex indica l'indice della pila di carte selezionata.
-   * Se invece è foundation, currentItemIndex indica l'indice della pila di fondazione selezionata.
-  */
+
+  /// <summary>
+  /// Indica l'elemento corrente della selezione in base all'area, e vale solo per tableau e foundation.
+  /// Per esempio, se l'area corrente è Tableau, currentItemIndex indica l'indice della pila di carte selezionata.
+  /// Se invece è foundation, currentItemIndex indica l'indice della pila di fondazione selezionata.
+  /// </summary>
   internal int CurrentItemIndex { get; private set; } = 0;
-  internal int CurrentCardIndex { get; private set; } = 0; // Indice della carta nella pla corrente (solo per tableau). Parte della carta più in basso della pila corrente.
+
+  /// <summary>
+  /// Indice della carta nella pla corrente (solo per tableau). Parte della carta più in basso della pila corrente.
+  /// </summary>
+  internal int CurrentCardIndex { get; private set; } = 0;
 
 
   internal ConsolePoint Position { get; private set; } = new(CardArt.cardWidth - 2, CardArt.cardHeight + 2); // Posizione iniziale del cursore (colonna, riga)

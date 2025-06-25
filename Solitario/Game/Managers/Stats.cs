@@ -6,19 +6,21 @@ internal class Stats {
   private readonly DateTime startTime;
   private readonly Tableau tableau;
 
+  internal long StartTime => ((DateTimeOffset)startTime).ToUnixTimeSeconds(); // Unix timestamp in secondi
   internal int Value { get; private set; } = 0;
   internal int TimeElapsed => (int)(DateTime.UtcNow - startTime).TotalSeconds;
   internal int MovesCount { get; private set; } = 0;
   internal int UndosCount { get; private set; } = 0;
   internal int HintsCount { get; private set; } = 0;
 
-  internal Stats(Tableau tableau, int value, int movesCount, int undosCount, int hintsCount) {
+  internal Stats(Tableau tableau, int value, int movesCount, int undosCount, int hintsCount, long startTime) {
     //this.startTime = startTime;
     this.tableau = tableau;
     Value = value;
     MovesCount = movesCount;
     UndosCount = undosCount;
     HintsCount = hintsCount;
+    this.startTime = DateTimeOffset.FromUnixTimeSeconds(startTime).UtcDateTime;
   }
 
   internal Stats(Tableau tableau) {

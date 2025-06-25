@@ -88,6 +88,9 @@ public struct DeckData {
 }
 
 public struct StatsData {
+  [JsonPropertyName("startTime")]
+  public long StartTime { get; set; }
+
   [JsonPropertyName("score")]
   public int Score { get; set; }
 

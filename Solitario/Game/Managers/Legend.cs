@@ -3,9 +3,10 @@ internal class Legend {
   // Config
   internal static readonly string[] selectTexts = { "Seleziona carta/e", "Posiziona" };
   internal static readonly string pickCardText = "Pesca una carta dal mazzo";
-  internal static readonly string pickWasteText = "Seleziona carta di riserva";
+  internal static readonly string pickWasteText = "Seleziona carta di scarto";
   internal static readonly string deselectText = "Annulla selezione";
   internal static readonly string undoText = "Annulla azione";
+  internal static readonly string toFoundationText = "Porta a fondazione";
   internal static readonly string[] hintText = { "Suggerimento", "Applica suggerimento" };
   internal static readonly string menuText = "Menu";
 
