@@ -27,7 +27,6 @@ internal class Cursor {
   /// </summary>
   internal int CurrentCardIndex { get; private set; } = 0;
 
-
   internal ConsolePoint Position { get; private set; } = new(CardArt.cardWidth - 2, CardArt.cardHeight + 2); // Posizione iniziale del cursore (colonna, riga)
   internal ConsolePoint PrevPosition { get; private set; } = new(CardArt.cardWidth - 2, CardArt.cardHeight + 2); // Posizione iniziale del cursore (colonna, riga)
 
@@ -133,5 +132,15 @@ internal class Cursor {
       CurrentCardIndex = tableau.GetPile(CurrentItemIndex).Count - 1;
       UpdatePosition();
     }
+  }
+
+  internal void DecCurrentCardIndex() {
+    if (CurrentCardIndex <= 0) return;
+    bool canGoUp = CurrentCardIndex == 0 || !tableau.GetCard(CurrentItemIndex, CurrentCardIndex - 1).Revealed;
+
+    if (canGoUp) return;
+
+    CurrentCardIndex--;
+    UpdatePosition();
   }
 }

@@ -3,7 +3,7 @@ internal static class ActionScores {
   #region Suggerimenti delle azioni
   // Punteggi positivi
   internal const int MoveToFoundation = 15;
-  internal const int RevealTableauCard = 5;
+  internal const int RevealTableauCard = 10;
   internal const int MoveFromWasteToTableau = 5;
   internal const int MoveKingToEmptySpace = 3;
   internal const int MoveFromTableauToTableau = 0; // Utente potrebbe abusare di un loop

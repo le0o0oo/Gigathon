@@ -185,6 +185,7 @@ internal class InputHandler {
     statsManager.IncMovesCount();
     statsManager.ApplyActionScore(action);
     actionsManager.Execute(action);
+    cursor.DecCurrentCardIndex();
 
     renderer.DrawBasedOnArea(area);
     renderer.DrawFoundations();
