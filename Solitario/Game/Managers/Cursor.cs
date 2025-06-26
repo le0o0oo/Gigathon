@@ -11,6 +11,7 @@ internal class Cursor {
   };
 
   private readonly Tableau tableau;
+  private const int FoundationToTableauRowOffset = 3;
 
   internal Areas CurrentArea { get; private set; } = Areas.Tableau;
 
@@ -79,7 +80,7 @@ internal class Cursor {
 
     // Vai su
     if (canGoUp) {
-      CurrentItemIndex = CurrentItemIndex - 3 < 0 ? 0 : CurrentItemIndex - 3;
+      CurrentItemIndex = CurrentItemIndex - FoundationToTableauRowOffset < 0 ? 0 : CurrentItemIndex - FoundationToTableauRowOffset;
       CurrentArea = Areas.Foundation;
       UpdatePosition();
       return;
@@ -93,7 +94,7 @@ internal class Cursor {
   internal void MoveDown() {
     // Vai giù
     if (CurrentArea == Areas.Foundation) {
-      CurrentItemIndex = CurrentItemIndex + 3;
+      CurrentItemIndex = CurrentItemIndex + FoundationToTableauRowOffset;
       CurrentCardIndex = tableau.GetPile(CurrentItemIndex).Count - 1;
       CurrentArea = Areas.Tableau;
       UpdatePosition();
