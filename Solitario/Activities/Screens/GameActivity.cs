@@ -58,7 +58,7 @@ internal class GameActivity : IActivity {
     var modalText = $"\n{AnsiColors.Foreground.BoldGreen}Hai vinto!{AnsiColors.Reset}\n\n" +
       "Hai completato il gioco con successo.\n\n" +
       $"Tempo impiegato: {TimeFormatter.FormatTime(game.statsManager.TimeElapsed)}\n" +
-      $"Penalità mosse: -{game.statsManager.MovesPenality}\n" +
+      $"Penalità mosse: {game.statsManager.MovesPenality}\n" +
       $"Bonus tempo: +{game.statsManager.TimeBonus}\n" +
       $"Punti totali: {game.statsManager.Value}";
     var modal = new Modal("Congratulazioni", modalText, btns)
@@ -78,8 +78,12 @@ internal class GameActivity : IActivity {
         _activityManager.CloseModal();
       }),
       new("Salva partita", () => {
+        if (!Directory.Exists(Config.SavesDirectory)) {
+          Directory.CreateDirectory(Config.SavesDirectory);
+        }
         var serializer = new Serializer(game.deck, game.foundation, game.tableau, game.statsManager);
-        serializer.SaveAsFile(Config.SaveFilename);
+        var filename = TimeFormatter.GetFormattedTimestamp().Replace(":", "-") + ".json";
+        serializer.SaveAsFile(Path.Combine(Config.SavesDirectory, filename));
 
         var feedbackModal = new Modal("Salva", "Partita salvata con successo", [new("OK", () => _activityManager.CloseModal())]);
 

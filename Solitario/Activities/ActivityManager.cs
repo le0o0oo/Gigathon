@@ -31,7 +31,7 @@ internal class ActivityManager {
     if (currentModal != null) throw new Exception("Another modal is currently active");
 
     this.currentModal = modal;
-    if (currentModal.OnClose == null) currentModal.OnClose = () => CloseModal();
+    currentModal.OnClose ??= () => CloseModal();
 
     currentModal.Draw();
   }

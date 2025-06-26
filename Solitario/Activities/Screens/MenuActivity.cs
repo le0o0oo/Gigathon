@@ -1,7 +1,6 @@
 ﻿using Solitario.Activities.Components;
 using Solitario.Activities.Models;
 using Solitario.Activities.Rendering;
-using Solitario.Game.Helpers;
 using Solitario.Utils;
 
 namespace Solitario.Activities.Screens;
@@ -26,14 +25,15 @@ internal class MenuActivity : IActivity {
 
     _buttons = [
       new("Nuova partita", () => _activityManager.Launch(new GameActivity(activityManager))),
-      new("Ripristina sessione", () => {
-        try {
+      new("Partite salvate", () => {
+        _activityManager.Launch(new SavedGames(_activityManager));
+        /*try {
           var deserializedGame = Serializer.LoadFromFile(Config.SaveFilename);
           _activityManager.Launch(new GameActivity(activityManager, deserializedGame));
         } catch (Exception) {
           var errorModal = new Modal("Errore", "Impossibile caricare la partita.\nIl file di salvataggio potrebbe essere corrotto.", [new("OK", () => _activityManager.CloseModal())]);
           _activityManager.ShowModal(errorModal);
-        }
+        } */
       }),
       new("Opzioni", () => _activityManager.Launch(new SettingsActivity(activityManager))),
 
@@ -43,7 +43,7 @@ internal class MenuActivity : IActivity {
 
   public void OnEnter() {
     //Draw();
-    _buttons[1].Disabled = !File.Exists(Config.SaveFilename);
+    // _buttons[1].Disabled = !File.Exists(Config.SaveFilename);
   }
 
   public void HandleInput(ConsoleKeyInfo keyInfo) {

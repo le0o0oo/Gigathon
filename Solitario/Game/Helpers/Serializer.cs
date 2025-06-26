@@ -29,12 +29,12 @@ internal class Serializer {
   /// Salva lo stato del gioco come un file
   /// </summary>
   /// <param name="fileName">Nome del file + estensione (per es. save.json)</param>
-  public void SaveAsFile(string fileName) {
+  public void SaveAsFile(string path) {
     var data = Serialize();
 
     string jsonData = JsonSerializer.Serialize(data, options);
 
-    File.WriteAllText(fileName, jsonData);
+    File.WriteAllText(path, jsonData);
   }
 
   /// <summary>

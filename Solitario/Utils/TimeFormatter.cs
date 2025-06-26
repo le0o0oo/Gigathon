@@ -12,4 +12,8 @@ internal static class TimeFormatter {
 
     return output.TrimEnd();
   }
+
+  public static string GetFormattedTimestamp() {
+    return DateTime.Now.ToString("yyyy_MM_dd HH:mm:ss");
+  }
 }

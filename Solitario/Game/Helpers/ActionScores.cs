@@ -11,8 +11,8 @@ internal static class ActionScores {
   // Penalità
   internal const int MoveFromFoundationToTableau = -20;
   internal const int UndoPenalty = -1; // Penalità per l'uso dell'annulla
-  internal const int HintPenality = -3; // Penalità per l'uso degli hint
-  internal const float MovePenalty = .5f; // Penalità per ogni mossa (applicata alla fine)
+  internal const int HintPenality = -3; // Penalità per l'uso delle hint
+  internal const float MovePenalty = -.4f; // Penalità per ogni mossa (applicata alla fine)
   #endregion
 
   #region Suggerimenti delle hint

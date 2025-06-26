@@ -1,7 +1,7 @@
 ﻿namespace Solitario;
 internal static class Config {
   /// <summary>
-  /// Il nome del file dello stato del gioco
+  /// Directory di tutti i salvataggi del gioco
   /// </summary>
-  public static readonly string SaveFilename = "save.json";
+  public static readonly string SavesDirectory = "saves";
 }
