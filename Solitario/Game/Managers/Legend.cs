@@ -6,13 +6,14 @@ internal class Legend {
   internal static readonly string pickWasteText = "Seleziona carta di scarto";
   internal static readonly string deselectText = "Annulla selezione";
   internal static readonly string undoText = "Annulla azione";
-  internal static readonly string toFoundationText = "Porta a fondazione";
+  internal static readonly string toFoundationText = "Porta a fondazione (se possibile)";
   internal static readonly string[] hintText = { "Suggerimento", "Applica suggerimento" };
   internal static readonly string menuText = "Menu";
 
   // Variabili di stato
-  internal int selectTextIndex { get; private set; } = 0; // Indice per il testo di selezione corrente
+  internal int SelectTextIndex { get; private set; } = 0; // Indice per il testo di selezione corrente
   internal bool CanUndo { get; private set; } = false; // Se è possibile annullare l'azione
+  internal bool CanShortCutFoundation { get; set; } = true; // Se è possibile portare una carta in fondazione con un tasto di scelta rapida
 
   internal Legend() {
 
@@ -20,7 +21,7 @@ internal class Legend {
 
   internal void SetSelected(bool selected) {
     // Cambia il testo di selezione in base allo stato
-    selectTextIndex = selected ? 1 : 0;
+    SelectTextIndex = selected ? 1 : 0;
   }
 
   internal void SetCanUndo(bool newState) {

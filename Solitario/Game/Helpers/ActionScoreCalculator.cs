@@ -20,22 +20,20 @@ internal static class ActionScoreCalculator {
   /// <param name="action"></param>
   /// <param name="managers"></param>
   /// <returns></returns>
-  /// <exception cref="ArgumentException"></exception>
+  /// <exception cref="ArgumentException">Quando una mossa non è valida</exception>
   internal static int Calculate(IAction action, Tableau tableau) {
-
-    if (action is MoveCardsAction moveAction) {
-      // Tableau-Tableau
-      if (moveAction.sourceArea == Areas.Tableau && moveAction.destArea == Areas.Tableau) return CalculateTableauMove(tableau, moveAction);
-      // [QUALSIASI]-Fondazione
-      else if (moveAction.destArea == Areas.Foundation) return ActionScores.MoveToFoundation;
-      // Fondazione-Tableau
-      else if (moveAction.sourceArea == Areas.Foundation && moveAction.destArea == Areas.Tableau) return ActionScores.MoveToFoundation * -1;
-      // Scarti-Tableau
-      else if (moveAction.sourceArea == Areas.Deck && moveAction.destArea == Areas.Tableau) return ActionScores.MoveFromWasteToTableau;
-      else throw new ArgumentException("Azione non valida/supportata.");
+    if (action is not MoveCardsAction moveAction) {
+      return 0;
     }
-    else if (action is DrawCardAction) return ActionScores.DrawFromDeck;
-    else throw new ArgumentException("Azione non valida/supportata.");
+
+    return (moveAction.sourceArea, moveAction.destArea) switch
+    {
+      (Areas.Tableau, Areas.Tableau) => CalculateTableauToTableauScore(tableau, moveAction),
+      (_, Areas.Foundation) => ActionScores.MoveToFoundation,
+      (Areas.Foundation, Areas.Tableau) => ActionScores.MoveFromFoundationToTableau,
+      (Areas.Deck, Areas.Tableau) => ActionScores.MoveFromWasteToTableau,
+      _ => 0 // Nessun punteggio per altre mosse
+    };
   }
 
 
@@ -45,7 +43,7 @@ internal static class ActionScoreCalculator {
   /// </summary>
   /// <param name="actions"></param>
   /// <returns></returns>
-  internal static int CalculateTableauMove(Tableau tableau, MoveCardsAction action) {
+  internal static int CalculateTableauMoveHint(Tableau tableau, MoveCardsAction action) {
     /*
       * Ordine:
       * 1. Mossa che rivela una carta nascosta nel Tableau - 75
@@ -53,32 +51,73 @@ internal static class ActionScoreCalculator {
       * 3. Qualsiasi altra mossa - 10 + valore carta
     */
     int score = 0;
-    bool otherCases = false;
 
-    // se è un re
-    if (action.CardsSelection.Count > 0 && action.CardsSelection[0].NumericValue == 13) {
-      // controlla se il re è non è la prima carta della pila
-      if (action.CardsSelection[0].NumericValue == 13 && tableau.GetPile(action.destIndex).Count == 0) {
-        score += ActionScores.MoveKingToEmptySpace;
-        otherCases = true;
-      }
+    if (IsRevealingNewCard(tableau, action)) {
+      score += ActionScores.HintRevealTableauCard;
     }
 
-    // rivela una carta
-    if (tableau.GetPile(action.sourceIndex).Count > action.CardsSelection.Count) {
-      // Indice della carta che diventerà la nuova cima della pila di origine
-      int newTopCardIndex = tableau.GetPile(action.sourceIndex).Count - action.CardsSelection.Count - 1;
-
-      // Controlla se quella carta era nascosta
-      if (!tableau.GetPile(action.sourceIndex)[newTopCardIndex].Revealed) {
-        score += ActionScores.RevealTableauCard;
-        otherCases = true;
-      }
+    if (IsMovingKingToEmptySpace(tableau, action)) {
+      score += ActionScores.HintMoveKingToEmptySpace;
     }
 
-    if (!otherCases) score += ActionScores.BaseTableauToTableauMove + action.CardsSelection[0].NumericValue;
+    if (score == 0) score += ActionScores.HintBaseTableauToTableauMove + action.CardsSelection[0].NumericValue;
 
     return score;
+  }
+
+  #endregion
+
+  #region Private helpers
+  /// <summary>
+  /// Calcola il punteggio per una mossa da Tableau a Tableau.
+  /// </summary>
+  private static int CalculateTableauToTableauScore(Tableau tableau, MoveCardsAction moveAction) {
+    int score = 0;
+
+    if (IsRevealingNewCard(tableau, moveAction)) {
+      score += ActionScores.RevealTableauCard;
+    }
+
+    if (IsMovingKingToEmptySpace(tableau, moveAction)) {
+      score += ActionScores.MoveKingToEmptySpace;
+    }
+
+    if (score == 0) score += ActionScores.MoveFromTableauToTableau;
+
+    return score;
+  }
+
+  /// <summary>
+  /// Controlla se l'azione di movimento sposterà un Re (la prima carta della selezione) in una colonna vuota del tableau.
+  /// </summary>
+  private static bool IsMovingKingToEmptySpace(Tableau tableau, MoveCardsAction moveAction) {
+    // La pila di destinazione deve essere vuota e la carta spostata un Re.
+    return tableau.GetPile(moveAction.destIndex).Count == 0 &&
+           moveAction.CardsSelection.Count > 0 &&
+           moveAction.CardsSelection[0].NumericValue == 13;
+  }
+
+  /// <summary>
+  /// Controlla se l'azione di movimento rivelerà una carta precedentemente coperta nella pila di origine.
+  /// </summary>
+  /// <remarks>
+  /// Questo metodo deve essere chiamato PRIMA che l'azione venga eseguita.
+  /// </remarks>
+  private static bool IsRevealingNewCard(Tableau tableau, MoveCardsAction moveAction) {
+    var sourcePile = tableau.GetPile(moveAction.sourceIndex);
+    int cardsToMoveCount = moveAction.CardsSelection.Count;
+
+    // C'è una carta sotto a quelle che vengono spostate?
+    if (sourcePile.Count > cardsToMoveCount) {
+      // Indice della carta che diventerà la nuova cima della pila di origine
+      int newTopCardIndex = sourcePile.Count - cardsToMoveCount - 1;
+
+      // La carta era nascosta?
+      return !sourcePile[newTopCardIndex].Revealed;
+    }
+
+    // Non ci sono carte sotto, quindi nessuna carta verrà rivelata.
+    return false;
   }
 
   #endregion

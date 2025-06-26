@@ -1,10 +1,27 @@
 ﻿namespace Solitario.Game.Helpers;
 internal static class ActionScores {
-  public const int MoveToFoundation = 100;
-  public const int RevealTableauCard = 75;
-  public const int MoveKingToEmptySpace = 60;
-  public const int MoveFromWasteToTableau = 50;
-  public const int BaseTableauToTableauMove = 10;
-  public const int DrawFromDeck = 1;
-  public const int NoMove = 0;
+  #region Suggerimenti delle azioni
+  // Punteggi positivi
+  internal const int MoveToFoundation = 15;
+  internal const int RevealTableauCard = 5;
+  internal const int MoveFromWasteToTableau = 5;
+  internal const int MoveKingToEmptySpace = 3;
+  internal const int MoveFromTableauToTableau = 0; // Utente potrebbe abusare di un loop
+
+  // Penalità
+  internal const int MoveFromFoundationToTableau = -20;
+  internal const int UndoPenalty = -1; // Penalità per l'uso dell'annulla
+  internal const int HintPenality = -3; // Penalità per l'uso degli hint
+  internal const float MovePenalty = .5f; // Penalità per ogni mossa (applicata alla fine)
+  #endregion
+
+  #region Suggerimenti delle hint
+  internal const int HintMoveToFoundation = 100;
+  internal const int HintRevealTableauCard = 75;
+  internal const int HintMoveKingToEmptySpace = 60;
+  internal const int HintMoveFromWasteToTableau = 50;
+  internal const int HintBaseTableauToTableauMove = 10;
+  internal const int HintDrawFromDeck = 1;
+  internal const int HintNoMove = 0;
+  #endregion
 }

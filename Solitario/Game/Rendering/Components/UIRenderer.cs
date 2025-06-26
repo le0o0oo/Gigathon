@@ -111,10 +111,11 @@ internal class UIRenderer {
     Console.SetCursorPosition(0, Renderer.legendStartY);
 
     // Determina colori e testo prima di disegnare
-    string pickActionColor = legend.selectTextIndex == 0 ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
-    string undoActionColor = legend.CanUndo && legend.selectTextIndex == 0 ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
-    string deselectActionColor = legend.selectTextIndex == 0 ? AnsiColors.Foreground.DarkGray : AnsiColors.Foreground.BoldCyan;
-    string dynamicSelectText = Legend.selectTexts[legend.selectTextIndex];
+    string pickActionColor = legend.SelectTextIndex == 0 ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
+    string undoActionColor = legend.CanUndo && legend.SelectTextIndex == 0 ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
+    string deselectActionColor = legend.SelectTextIndex == 0 ? AnsiColors.Foreground.DarkGray : AnsiColors.Foreground.BoldCyan;
+    string dynamicSelectText = Legend.selectTexts[legend.SelectTextIndex];
+    string toFoundationColor = legend.CanShortCutFoundation ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
 
     int hintTextIndex = hintManager.ShowingHint ? 1 : 0;
 
@@ -124,7 +125,7 @@ internal class UIRenderer {
       $"{AnsiColors.Foreground.BoldYellow}(R){AnsiColors.Reset} {pickActionColor}{Legend.pickCardText}",
       $"{AnsiColors.Foreground.BoldYellow}(E){AnsiColors.Reset} {pickActionColor}{Legend.pickWasteText}",
       $"{AnsiColors.Foreground.BoldYellow}(Spazio){AnsiColors.Reset} {AnsiColors.Foreground.BoldCyan}{dynamicSelectText}",
-      $"{AnsiColors.Foreground.BoldYellow}(F){AnsiColors.Reset} {pickActionColor}{Legend.toFoundationText}",
+      $"{AnsiColors.Foreground.BoldYellow}(F){AnsiColors.Reset} {toFoundationColor}{Legend.toFoundationText}",
       $"{AnsiColors.Foreground.BoldYellow}(X){AnsiColors.Reset} {deselectActionColor}{Legend.deselectText}",
       $"{AnsiColors.Foreground.BoldYellow}(Z){AnsiColors.Reset} {undoActionColor}{Legend.undoText}",
       $"{AnsiColors.Foreground.BoldYellow}(Esc){AnsiColors.Reset} {AnsiColors.Foreground.BoldCyan}{Legend.menuText}",

@@ -54,6 +54,7 @@ internal class Game {
     renderer.DrawLegend();
 
     if (HasWon()) {
+      statsManager.CalculateFinalScore();
       OnWin?.Invoke();
     }
   }

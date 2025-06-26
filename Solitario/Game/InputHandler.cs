@@ -92,6 +92,7 @@ internal class InputHandler {
         if (!actionsManager.CanUndo()) break;
 
         var undoAction = actionsManager.Undo();
+        statsManager.ApplyUndoPenality();
         statsManager.RemoveActionScore(undoAction);
         statsManager.IncUndosCount();
         statsManager.DecMovesCount();
@@ -116,6 +117,7 @@ internal class InputHandler {
 
         if (!hintManager.ShowingHint) {
           statsManager.IncHintsCount();
+          statsManager.ApplyHintPenalty();
           hintManager.SetLastAction(hint);
           renderer.DrawAction(hint);
           hintManager.ShowingHint = true;
@@ -149,38 +151,51 @@ internal class InputHandler {
       renderer.DrawStats();
     }
 
+    legend.CanShortCutFoundation = !(selection.Active && selection.SourceArea == Areas.Tableau);
   }
 
+  /// <summary>
+  /// Porta automaticamente la carta selezionata in fondazione, se possibile.
+  /// </summary>
   private void ToFoundation() {
-    if (selection.Active) return;
+    Card card;
+    Selection movSelection = new();
+    Areas area;
+    if (selection.Active && selection.SourceArea == Areas.Deck) {
+      card = selection.SelectedCards[0]; // Prende la prima carta della selezione
+      area = Areas.Deck;
+      movSelection.SetSelection(Areas.Deck, 0, [card]);
+    }
+    else if (cursor.CurrentArea == Areas.Tableau && !selection.Active) {
+      if (cursor.CurrentCardIndex != tableau.GetPile(cursor.CurrentItemIndex).Count - 1) return; // Non puoi piazzare in fondazione se non hai selezionato l'ultima carta
+      card = tableau.GetCard(cursor.CurrentItemIndex);
+      area = Areas.Tableau;
+      movSelection.SetSelection(Areas.Tableau, cursor.CurrentItemIndex, [card]);
+    }
+    else return;
 
-    if (cursor.CurrentArea != Areas.Tableau) return; // Non puoi piazzare in fondazione se non hai selezionato dal tableau
-    if (cursor.CurrentCardIndex != tableau.GetPile(cursor.CurrentItemIndex).Count - 1) return; // Non puoi piazzare in fondazione se non hai selezionato l'ultima carta
-
-    var card = tableau.GetCard(cursor.CurrentItemIndex);
     var foundationPileIndex = Foundation.seedIndexMap[card.Seed];
     if (!Validator.ValidateCardMove(card, foundation.GetPile(foundationPileIndex), Areas.Foundation, foundationPileIndex)) return; // Non puoi piazzare in fondazione se non è valida
+    selection.ClearSelection();
+    legend.SetSelected(false);
 
     var managers = new GameManagers(deck, tableau, foundation, selection, cursor);
-    var movSelection = new Selection();
-    movSelection.SetSelection(Areas.Tableau, cursor.CurrentItemIndex, [card]);
-    var action = new MoveCardsAction(managers, Areas.Tableau, cursor.CurrentItemIndex, Areas.Foundation, foundationPileIndex, movSelection);
-
-    var pile = tableau.GetPile(cursor.CurrentItemIndex);
+    var action = new MoveCardsAction(managers, area, cursor.CurrentItemIndex, Areas.Foundation, foundationPileIndex, movSelection);
 
     statsManager.IncMovesCount();
     statsManager.ApplyActionScore(action);
     actionsManager.Execute(action);
 
-    if (pile.Count > 0) {
-      cursor.MoveUp();
-    }
-
-    renderer.DrawTableau();
+    renderer.DrawBasedOnArea(area);
     renderer.DrawFoundations();
     renderer.DrawStats();
     renderer.DrawCursor();
   }
+
+  /// <summary>
+  /// Gestisce il movimento del cursore in base ai tasti premuti.
+  /// </summary>
+  /// <param name="key"></param>
   private void HandleCursorMovement(ConsoleKey key) {
     switch (key) {
       case ConsoleKey.UpArrow:
@@ -199,6 +214,9 @@ internal class InputHandler {
     renderer.DrawCursor();
   }
 
+  /// <summary>
+  /// Gestisce la selezione attuale delle carte, ridisegnado le aree interessate.
+  /// </summary>
   private void HandleSelection() {
     var wasActive = selection.Active;
     var sourceAreaBeforeMove = selection.SourceArea;
@@ -222,6 +240,9 @@ internal class InputHandler {
     renderer.DrawCursor();
   }
 
+  /// <summary>
+  /// Gestisce l'azione di selezione delle carte, sia per piazzarle che per prenderle.
+  /// </summary>
   private void HandleSelectAction() {
     if (selection.Active) {
       // Piazza le carte

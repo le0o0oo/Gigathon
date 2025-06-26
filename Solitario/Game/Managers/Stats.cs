@@ -8,10 +8,12 @@ internal class Stats {
 
   internal long StartTime => ((DateTimeOffset)startTime).ToUnixTimeSeconds(); // Unix timestamp in secondi
   internal int Value { get; private set; } = 0;
-  internal int TimeElapsed => (int)(DateTime.UtcNow - startTime).TotalSeconds;
+  internal TimeSpan TimeElapsed => (DateTime.UtcNow - startTime);
   internal int MovesCount { get; private set; } = 0;
   internal int UndosCount { get; private set; } = 0;
   internal int HintsCount { get; private set; } = 0;
+  internal int TimeBonus { get; private set; } = 0;
+  internal int MovesPenality => (int)(ActionScores.MovePenalty * MovesCount);
 
   internal Stats(Tableau tableau, int value, int movesCount, int undosCount, int hintsCount, long startTime) {
     //this.startTime = startTime;
@@ -48,6 +50,8 @@ internal class Stats {
     if (!ValidateAction(action)) return;
 
     Value += ActionScoreCalculator.Calculate(action, tableau);
+
+    if (Value < 0) Value = 0;
   }
 
   /// <summary>
@@ -58,9 +62,37 @@ internal class Stats {
   internal void RemoveActionScore(IAction action) {
     if (!ValidateAction(action)) return;
 
-
-
     Value -= ActionScoreCalculator.Calculate(action, tableau);
+
+    if (Value < 0) Value = 0;
+  }
+
+  internal void ApplyUndoPenality() {
+    Value += ActionScores.UndoPenalty;
+    if (Value < 0) Value = 0;
+
+  }
+
+  internal void ApplyHintPenalty() {
+    Value += ActionScores.HintPenality;
+    if (Value < 0) Value = 0;
+
+  }
+
+  /// <summary>
+  /// Calcola il punteggio finale includendo il bonus tempo.
+  /// Chiamare solo in caso di vittoria.
+  /// </summary>
+  /// <returns>Una tupla con (bonus tempo, penalità mosse)</returns>
+  internal void CalculateFinalScore() {
+    if (TimeElapsed.TotalSeconds > 30) { // Nessun bonus se ci metti meno di 30 secondi
+      // Formula di esempio: 700,000 / secondi totali.
+      // Più veloce sei, più alto il bonus.
+      TimeBonus = 700000 / (int)TimeElapsed.TotalSeconds;
+      Value += TimeBonus;
+    }
+
+    Value += MovesPenality; // Penalità per le mosse
   }
 
   /// <summary>

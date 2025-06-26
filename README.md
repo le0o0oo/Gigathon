@@ -43,6 +43,7 @@ L'interfaccia viene interamente controllata da tastiera
 | **Spazio / Invio** | **Seleziona** elementi.                    |
 | **R**              | **Pesca** una carta dalla cima del mazzo   |
 | **E**              | **Seleziona** la carta in cima agli scarti |
+| **F**              | **Sposta** automaticamente (se possibile) una carta dal tableau o dagli scarti alle fondazioni |
 | **X**              | **Annulla** selezione corrente             |
 | **Z**              | **Annulla** ultima mossa eseguita          |
 | **H**              | Richiedi un **suggerimento**               |
@@ -66,3 +67,6 @@ Nel solitario classico però la pila degli scarti va capovolta **senza rimescola
 
 Di conseguenza sono andato per una via di mezzo, implementando entrambe le logiche.
 Ho aggiungo una voce al menu "Opzioni", disabilitata di default, per abilitare il rimescolo come detto nel documento
+
+### Punteggio
+Il punteggio viene calcolato in base in base al tempo, il tipo di mosse e il numero di esse.
