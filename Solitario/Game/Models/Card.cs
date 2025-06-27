@@ -14,16 +14,16 @@ class Card {
   /// <summary>
   /// Valore della carta (A, 2, ..., 10, J, Q, K)
   /// </summary>
-  public string Rank { get; }
+  public string Rank { get; init; }
   /// <summary>
   /// Vero valore numerico della carta (1, 2, ..., 10, 11, 12, 13)
   /// </summary>
-  public byte NumericValue { get; }
+  public byte NumericValue { get; init; }
   /// <summary>
   /// Seme della carta (spades, hearts, diamonds, clubs)
   /// </summary>
-  public CardSeed Seed { get; }
-  public CardColor Color { get; }
+  public CardSeed Seed { get; init; }
+  public CardColor Color { get; init; }
   public bool Revealed { get; set; }
 
 

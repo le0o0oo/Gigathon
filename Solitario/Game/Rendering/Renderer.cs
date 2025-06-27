@@ -21,15 +21,15 @@ internal class Renderer {
   #endregion
 
   #region Costanti
-  protected internal static readonly int tableauHeight = CardArt.cardHeight + 19;
+  internal static readonly int tableauHeight = CardArt.cardHeight + 19;
 
-  protected internal static readonly int legendWidth = 50;
-  protected internal static readonly int legenStartX = 0;
-  protected internal static readonly int legendStartY = CardArt.cardHeight + 3 + (tableauHeight - 6);
+  internal static readonly int legendWidth = 50;
+  internal static readonly int legenStartX = 0;
+  internal static readonly int legendStartY = CardArt.cardHeight + 3 + (tableauHeight - 6);
 
-  protected internal static readonly int statsBoxWidth = 25;
-  protected internal static readonly int statsBoxStartX = CardArt.cardWidth * 7;
-  protected internal static readonly int statsBoxStartY = 1;
+  internal static readonly int statsBoxWidth = 25;
+  internal static readonly int statsBoxStartX = CardArt.cardWidth * 7;
+  internal static readonly int statsBoxStartY = 1;
 
   internal static readonly ConsoleColor color = ConsoleColor.DarkGreen;
   internal static readonly char cursorChar = CurrentSettings.UseAnsi ? '❮' : '<';

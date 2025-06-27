@@ -58,7 +58,6 @@ internal static class CardSeedNames {
   "foundation": [[], [], [], []],
   "tableau": [[], [], [], [], [], [], []]
 }
-
 */
 public struct CardStruct {
   public string Seed;
