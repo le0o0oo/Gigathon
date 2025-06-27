@@ -134,6 +134,9 @@ internal class Cursor {
     }
   }
 
+  /// <summary>
+  /// Decrementa l'indice della carta corrente nella pila corrente del tableau.
+  /// </summary>
   internal void DecCurrentCardIndex() {
     if (CurrentCardIndex <= 0) return;
     bool canGoUp = CurrentCardIndex == 0 || !tableau.GetCard(CurrentItemIndex, CurrentCardIndex - 1).Revealed;

@@ -97,8 +97,9 @@ internal class ActionRenderer {
 
         case Areas.Foundation:
           string[] foundationLines;
+          string foundationArt = foundation.GetPile(movAction.destIndex).Count == 0 ? CardArt.GetFoundationArt(movAction.destIndex) : CardArt.GetCardArt(foundation.GetPile(movAction.destIndex)[^1]);
           if (foundation.GetPile(movAction.destIndex).Count == 0)
-            foundationLines = CardArt.GetFoundationArt(foundation, movAction.destIndex).Split('\n');
+            foundationLines = foundationArt.Split('\n');
           else
             foundationLines = CardArt.GetCardArt(foundation.GetCardAt(movAction.destIndex)).Split('\n');
 

@@ -17,21 +17,22 @@ internal class Game {
   private readonly Renderer renderer;
   private readonly Actions actionsManager;
 
-  internal record GameManagers(Deck Deck, Tableau Tableau, Foundation Foundation, Selection Selection, Cursor Cursor);
+  internal record GameManagers(Deck Deck, Tableau Tableau, Foundation Foundation, Actions ActionsManager, Cursor Cursor, Legend Legend, Selection Selection, Managers.Hint HintManager, Stats statsManager);
+  internal GameManagers Managers => new(deck, tableau, foundation, actionsManager, cursor, legend, selection, hintManager, statsManager);
 
   internal Action? OnWin;
   internal Action? OnEsc;
 
-  internal Game(Deck? deck = null, Tableau? tableau = null, Foundation? foundation = null, Stats? scoreManager = null) {
+  internal Game(Deck? deck = null, Tableau? tableau = null, Foundation? foundation = null, Stats? statsManager = null) {
     deck ??= new Deck();
     tableau ??= new Tableau(deck);
     foundation ??= new Foundation();
-    scoreManager ??= new Stats(tableau);
+    statsManager ??= new Stats(tableau);
 
     this.deck = deck;
     this.tableau = tableau;
     this.foundation = foundation;
-    this.statsManager = scoreManager;
+    this.statsManager = statsManager;
 
     legend = new Legend();
     selection = new Selection();
@@ -39,8 +40,8 @@ internal class Game {
     hintManager = new Managers.Hint();
     actionsManager = new Actions();
 
-    renderer = new Renderer(deck, tableau, foundation, cursor, legend, selection, hintManager, scoreManager);
-    inputHandler = new InputHandler(this, cursor, renderer, selection, legend, deck, tableau, foundation, actionsManager, hintManager, scoreManager);
+    renderer = new Renderer(Managers);
+    inputHandler = new InputHandler(this, renderer, Managers);
   }
 
   #region Public methods

@@ -120,8 +120,10 @@ internal class BoardRenderer {
     Console.SetCursorPosition(startXPos, 0);
     Console.Write("Fondazioni");
 
+
     for (int i = 0; i < 4; i++) {
-      string[] lines = CardArt.GetFoundationArt(foundation, i).Split('\n');
+      string foundationArt = foundation.GetPile(i).Count == 0 ? CardArt.GetFoundationArt(i) : CardArt.GetCardArt(foundation.GetPile(i)[^1]);
+      string[] lines = foundationArt.Split('\n');
       ConsoleColor foregroundColor;
       if (foundation.GetPile(i).Count == 0) foregroundColor = ConsoleColor.DarkGray;
       else foregroundColor = CardArt.GetColor(foundation.GetPile(i)[^1]);

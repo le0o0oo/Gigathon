@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Solitario.Activities.Screens;
 
-internal class SavedGames : IActivity {
+internal class SavedGamesActivity : IActivity {
   private readonly ActivityManager _activityManager;
   private readonly List<Button> _buttons = new(); // Corrected initialization of the list
 
@@ -23,7 +23,7 @@ internal class SavedGames : IActivity {
   private int _selectedIndex = 0; // Indice della selezione attuale
   private int _currentPage = 0; // Indice della pagina corrente
 
-  internal SavedGames(ActivityManager activityManager) {
+  internal SavedGamesActivity(ActivityManager activityManager) {
     this._activityManager = activityManager;
 
     _buttons.Add(new Button("◄ Indietro (Esc)", () => {

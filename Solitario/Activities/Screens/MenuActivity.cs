@@ -26,14 +26,7 @@ internal class MenuActivity : IActivity {
     _buttons = [
       new("Nuova partita", () => _activityManager.Launch(new GameActivity(activityManager))),
       new("Partite salvate", () => {
-        _activityManager.Launch(new SavedGames(_activityManager));
-        /*try {
-          var deserializedGame = Serializer.LoadFromFile(Config.SaveFilename);
-          _activityManager.Launch(new GameActivity(activityManager, deserializedGame));
-        } catch (Exception) {
-          var errorModal = new Modal("Errore", "Impossibile caricare la partita.\nIl file di salvataggio potrebbe essere corrotto.", [new("OK", () => _activityManager.CloseModal())]);
-          _activityManager.ShowModal(errorModal);
-        } */
+        _activityManager.Launch(new SavedGamesActivity(_activityManager));
       }),
       new("Opzioni", () => _activityManager.Launch(new SettingsActivity(activityManager))),
 

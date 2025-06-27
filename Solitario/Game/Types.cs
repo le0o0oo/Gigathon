@@ -25,7 +25,7 @@ internal enum Areas {
 /// <summary>
 /// Rappresenta il possibile colore di una carta
 /// </summary>
-internal enum CardColor {
+public enum CardColor {
   Red,
   Black
 }
@@ -33,7 +33,7 @@ internal enum CardColor {
 /// <summary>
 /// Rappresenta i possibili semi che una carta può avere
 /// </summary>
-internal enum CardSeed {
+public enum CardSeed {
   Spades,
   Hearts,
   Diamonds,

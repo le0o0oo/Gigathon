@@ -66,13 +66,8 @@ internal static class Pencil {
   internal static void ClearRectangle(int left, int top, int width, int height, char debugChar = ' ') {
     string blankLine = new(debugChar, width);
     for (int y = top; y < top + height; y++) {
-      try {
-        Console.SetCursorPosition(left, y);
-        Console.Write(blankLine);
-      }
-      catch (Exception) {
-        continue;
-      }
+      Console.SetCursorPosition(left, y);
+      Console.Write(blankLine);
     }
   }
 }

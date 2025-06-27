@@ -79,19 +79,19 @@ internal class Renderer {
   }
   #endregion
 
-  internal Renderer(Deck deck, Tableau tableau, Foundation foundation, Cursor cursor, Legend legend, Selection selection, Hint hintManager, Stats scoreManager) {
-    this.deck = deck;
-    this.tableau = tableau;
-    this.foundation = foundation;
-    this.cursor = cursor;
-    this.legend = legend;
-    this.selection = selection;
-    this.hintManager = hintManager;
-    this.statsManager = scoreManager;
+  internal Renderer(Game.GameManagers managers) {
+    this.deck = managers.Deck;
+    this.tableau = managers.Tableau;
+    this.foundation = managers.Foundation;
+    this.cursor = managers.Cursor;
+    this.legend = managers.Legend;
+    this.selection = managers.Selection;
+    this.hintManager = managers.HintManager;
+    this.statsManager = managers.statsManager;
 
     // Create the specialized renderers, giving them only what they need.
     this.boardRenderer = new BoardRenderer(deck, tableau, foundation);
-    this.uiRenderer = new UIRenderer(cursor, selection, legend, hintManager, scoreManager);
+    this.uiRenderer = new UIRenderer(cursor, selection, legend, hintManager, statsManager);
     this.actionRenderer = new ActionRenderer(deck, tableau, foundation);
   }
 

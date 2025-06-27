@@ -19,18 +19,22 @@ internal class InputHandler {
   private readonly Managers.Hint hintManager;
   private readonly Stats statsManager;
 
-  internal InputHandler(Game game, Cursor cursor, Renderer renderer, Selection selection, Legend legend, Deck deck, Tableau tableau, Foundation foundation, Actions actions, Managers.Hint hintsManager, Stats statsManager) {
+  private readonly GameManagers managers;
+
+  internal InputHandler(Game game, Renderer renderer, GameManagers managers) {
     this.game = game;
-    this.cursor = cursor;
+    this.cursor = managers.Cursor;
     this.renderer = renderer;
-    this.selection = selection;
-    this.legend = legend;
-    this.deck = deck;
-    this.tableau = tableau;
-    this.foundation = foundation;
-    this.actionsManager = actions;
-    this.hintManager = hintsManager;
-    this.statsManager = statsManager;
+    this.selection = managers.Selection;
+    this.legend = managers.Legend;
+    this.deck = managers.Deck;
+    this.tableau = managers.Tableau;
+    this.foundation = managers.Foundation;
+    this.actionsManager = managers.ActionsManager;
+    this.hintManager = managers.HintManager;
+    this.statsManager = managers.statsManager;
+
+    this.managers = managers;
   }
 
   internal void ProcessInput(ConsoleKeyInfo keyInfo) {
@@ -110,7 +114,6 @@ internal class InputHandler {
 
       case ConsoleKey.H:
         if (selection.Active || !CurrentSettings.UseHints) break;
-        var managers = new GameManagers(deck, tableau, foundation, selection, cursor);
 
         var hint = Hints.FindHint(managers);
         if (hint == null) break;
@@ -179,7 +182,6 @@ internal class InputHandler {
     selection.ClearSelection();
     legend.SetSelected(false);
 
-    var managers = new GameManagers(deck, tableau, foundation, selection, cursor);
     var action = new MoveCardsAction(managers, area, cursor.CurrentItemIndex, Areas.Foundation, foundationPileIndex, movSelection);
 
     statsManager.IncMovesCount();
@@ -298,7 +300,6 @@ internal class InputHandler {
 
   // Piazza le carte della selezione.
   private void PlaceSelectedCards(Areas sourceArea, int sourceIndex, Areas destArea, int destIndex) {
-    var managers = new GameManagers(deck, tableau, foundation, selection, cursor);
     var action = new MoveCardsAction(managers, sourceArea, sourceIndex, destArea, destIndex);
 
     statsManager.ApplyActionScore(action);

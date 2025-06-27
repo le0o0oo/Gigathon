@@ -112,12 +112,10 @@ $@"╔═══════════╗
   /// <summary>
   /// Restituisce una immagine di una fondazione vuota
   /// </summary>
-  /// <param name="foundation">L'oggetto del manager delle fondazioni</param>
   /// <param name="index">Indice della fondazione</param>
   /// <returns></returns>
   /// <exception cref="ArgumentOutOfRangeException"></exception>
-  internal static string GetFoundationArt(Managers.Foundation foundation, int index) {
-    string art;
+  internal static string GetFoundationArt(int index) {
     string cardIcon = index switch
     {
       0 => "♣", // Clubs
@@ -127,8 +125,7 @@ $@"╔═══════════╗
       _ => throw new ArgumentOutOfRangeException(nameof(index), "Indice della fondazione non valido.")
     };
 
-    if (foundation.GetPile(index).Count == 0) {
-      art =
+    string art =
 $@"╔ ═ ═ ═ ═ ═ ╗
              
 ║           ║
@@ -138,10 +135,7 @@ $@"╔ ═ ═ ═ ═ ═ ╗
 ║           ║
              
 ╚ ═ ═ ═ ═ ═ ╝";
-    }
-    else {
-      art = GetCardArt(foundation.GetPile(index)[^1]);
-    }
+
 
     return art;
   }
