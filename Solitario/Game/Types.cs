@@ -41,12 +41,6 @@ public enum CardSeed {
 }
 
 #region Serialization
-internal static class CardSeedNames {
-  public const string Spades = "spades";
-  public const string Hearts = "hearts";
-  public const string Diamonds = "diamonds";
-  public const string Clubs = "clubs";
-}
 /*
  * Struttua:
 
@@ -60,20 +54,12 @@ internal static class CardSeedNames {
 }
 */
 public struct CardStruct {
-  public string Seed;
-  public byte NumericValue;
-  public bool Revealed;
+  public CardSeed Seed { get; set; }
+  public byte NumericValue { get; set; }
+  public bool Revealed { get; set; }
 
   internal CardStruct(CardSeed seed, byte Value, bool revealed) {
-    this.Seed = seed switch
-    {
-      CardSeed.Spades => CardSeedNames.Spades,
-      CardSeed.Hearts => CardSeedNames.Hearts,
-      CardSeed.Diamonds => CardSeedNames.Diamonds,
-      CardSeed.Clubs => CardSeedNames.Clubs,
-      _ => throw new ArgumentException("Invalid seed parameter"),
-    };
-
+    this.Seed = seed;
     this.NumericValue = Value;
     this.Revealed = revealed;
   }

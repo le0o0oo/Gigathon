@@ -1,6 +1,7 @@
 ﻿using Solitario.Game.Managers;
 using Solitario.Game.Models;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Solitario.Game.Helpers;
 
@@ -15,7 +16,9 @@ internal class Serializer {
 
   private static readonly JsonSerializerOptions options = new()
   {
-    IncludeFields = true
+    IncludeFields = true,
+
+    Converters = { new JsonStringEnumConverter() }
   };
 
   internal Serializer(Deck deck, Foundation foundation, Tableau tableau, Stats statsManager) {
@@ -102,14 +105,7 @@ internal class Serializer {
   /// <returns></returns>
   /// <exception cref="ArgumentException"></exception>
   private static Card CardFromStruct(CardStruct serializedCard) {
-    CardSeed seed = serializedCard.Seed switch
-    {
-      CardSeedNames.Spades => CardSeed.Spades,
-      CardSeedNames.Hearts => CardSeed.Hearts,
-      CardSeedNames.Diamonds => CardSeed.Diamonds,
-      CardSeedNames.Clubs => CardSeed.Clubs,
-      _ => throw new ArgumentException("Invalid card seed")
-    };
+    CardSeed seed = serializedCard.Seed;
 
     var card = new Card(seed, serializedCard.NumericValue)
     {
