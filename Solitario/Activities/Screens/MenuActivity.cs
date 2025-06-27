@@ -28,7 +28,7 @@ internal class MenuActivity : IActivity {
       new("Partite salvate", () => {
         _activityManager.Launch(new SavedGamesActivity(_activityManager));
       }),
-      new("Opzioni", () => _activityManager.Launch(new SettingsActivity(activityManager))),
+      new("Impostazioni", () => _activityManager.Launch(new SettingsActivity(activityManager))),
 
       new("Esci", () => _activityManager.Stop())
     ];

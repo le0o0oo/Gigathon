@@ -11,7 +11,7 @@ internal static class TimeFormatter {
     return string.Join(" ", parts);
   }
 
-  public static string GetFormattedTimestamp() {
+  internal static string GetFormattedTimestamp() {
     return DateTime.Now.ToString("yyyy_MM_dd HH:mm:ss");
   }
 }
