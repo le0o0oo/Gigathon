@@ -22,6 +22,7 @@ Questo è un classico gioco di Solitario (Klondike) sviluppato in C# per la cons
 ## Come eseguire
 ### Requisiti
 - .NET 8.0 SDK (o versione successiva).
+- Terminale con supporto UTF-8 e ANSI
 
 ### Istruzioni
 #### Apri con Visual studio
@@ -50,15 +51,20 @@ L'interfaccia viene interamente controllata da tastiera
 | **Esc**            | Apri menu di **pausa**                     |
 
 ## Architettura
+### Panoramica generale
 Il progetto è stato pensato per essere modulare, manutenibile e scalabile.
 
 - `Activities/`: Contiene un piccolo framework per la gestione delle schermate (ispirato da Android), come il Menu principale, la schermata di Gioco e le Impostazioni.
 - `Game/`: Contiene tutto il core del gioco
-    - `Models/`: Definiscono oggetti di base
-    - `Managers/`: Classi che specializzandosi in un solo compito gestiscono le varie parti del gioco
-    - `Rendering/`: Classi responsabili del rendering
+    - `Controllers/`: Classi che gestiscono le interazioni tra il gioco e l'utente
+    - `Data/`: Contiene i tipi del gioco, come le aree e come la struttura della serializzazione
     - `Helpers/`: Contiene classi di utilità come `Validator` per la logica delle mosse e `Hint` per l'algoritmo dei suggerimenti
+    - `Managers/`: Classi che specializzandosi in un solo compito gestiscono le varie parti del gioco
+    - `Models/`: Definiscono oggetti di base
+    - `Rendering/`: Classi responsabili del rendering
 - `Utils/`: Contiene classi di utilità varie
+### Info tecnice
+Per una visione più tecnica consultare [la documentazione](docs/README.md)
 
 ## Note
 ### Regola del mazzo di riserva

@@ -14,7 +14,7 @@ internal class Program {
 
     var activityManager = new ActivityManager();
 
-    // Carica il menu principale
+    // Carica selettore modalità ANSI
     activityManager.Launch(new Activities.Screens.ModeSelector(activityManager));
 
     #region Resize thread

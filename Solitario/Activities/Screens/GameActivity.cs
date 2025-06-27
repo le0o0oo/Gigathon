@@ -78,17 +78,23 @@ internal class GameActivity : IActivity {
         _activityManager.CloseModal();
       }),
       new("Salva partita", () => {
-        if (!Directory.Exists(Config.SavesDirectory)) {
-          Directory.CreateDirectory(Config.SavesDirectory);
+        try {
+          if (!Directory.Exists(Config.SavesDirectory)) {
+            Directory.CreateDirectory(Config.SavesDirectory);
+          }
+          var serializer = new Serializer(game.deck, game.foundation, game.tableau, game.statsManager);
+          var filename = TimeFormatter.GetFormattedTimestamp().Replace(":", "-") + ".json";
+          serializer.SaveAsFile(Path.Combine(Config.SavesDirectory, filename));
+
+          var feedbackModal = new Modal("Salva", "Partita salvata con successo", [new("OK", () => _activityManager.CloseModal())]);
+
+          _activityManager.CloseModal();
+          _activityManager.ShowModal(feedbackModal);
+        } catch (Exception ex) {
+          var errorModal = new Modal("Errore", $"Impossibile salvare la partita.\n{ex.Message}", [new("OK", () => _activityManager.CloseModal())]);
+          _activityManager.CloseModal();
+          _activityManager.ShowModal(errorModal);
         }
-        var serializer = new Serializer(game.deck, game.foundation, game.tableau, game.statsManager);
-        var filename = TimeFormatter.GetFormattedTimestamp().Replace(":", "-") + ".json";
-        serializer.SaveAsFile(Path.Combine(Config.SavesDirectory, filename));
-
-        var feedbackModal = new Modal("Salva", "Partita salvata con successo", [new("OK", () => _activityManager.CloseModal())]);
-
-        _activityManager.CloseModal();
-        _activityManager.ShowModal(feedbackModal);
       }),
       new("Rigioca", () => {
         game = new Game.Game();
