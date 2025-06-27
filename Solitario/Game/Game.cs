@@ -1,4 +1,6 @@
-﻿using Solitario.Game.Managers;
+﻿using Solitario.Game.Controllers;
+using Solitario.Game.Managers;
+using Solitario.Game.Models.Actions;
 using Solitario.Game.Rendering;
 
 namespace Solitario.Game;
@@ -17,7 +19,19 @@ internal class Game {
   private readonly Renderer renderer;
   private readonly Actions actionsManager;
 
-  internal record GameManagers(Deck Deck, Tableau Tableau, Foundation Foundation, Actions ActionsManager, Cursor Cursor, Legend Legend, Selection Selection, Managers.Hint HintManager, Stats statsManager);
+  private int prevMovesCount = 0;
+
+  internal record GameManagers(
+    Deck Deck,
+    Tableau Tableau,
+    Foundation Foundation,
+    Actions ActionsManager,
+    Cursor Cursor,
+    Legend Legend,
+    Selection Selection,
+    Managers.Hint HintManager,
+    Stats StatsManager
+  );
   internal GameManagers Managers => new(deck, tableau, foundation, actionsManager, cursor, legend, selection, hintManager, statsManager);
 
   internal Action? OnWin;
@@ -42,6 +56,8 @@ internal class Game {
 
     renderer = new Renderer(Managers);
     inputHandler = new InputHandler(this, renderer, Managers);
+
+    prevMovesCount = statsManager.MovesCount;
   }
 
   #region Public methods
@@ -52,7 +68,12 @@ internal class Game {
   internal void Input(ConsoleKeyInfo keyInfo) {
     inputHandler.ProcessInput(keyInfo);
 
-    renderer.DrawLegend();
+    if (statsManager.MovesCount != prevMovesCount) {
+      if (actionsManager.LastAction != null) DrawDirtyAreas(actionsManager.LastAction);
+      // Area sconosciuta
+      else Draw();
+      prevMovesCount = statsManager.MovesCount;
+    }
 
     if (HasWon()) {
       statsManager.CalculateFinalScore();
@@ -77,6 +98,26 @@ internal class Game {
     renderer.DrawCursor();
     renderer.DrawLegend();
     renderer.DrawStats();
+  }
+
+  /// <summary>
+  /// Ridisegna le aree modificate dopo una azione.
+  /// </summary>
+  /// <param name="action"></param>
+  internal void DrawDirtyAreas(IAction action) {
+    // Pescata carta dal mazzo
+    if (action is DrawCardAction) {
+      renderer.DrawDeck();
+      return;
+    }
+    else if (action is MoveCardsAction movAction) {
+      renderer.DrawBasedOnArea(movAction.sourceArea);
+      renderer.DrawBasedOnArea(movAction.destArea);
+    }
+
+    renderer.DrawLegend();
+    renderer.DrawStats();
+    renderer.DrawCursor();
   }
   #endregion
 

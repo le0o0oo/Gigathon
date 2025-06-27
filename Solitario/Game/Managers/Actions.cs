@@ -6,7 +6,13 @@ namespace Solitario.Game.Managers;
 /// Manager del command pattern
 /// </summary>
 internal class Actions {
+  /// <summary>
+  /// Restituisce l'ultima azione eseguita, se esiste
+  /// </summary>
+  internal IAction? LastAction => _history.Count > 0 ? _history.Peek() : null;
+
   private readonly Stack<IAction> _history = [];
+
   /// <summary>
   /// Esegue una azione dato un suo oggetto e lo salva in memoria
   /// </summary>

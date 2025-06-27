@@ -1,7 +1,9 @@
-﻿using Solitario.Game.Managers;
+﻿using Solitario.Game.Data;
+using Solitario.Game.Managers;
 using Solitario.Game.Models;
 using Solitario.Game.Rendering.Helpers;
 using Solitario.Utils;
+
 
 namespace Solitario.Game.Rendering.Components;
 internal class UIRenderer {
@@ -115,7 +117,7 @@ internal class UIRenderer {
     string undoActionColor = legend.CanUndo && legend.SelectTextIndex == 0 ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
     string deselectActionColor = legend.SelectTextIndex == 0 ? AnsiColors.Foreground.DarkGray : AnsiColors.Foreground.BoldCyan;
     string dynamicSelectText = Legend.selectTexts[legend.SelectTextIndex];
-    string toFoundationColor = legend.CanShortCutFoundation ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
+    string toFoundationColor = legend.CanShortCutFoundation == true ? AnsiColors.Foreground.BoldCyan : AnsiColors.Foreground.DarkGray;
 
     int hintTextIndex = hintManager.ShowingHint ? 1 : 0;
 

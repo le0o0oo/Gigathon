@@ -1,4 +1,5 @@
-﻿using Solitario.Game.Models;
+﻿using Solitario.Game.Data;
+using Solitario.Game.Models;
 
 namespace Solitario.Game.Helpers;
 internal static class Validator {

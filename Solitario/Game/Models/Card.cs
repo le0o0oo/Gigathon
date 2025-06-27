@@ -1,4 +1,6 @@
-﻿/*
+﻿using Solitario.Game.Data;
+
+/*
  * Spades - Picche
  * Hearts - Cuori
  * Quadri - Diamonds

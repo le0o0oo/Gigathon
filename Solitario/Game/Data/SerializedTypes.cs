@@ -1,58 +1,7 @@
-﻿// Types only for the game
+﻿using System.Text.Json.Serialization;
 
-using System.Text.Json.Serialization;
+namespace Solitario.Game.Data;
 
-namespace Solitario.Game;
-
-/// <summary>
-/// Rappresenta le possibili aree del gioco
-/// </summary>
-internal enum Areas {
-  /// <summary>
-  /// Rappresenta sia le carte da pescare che quelle di scarto
-  /// </summary>
-  Deck,
-  /// <summary>
-  /// Fondazione
-  /// </summary>
-  Foundation,
-  /// <summary>
-  /// Rappresenta il Tableau
-  /// </summary>
-  Tableau
-}
-
-/// <summary>
-/// Rappresenta il possibile colore di una carta
-/// </summary>
-public enum CardColor {
-  Red,
-  Black
-}
-
-/// <summary>
-/// Rappresenta i possibili semi che una carta può avere
-/// </summary>
-public enum CardSeed {
-  Spades,
-  Hearts,
-  Diamonds,
-  Clubs
-}
-
-#region Serialization
-/*
- * Struttua:
-
-{
-  "deck": {
-    "hiddenCards": [],
-    "revealedCards": []
-  },
-  "foundation": [[], [], [], []],
-  "tableau": [[], [], [], [], [], [], []]
-}
-*/
 public struct CardStruct {
   public CardSeed Seed { get; set; }
   public byte NumericValue { get; set; }
@@ -110,5 +59,3 @@ public struct SerializedData {
     Tableau = new();
   }
 }
-
-#endregion

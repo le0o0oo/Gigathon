@@ -1,4 +1,5 @@
-﻿using Solitario.Game.Managers;
+﻿using Solitario.Game.Data;
+using Solitario.Game.Managers;
 
 namespace Solitario.Game.Models.Actions;
 

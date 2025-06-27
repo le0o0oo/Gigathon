@@ -1,4 +1,5 @@
-﻿using Solitario.Game.Models;
+﻿using Solitario.Game.Data;
+using Solitario.Game.Models;
 using Solitario.Game.Rendering.Helpers;
 
 namespace Solitario.Game.Managers;

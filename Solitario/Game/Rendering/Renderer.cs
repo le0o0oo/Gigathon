@@ -1,4 +1,5 @@
-﻿using Solitario.Game.Managers;
+﻿using Solitario.Game.Data;
+using Solitario.Game.Managers;
 using Solitario.Game.Models.Actions;
 using Solitario.Game.Rendering.Components;
 using Solitario.Game.Rendering.Helpers;
@@ -87,7 +88,7 @@ internal class Renderer {
     this.legend = managers.Legend;
     this.selection = managers.Selection;
     this.hintManager = managers.HintManager;
-    this.statsManager = managers.statsManager;
+    this.statsManager = managers.StatsManager;
 
     // Create the specialized renderers, giving them only what they need.
     this.boardRenderer = new BoardRenderer(deck, tableau, foundation);
