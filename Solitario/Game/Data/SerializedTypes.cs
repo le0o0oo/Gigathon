@@ -22,8 +22,11 @@ public struct DeckData {
 }
 
 public struct StatsData {
-  [JsonPropertyName("startTime")]
-  public long StartTime { get; set; }
+  /// <summary>
+  /// Tempo trascorso in secondi
+  /// </summary>
+  [JsonPropertyName("elapsedTime")]
+  public long ElapsedTime { get; set; } // Tempo in SECONDI
 
   [JsonPropertyName("score")]
   public int Score { get; set; }

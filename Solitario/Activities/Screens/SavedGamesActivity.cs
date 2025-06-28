@@ -48,7 +48,10 @@ internal class SavedGamesActivity : IActivity {
       Directory.CreateDirectory(Config.SavesDirectory);
     }
 
-    string[] files = Directory.GetFiles(Config.SavesDirectory, "*.json").Select(Path.GetFileName).ToArray()!;
+    string[] files = Directory.GetFiles(Config.SavesDirectory, "*.json")
+      .OrderByDescending(path => File.GetLastWriteTime(path))
+      .Select(Path.GetFileName)
+      .ToArray()!;
 
     foreach (string file in files) {
       StringBuilder sb = new(file);

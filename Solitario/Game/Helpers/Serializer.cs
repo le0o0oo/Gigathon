@@ -82,7 +82,8 @@ internal class Serializer {
     #endregion
 
     #region Load stats
-    statsManager = new(tableau, data.Stats.Score, data.Stats.Moves, data.Stats.Undos, data.Stats.Hints, data.Stats.StartTime);
+    long startTime = DateTimeOffset.Now.ToUnixTimeSeconds() - data.Stats.ElapsedTime;
+    statsManager = new(tableau, data.Stats.Score, data.Stats.Moves, data.Stats.Undos, data.Stats.Hints, startTime);
     #endregion
 
     var game = new Game(deck, tableau, foundation, statsManager);
@@ -124,7 +125,7 @@ internal class Serializer {
     SerializedData data = new();
 
     #region Stats
-    data.Stats.StartTime = statsManager.StartTime;
+    data.Stats.ElapsedTime = (long)statsManager.ElapsedTime.TotalSeconds;
     data.Stats.Score = statsManager.Value;
     data.Stats.Moves = statsManager.MovesCount;
     data.Stats.Undos = statsManager.UndosCount;

@@ -8,7 +8,7 @@ internal class Stats {
 
   internal long StartTime => ((DateTimeOffset)startTime).ToUnixTimeSeconds(); // Unix timestamp in secondi
   internal int Value { get; private set; } = 0;
-  internal TimeSpan TimeElapsed => (DateTime.UtcNow - startTime);
+  internal TimeSpan ElapsedTime => (DateTime.UtcNow - startTime);
   internal int MovesCount { get; private set; } = 0;
   internal int UndosCount { get; private set; } = 0;
   internal int HintsCount { get; private set; } = 0;
@@ -85,10 +85,10 @@ internal class Stats {
   /// </summary>
   /// <returns>Una tupla con (bonus tempo, penalità mosse)</returns>
   internal void CalculateFinalScore() {
-    if (TimeElapsed.TotalSeconds > 60) { // Nessun bonus se ci metti meno di 60 secondi
+    if (ElapsedTime.TotalSeconds > 60) { // Nessun bonus se ci metti meno di 60 secondi
       // Formula di esempio: 700,000 / secondi totali.
       // Più veloce sei, più alto il bonus.
-      TimeBonus = 700000 / (int)TimeElapsed.TotalSeconds;
+      TimeBonus = 700000 / (int)ElapsedTime.TotalSeconds;
       Value += TimeBonus;
     }
 

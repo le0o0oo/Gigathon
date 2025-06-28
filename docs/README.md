@@ -26,7 +26,7 @@ Quando viene avviato, vengono eseguite le seguenti azioni:
 ### 2. Activity manager
 L'activity manager gestice le schermate e le finestre modali che vanno mostrate sullo schermo e redirige eventuali input utenti ad esse.
 
-Ogni attività deve essere una istanza di [IActivity](../Solitario/Activities/Data/IActivity.cs) (situata in `Solitario/Activities/Data`),
+Ogni attività deve essere un oggetto che implementa [IActivity](../Solitario/Activities/Data/IActivity.cs) (situata in `Solitario/Activities/Data`),
 e contiene metodi basici per una attività, che sono:
 ```csharp
   void OnEnter();
