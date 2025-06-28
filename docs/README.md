@@ -1,13 +1,17 @@
 # Documentazione
 Ogni (o almeno, quasi ogni) funzione è stata commentata via XML. Questo documento serve a spiegare più in dettaglio l'architettura e come funzionano certi componenti.
 
-Ho cercato di fare il tutto seguendo il più possibile pattern **MVC**.
+Ho cercato di fare il tutto seguendo il più possibile il pattern **MVC**.
 
 ## Indice
 - [Architettura dettagliata](#architettura-dettagliata)
   - [Program.cs](#programcs)
   - [Activity manager](#activity-manager)
   - [Core del gioco](#core-del-gioco)
+- [Logiche chiave](#logiche-chiave)
+  - [Command pattern](#command-pattern)
+  - [Sistema di suggerimenti](#sistema-di-suggerimenti)
+  - [Serializzazione per i salvataggi](#serializzazione-per-i-salvataggi)
 
 ## Architettura dettagliata
 ### 1. `Program.cs` (Entry point)
@@ -99,10 +103,11 @@ Il sistema di suggerimenti è situtato in [Helpers/Hints](../Solitario/Game/Helpe
 3. Seleziona la migliore mossa (se esiste)
 4. Se esiste, restituisce la mossa selezionata come un oggetto di `IAction` che può essere eseguito facilmente, altrimenti restituisce nullo
 
+
 ### Serializzazione per i salvataggi
 Il gioco può essere salvato e ricaricato in formato JSON utilizzando la libreria [System.Text.Json](https://learn.microsoft.com/en-us/dotnet/api/system.text.json?view=net-9.0) e [JsonSerializer](https://learn.microsoft.com/en-us/dotnet/api/system.text.json.jsonserializer?view=net-9.0).
 
-La classe responsabile di tutto ciò è [Helpers/Serializer.cs](../Solitario/Game/Helpers/Serializer.cs), che si occupa di serializzare e deserializzare gli oggetti del gioco in formato JSON e provvede delle funzioni di alto livello che scrivono e leggono direttamente dai file.
+La classe responsabile di tutto ciò è [Helpers/Serializer.cs](../Solitario/Game/Helpers/Serializer.cs), che si occupa di serializzare e deserializzare gli oggetti del gioco in formato JSON e provvede delle funzioni di alto livello che scrivono e leggono direttamente i file.
 
 **Serializzazione**:
 1. Il serializzatore prende gli stati di `Deck`, `Foundation`, `Tableau` e `Stats`

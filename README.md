@@ -64,7 +64,7 @@ Il progetto è stato pensato per essere modulare, manutenibile e scalabile.
     - `Rendering/`: Classi responsabili del rendering
 - `Utils/`: Contiene classi di utilità varie
 ### Info tecnice
-Per una visione più tecnica consultare [la documentazione](docs/README.md)
+Per una visione più tecnica consultare [la documentazione dettagliata](docs/README.md)
 
 ## Note
 ### Regola del mazzo di riserva
