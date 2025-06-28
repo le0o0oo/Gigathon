@@ -10,13 +10,13 @@ internal class ModeSelector : IActivity {
     new("Normale", () => {
       CurrentSettings.UseAnsi = true;
     }),
-    new("No ANSI", () => {
+    new("Ridotta", () => {
       CurrentSettings.UseAnsi = false;
     })
   };
   private static readonly string[] modesDescription = {
-    "Abilita i colori per un'esperienza visiva più ricca. Consigliata per la maggior parte dei terminali.",
-    "Disabilita i colori. Scegli questa modalità se visualizzi caratteri strani o illeggibili."
+    "Visualizza il gioco normalmente. Consigliata per la maggior parte dei terminali.",
+    "Disabilita ANSI e utilizza caratteri semplici. Scegli questa modalità se visualizzi caratteri strani o illeggibili."
   };
   int currentSelection = 0;
 

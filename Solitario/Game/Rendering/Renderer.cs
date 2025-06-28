@@ -108,4 +108,8 @@ internal class Renderer {
   internal void DrawStats() => uiRenderer.DrawStats();
 
   #endregion
+
+  #region Specific methods
+  internal void DrawTableauPile(int index, bool clearRectangle = false) => boardRenderer.DrawTableauPile(index, clearRectangle);
+  #endregion
 }

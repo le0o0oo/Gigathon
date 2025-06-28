@@ -1,4 +1,5 @@
 ﻿using Solitario.Game.Controllers;
+using Solitario.Game.Data;
 using Solitario.Game.Managers;
 using Solitario.Game.Models.Actions;
 using Solitario.Game.Rendering;
@@ -111,8 +112,12 @@ internal class Game {
       return;
     }
     else if (action is MoveCardsAction movAction) {
-      renderer.DrawBasedOnArea(movAction.sourceArea);
-      renderer.DrawBasedOnArea(movAction.destArea);
+      // Ottimizza il ridisegno delle aree (solo per tableau)
+      if (movAction.sourceArea == Areas.Tableau) renderer.DrawTableauPile(movAction.sourceIndex, clearRectangle: true);
+      else renderer.DrawBasedOnArea(movAction.sourceArea);
+
+      if (movAction.destArea == Areas.Tableau) renderer.DrawTableauPile(movAction.destIndex, true);
+      else renderer.DrawBasedOnArea(movAction.destArea);
     }
 
     renderer.DrawLegend();

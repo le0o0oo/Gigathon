@@ -35,7 +35,13 @@ internal static class ComponentRenderer {
   /// <param name="selected">Se deve essere restituita una versione in cui la checkbox viene selezionato o no</param>
   /// <returns></returns>
   internal static string GetCheckboxArt(Checkbox checkbox, bool selected) {
-    string icon = checkbox.Checked ? "🗹" : "☐";
+    string icon;
+    if (CurrentSettings.UseAnsi) {
+      icon = checkbox.Checked ? "🗹" : "☐";
+    }
+    else {
+      icon = checkbox.Checked ? "[x]" : "[ ]";
+    }
 
     if (!selected)
       return $"  {checkbox.Text} {icon} ";

@@ -9,6 +9,8 @@ internal class BoardRenderer {
   private readonly Tableau tableau;
   private readonly Foundation foundation;
 
+  private readonly int tableauStartLine = CardArt.cardHeight + 2;
+
   internal BoardRenderer(Deck deck, Tableau tableau, Foundation foundation) {
     this.deck = deck;
     this.tableau = tableau;
@@ -61,50 +63,64 @@ internal class BoardRenderer {
   }
 
   /// <summary>
+  /// Disegna una pila del tableau specificata.
+  /// </summary>
+  /// <param name="index">Indice della pila</param>
+  /// <param name="clearRectangle">se cancellare l'area della pila</param>
+  /// <exception cref="ArgumentOutOfRangeException">Se l'indice della pila è fuori dai limiti</exception>
+  internal void DrawTableauPile(int index, bool clearRectangle = false) {
+    if (index < 0 || index >= tableau.Piles.Count) {
+      throw new ArgumentOutOfRangeException(nameof(index), "Indice della pila del tableau fuori dai limiti.");
+    }
+
+    if (clearRectangle) Pencil.ClearRectangle(index * CardArt.cardWidth, tableauStartLine, CardArt.cardWidth, Renderer.tableauHeight);
+
+    byte j = 0;
+
+    if (tableau.GetPile(index).Count == 0) {
+      string[] lines = CardArt.GetEmptyArt().Split('\n');
+      Console.ForegroundColor = ConsoleColor.DarkGray;
+      for (int k = 0; k < lines.Length; k++) {
+        Console.SetCursorPosition(index * CardArt.cardWidth, j + tableauStartLine);
+        Console.Write(lines[k]);
+        j++;
+      }
+      return;
+    }
+
+    var rawTableau = tableau.Piles;
+
+    foreach (Card card in rawTableau[index]) {
+
+      Console.ForegroundColor = CardArt.GetColor(card);
+      if (rawTableau[index].IndexOf(card) != rawTableau[index].Count - 1) {
+        Console.SetCursorPosition(index * CardArt.cardWidth, j + tableauStartLine);
+        Console.WriteLine(CardArt.GetShortArt(card));
+      }
+      else {
+        Console.SetCursorPosition(index * CardArt.cardWidth, j + tableauStartLine);
+        //DrawArt(card.GetCardArt());
+        string[] lines = CardArt.GetCardArt(card).Split('\n');
+        byte offset = 0;
+        for (int line = 0; line < lines.Length; line++) {
+          Console.SetCursorPosition(index * CardArt.cardWidth, j + offset + tableauStartLine);
+          Console.Write(lines[line]);
+          offset++;
+        }
+      }
+
+      j++;
+    }
+  }
+
+  /// <summary>
   /// Disegna la parte di <see cref="Areas.Tableau"/>
   /// </summary>
   internal void DrawTableau() {
-
-    int startLine = CardArt.cardHeight + 2;
-
-    Pencil.ClearRectangle(0, startLine, CardArt.cardWidth * 7, Renderer.tableauHeight);
+    Pencil.ClearRectangle(0, tableauStartLine, CardArt.cardWidth * 7, Renderer.tableauHeight);
     // Itera per ogni colonna
     for (int i = 0; i < 7; i++) {
-      byte j = 0;
-      if (tableau.GetPile(i).Count == 0) {
-        string[] lines = CardArt.GetEmptyArt().Split('\n');
-        Console.ForegroundColor = ConsoleColor.DarkGray;
-        for (int k = 0; k < lines.Length; k++) {
-          Console.SetCursorPosition(i * CardArt.cardWidth, j + startLine);
-          Console.Write(lines[k]);
-          j++;
-        }
-        continue;
-      }
-
-      var rawTableau = tableau.Piles;
-
-      foreach (Card card in rawTableau[i]) {
-
-        Console.ForegroundColor = CardArt.GetColor(card);
-        if (rawTableau[i].IndexOf(card) != rawTableau[i].Count - 1) {
-          Console.SetCursorPosition(i * CardArt.cardWidth, j + startLine);
-          Console.WriteLine(CardArt.GetShortArt(card));
-        }
-        else {
-          Console.SetCursorPosition(i * CardArt.cardWidth, j + startLine);
-          //DrawArt(card.GetCardArt());
-          string[] lines = CardArt.GetCardArt(card).Split('\n');
-          byte offset = 0;
-          for (int line = 0; line < lines.Length; line++) {
-            Console.SetCursorPosition(i * CardArt.cardWidth, j + offset + startLine);
-            Console.Write(lines[line]);
-            offset++;
-          }
-        }
-
-        j++;
-      }
+      DrawTableauPile(i);
     }
 
     Console.ResetColor();
