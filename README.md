@@ -32,7 +32,7 @@ Questo è un classico gioco di Solitario (Klondike) sviluppato in C# per la cons
 
 #### Eseguire in un terminale
 1. Estrai lo Zip
-2. Naviga alla cartella Solitario
+2. Naviga alla cartella `Solitario`
 2. Esegui `dotnet run`
 
 ## Comandi
