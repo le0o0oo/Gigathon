@@ -3,6 +3,7 @@
 namespace Solitario.Utils;
 internal static class Pencil {
   internal static readonly Regex AnsiRegex = new(@"\u001b\[[;\d]*m", RegexOptions.Compiled);
+  internal static readonly string[] LineEndings = ["\r\n", "\n", "\r"];
 
   /// <summary>
   /// Scrive una linea centrata orizzontalmente nella console
@@ -10,7 +11,7 @@ internal static class Pencil {
   /// <param name="text"></param>
   /// <param name="top"></param>
   internal static void DrawCentered(string text, int top) {
-    string[] textLines = text.Split([Environment.NewLine], StringSplitOptions.None);
+    string[] textLines = text.Split(LineEndings, StringSplitOptions.None);
 
     for (int i = 0; i < textLines.Length; i++) {
       var noAnsiLine = AnsiRegex.Replace(textLines[i], "");
@@ -44,7 +45,7 @@ internal static class Pencil {
   /// <param name="top"></param>
   /// <returns>True se il disegno è stato completato, False se non è andato a buon fine</returns>
   internal static bool DrawArt(string art, int left, int top) {
-    string[] artLines = art.Split(Environment.NewLine);
+    string[] artLines = art.Split(LineEndings, StringSplitOptions.None);
 
     for (int i = 0; i < artLines.Length; i++) {
       if (i + top >= Console.WindowHeight) return false;
