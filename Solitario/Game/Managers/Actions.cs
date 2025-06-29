@@ -7,9 +7,13 @@ namespace Solitario.Game.Managers;
 /// </summary>
 internal class Actions {
   /// <summary>
-  /// Restituisce l'ultima azione eseguita, se esiste
+  /// Restituisce l'ultima azione dello stack. Se una azione è stata annullata, questa non viene considerata.
   /// </summary>
-  internal IAction? LastAction => _history.Count > 0 ? _history.Peek() : null;
+  internal IAction? TopAction => _history.Count > 0 ? _history.Peek() : null;
+  /// <summary>
+  /// L'ultima azione eseguita, includendo le azioni annullate
+  /// </summary>
+  internal IAction? LastAction { get; private set; } = null;
 
   private readonly Stack<IAction> _history = [];
 
@@ -20,6 +24,7 @@ internal class Actions {
   internal void Execute(IAction action) {
     action.Execute();
     _history.Push(action);
+    LastAction = action;
   }
 
   /// <summary>
@@ -29,6 +34,7 @@ internal class Actions {
   internal IAction Undo() {
     var action = _history.Pop();
     action.Undo();
+    LastAction = action;
 
     return action;
   }

@@ -17,7 +17,7 @@ internal class InputHandler {
   private readonly GameController controller;
 
   internal InputHandler(Game game, Renderer renderer, GameManagers managers) {
-    controller = new GameController(managers, game);
+    controller = new GameController(managers);
 
     this.game = game;
     cursor = managers.Cursor;

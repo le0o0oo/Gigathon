@@ -1,7 +1,5 @@
 ﻿using Solitario.Game.Controllers;
-using Solitario.Game.Data;
 using Solitario.Game.Managers;
-using Solitario.Game.Models.Actions;
 using Solitario.Game.Rendering;
 
 namespace Solitario.Game;
@@ -70,7 +68,7 @@ internal class Game {
     inputHandler.ProcessInput(keyInfo);
 
     if (statsManager.MovesCount != prevMovesCount) {
-      if (actionsManager.LastAction != null) DrawDirtyAreas(actionsManager.LastAction);
+      if (actionsManager.LastAction != null) renderer.DrawDirtyAreas(actionsManager.LastAction);
       // Area sconosciuta
       else Draw();
       prevMovesCount = statsManager.MovesCount;
@@ -99,30 +97,6 @@ internal class Game {
     renderer.DrawCursor();
     renderer.DrawLegend();
     renderer.DrawStats();
-  }
-
-  /// <summary>
-  /// Ridisegna le aree modificate dopo una azione.
-  /// </summary>
-  /// <param name="action"></param>
-  internal void DrawDirtyAreas(IAction action) {
-    // Pescata carta dal mazzo
-    if (action is DrawCardAction) {
-      renderer.DrawDeck();
-      return;
-    }
-    else if (action is MoveCardsAction movAction) {
-      // Ottimizza il ridisegno delle aree (solo per tableau)
-      if (movAction.sourceArea == Areas.Tableau) renderer.DrawTableauPile(movAction.sourceIndex, clearRectangle: true);
-      else renderer.DrawBasedOnArea(movAction.sourceArea);
-
-      if (movAction.destArea == Areas.Tableau) renderer.DrawTableauPile(movAction.destIndex, true);
-      else renderer.DrawBasedOnArea(movAction.destArea);
-    }
-
-    renderer.DrawLegend();
-    renderer.DrawStats();
-    renderer.DrawCursor();
   }
   #endregion
 

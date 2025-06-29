@@ -18,10 +18,9 @@ internal class GameController {
   private readonly Tableau tableau;
   private readonly Foundation foundation;
   private readonly Cursor cursor;
-  private readonly Game game;
   private readonly Hint hintManager;
 
-  internal GameController(Game.GameManagers managers, Game game) {
+  internal GameController(Game.GameManagers managers) {
     Managers = managers;
     selection = managers.Selection;
     statsManager = managers.StatsManager;
@@ -33,7 +32,6 @@ internal class GameController {
     foundation = managers.Foundation;
     cursor = managers.Cursor;
     hintManager = managers.HintManager;
-    this.game = game;
   }
 
   /// <summary>
@@ -106,9 +104,10 @@ internal class GameController {
   /// <summary>
   /// Annulla l'ultima azione eseguita, se possibile.
   /// </summary>
-  internal void UndoLastAction() {
-    if (selection.Active) return;
-    if (!actionsManager.CanUndo()) return;
+  /// <returns>L'azione appena annullata</returns>
+  internal IAction? UndoLastAction() {
+    if (selection.Active) return null;
+    if (!actionsManager.CanUndo()) return null;
 
     var undoAction = actionsManager.Undo();
     statsManager.ApplyUndoPenality();
@@ -117,6 +116,8 @@ internal class GameController {
     statsManager.DecMovesCount();
 
     legend.SetCanUndo(actionsManager.CanUndo());
+
+    return undoAction;
   }
 
   /// <summary>

@@ -78,6 +78,30 @@ internal class Renderer {
         break;
     }
   }
+
+  /// <summary>
+  /// Ridisegna le aree modificate dopo una azione.
+  /// </summary>
+  /// <param name="action"></param>
+  internal void DrawDirtyAreas(IAction action) {
+    // Pescata carta dal mazzo
+    if (action is DrawCardAction) {
+      DrawDeck();
+      return;
+    }
+    else if (action is MoveCardsAction movAction) {
+      // Ottimizza il ridisegno delle aree (solo per tableau)
+      if (movAction.sourceArea == Areas.Tableau) DrawTableauPile(movAction.sourceIndex, clearRectangle: true);
+      else DrawBasedOnArea(movAction.sourceArea);
+
+      if (movAction.destArea == Areas.Tableau) DrawTableauPile(movAction.destIndex, true);
+      else DrawBasedOnArea(movAction.destArea);
+    }
+
+    DrawLegend();
+    DrawStats();
+    DrawCursor();
+  }
   #endregion
 
   internal Renderer(Game.GameManagers managers) {
