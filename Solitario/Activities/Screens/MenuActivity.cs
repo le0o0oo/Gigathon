@@ -88,7 +88,7 @@ internal class MenuActivity : IActivity {
 
   private void DrawTitle() {
     const string titleArtShort = "Solitario";
-    bool canDrawTitle = Console.WindowWidth >= titleArt.Split('\n')[0].Length;
+    bool canDrawTitle = Console.WindowWidth >= titleArt.Split([Environment.NewLine], StringSplitOptions.None)[0].Length;
     Pencil.DrawCentered(canDrawTitle ? titleArt : titleArtShort, startYTitle);
   }
 

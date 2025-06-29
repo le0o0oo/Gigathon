@@ -31,7 +31,7 @@ internal class UIRenderer {
   /// <param name="highlightWhiteAsBlack">Inverte il bianco con il nero</param>
   internal static void DrawCard(Card card, int x, int y, bool highlightWhiteAsBlack = false) {
     string cardArt = CardArt.GetCardArt(card);
-    string[] artLines = cardArt.Split('\n');
+    string[] artLines = cardArt.Split([Environment.NewLine], StringSplitOptions.None);
 
     var cardConsoleColor = CardArt.GetColor(card, highlightWhiteAsBlack);
     Console.ForegroundColor = cardConsoleColor == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
@@ -83,7 +83,7 @@ internal class UIRenderer {
         for (int i = 0; i < cards.Count; i++) {
           var card = cards[i];
           string art = i == cards.Count - 1 ? CardArt.GetCardArt(card) : CardArt.GetShortArt(card);
-          string[] lines = art.Split('\n');
+          string[] lines = art.Split([Environment.NewLine], StringSplitOptions.None);
 
           Console.ForegroundColor = CardArt.GetColor(card) == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
 
