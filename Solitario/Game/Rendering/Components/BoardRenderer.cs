@@ -21,6 +21,7 @@ internal class BoardRenderer {
   /// Disegna la parte di <see cref="Areas.Deck"/>
   /// </summary>
   internal void DrawDeck() {
+    Console.ResetColor();
     Pencil.ClearRectangle(0, 0, CardArt.cardWidth * 2, CardArt.cardHeight + 2);
 
     string art = CardArt.GetFlippedArt();
@@ -117,6 +118,7 @@ internal class BoardRenderer {
   /// Disegna la parte di <see cref="Areas.Tableau"/>
   /// </summary>
   internal void DrawTableau() {
+    Console.ResetColor();
     Pencil.ClearRectangle(0, tableauStartLine, CardArt.cardWidth * 7, Renderer.tableauHeight);
     // Itera per ogni colonna
     for (int i = 0; i < 7; i++) {
@@ -130,6 +132,7 @@ internal class BoardRenderer {
   /// Disegna la parte di <see cref="Areas.Foundation"/>
   /// </summary>
   internal void DrawFoundations() {
+    Console.ResetColor();
     int startXPos = CardArt.cardWidth * 3;
     Pencil.ClearRectangle(startXPos, 0, CardArt.cardWidth * 4, CardArt.cardHeight + 2);
 
