@@ -64,6 +64,7 @@ internal class GameController {
     if (!selection.Active) return false;
     selection.ClearSelection();
     legend.SetSelected(false);
+    legend.UpdateFoundationShortcut(selection);
 
     return true;
   }

@@ -1,4 +1,6 @@
-﻿namespace Solitario.Game.Managers;
+﻿using Solitario.Game.Data;
+
+namespace Solitario.Game.Managers;
 internal class Legend {
   // Config
   internal static readonly string[] selectTexts = { "Seleziona carta/e", "Posiziona" };
@@ -26,5 +28,18 @@ internal class Legend {
 
   internal void SetCanUndo(bool newState) {
     CanUndo = newState;
+  }
+
+  /// <summary>
+  /// Aggiorna lo stato di CanShortCutFoundation in base alla selezione.
+  /// </summary>
+  /// <param name="cursor"></param>
+  /// <param name="selection"></param>
+  internal void UpdateFoundationShortcut(Selection selection) {
+    if (selection.SourceArea == Areas.Tableau) {
+      CanShortCutFoundation = !selection.Active;
+    }
+    else if (selection.Active && selection.SourceArea == Areas.Deck) CanShortCutFoundation = true;
+    else CanShortCutFoundation = true;
   }
 }

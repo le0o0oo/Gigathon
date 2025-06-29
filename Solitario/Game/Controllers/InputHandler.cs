@@ -1,5 +1,4 @@
-﻿using Solitario.Game.Data;
-using Solitario.Game.Managers;
+﻿using Solitario.Game.Managers;
 using Solitario.Game.Models.Actions;
 using Solitario.Game.Rendering;
 using static Solitario.Game.Game;
@@ -58,6 +57,8 @@ internal class InputHandler {
       case ConsoleKey.Enter:
       case ConsoleKey.Spacebar:
         controller.HandleSelection();
+
+        legend.UpdateFoundationShortcut(selection);
         renderer.DrawLegend();
         /*renderer.DrawBasedOnArea(selection.SourceArea);
         renderer.DrawCursor();*/
@@ -65,6 +66,7 @@ internal class InputHandler {
 
       case ConsoleKey.X:
         if (controller.ClearSelection()) {
+
           renderer.DrawBasedOnArea(selection.SourceArea);
           renderer.DrawCursor();
           renderer.DrawLegend();
@@ -102,7 +104,11 @@ internal class InputHandler {
       renderer.DrawStats();
     }
 
-    legend.CanShortCutFoundation = selection.Active || selection.Active && selection.SourceArea == Areas.Deck;
+    //legend.CanShortCutFoundation = selection.Active || selection.Active && selection.SourceArea == Areas.Deck;
+    //if (selection.Active && selection.SourceArea == Areas.Deck) legend.CanShortCutFoundation = true;
+    //else if (cursor.CurrentArea == Areas.Tableau && !selection.Active) legend.CanShortCutFoundation = true;
+    //else legend.CanShortCutFoundation = false;
+    //renderer.DrawLegend();
   }
 
   /// <summary>
