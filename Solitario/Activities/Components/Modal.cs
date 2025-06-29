@@ -20,7 +20,7 @@ internal class Modal {
   internal Modal(string title, string content, Tuple<string, Action>[]? buttons = null) {
     this.title = title;
     this.content = content;
-    this.splittedContent = content.Split([Environment.NewLine], StringSplitOptions.None);
+    this.splittedContent = content.Split('\n');
     this._buttons = buttons;
 
     int contentWidth = Pencil.AnsiRegex.Replace(content, "").Split([Environment.NewLine], StringSplitOptions.None)
