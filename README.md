@@ -1,4 +1,7 @@
-﻿# Gigathon 2025 - Solitario
+﻿<div align="center" style="display: flex; align-items: center;">
+  <img src="media/logo.png" alt="Logo" width="100"/>
+  <h1>Gigathon 2025 - Solitario</h1>
+</div>
 
 Questo è un classico gioco di Solitario (Klondike) sviluppato in C# per la console, come progetto per la sfida di programmazione Gigathon (fascia 16-18 anni).
 
