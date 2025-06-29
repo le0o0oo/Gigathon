@@ -27,7 +27,7 @@ internal class ActionRenderer {
     if (action is DrawCardAction) {
       Console.ForegroundColor = ConsoleColor.Black;
       Console.BackgroundColor = sourceColor;
-      var artLines = CardArt.GetFlippedArt().Split([Environment.NewLine], StringSplitOptions.None);
+      var artLines = CardArt.GetFlippedArt().Split('\n');
 
       for (int i = 0; i < artLines.Length; i++) {
         Console.SetCursorPosition(0, i + 1);
@@ -44,7 +44,7 @@ internal class ActionRenderer {
           for (int i = 0; i < cards.Count; i++) {
             var card = cards[i];
             string art = i == cards.Count - 1 ? CardArt.GetCardArt(card) : CardArt.GetShortArt(card);
-            string[] lines = art.Split([Environment.NewLine], StringSplitOptions.None);
+            string[] lines = art.Split('\n');
 
             Console.ForegroundColor = CardArt.GetColor(card) == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
             Console.BackgroundColor = sourceColor;
@@ -75,7 +75,7 @@ internal class ActionRenderer {
             var card = cards[i];
             if (!card.Revealed) continue;
             string art = i == cards.Count - 1 ? CardArt.GetCardArt(card) : CardArt.GetShortArt(card);
-            string[] lines = art.Split([Environment.NewLine], StringSplitOptions.None);
+            string[] lines = art.Split('\n');
 
             Console.ForegroundColor = CardArt.GetColor(card) == ConsoleColor.White ? ConsoleColor.White : ConsoleColor.DarkRed;
 
@@ -86,7 +86,7 @@ internal class ActionRenderer {
           }
 
           if (cards.Count == 0) {
-            var lines = CardArt.GetEmptyArt().Split([Environment.NewLine], StringSplitOptions.None);
+            var lines = CardArt.GetEmptyArt().Split('\n');
 
             for (int j = 0; j < lines.Length; j++) {
               Console.SetCursorPosition(CardArt.cardWidth * cardPileIndex, CardArt.cardHeight + 2 + j + startDrawIndex);
@@ -100,9 +100,9 @@ internal class ActionRenderer {
           string[] foundationLines;
           string foundationArt = foundation.GetPile(movAction.destIndex).Count == 0 ? CardArt.GetFoundationArt(movAction.destIndex) : CardArt.GetCardArt(foundation.GetPile(movAction.destIndex)[^1]);
           if (foundation.GetPile(movAction.destIndex).Count == 0)
-            foundationLines = foundationArt.Split([Environment.NewLine], StringSplitOptions.None);
+            foundationLines = foundationArt.Split('\n');
           else
-            foundationLines = CardArt.GetCardArt(foundation.GetCardAt(movAction.destIndex)).Split([Environment.NewLine], StringSplitOptions.None);
+            foundationLines = CardArt.GetCardArt(foundation.GetCardAt(movAction.destIndex)).Split('\n');
 
 
           int startXPos = CardArt.cardWidth * (3 + movAction.destIndex);

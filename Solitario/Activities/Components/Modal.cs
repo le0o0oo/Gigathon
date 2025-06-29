@@ -23,7 +23,7 @@ internal class Modal {
     this.splittedContent = content.Split('\n');
     this._buttons = buttons;
 
-    int contentWidth = Pencil.AnsiRegex.Replace(content, "").Split([Environment.NewLine], StringSplitOptions.None)
+    int contentWidth = Pencil.AnsiRegex.Replace(content, "").Split('\n')
       .OrderByDescending(line => line.Length).FirstOrDefault()?.Length ?? 0;
     int titleWidth = title.Length + 6;
 

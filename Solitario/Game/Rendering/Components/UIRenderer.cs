@@ -31,7 +31,7 @@ internal class UIRenderer {
   /// <param name="highlightWhiteAsBlack">Inverte il bianco con il nero</param>
   internal static void DrawCard(Card card, int x, int y, bool highlightWhiteAsBlack = false) {
     string cardArt = CardArt.GetCardArt(card);
-    string[] artLines = cardArt.Split([Environment.NewLine], StringSplitOptions.None);
+    string[] artLines = cardArt.Split('\n');
 
     var cardConsoleColor = CardArt.GetColor(card, highlightWhiteAsBlack);
     Console.ForegroundColor = cardConsoleColor == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
@@ -83,7 +83,7 @@ internal class UIRenderer {
         for (int i = 0; i < cards.Count; i++) {
           var card = cards[i];
           string art = i == cards.Count - 1 ? CardArt.GetCardArt(card) : CardArt.GetShortArt(card);
-          string[] lines = art.Split([Environment.NewLine], StringSplitOptions.None);
+          string[] lines = art.Split('\n');
 
           Console.ForegroundColor = CardArt.GetColor(card) == ConsoleColor.White ? ConsoleColor.Black : ConsoleColor.Red;
 
@@ -110,6 +110,7 @@ internal class UIRenderer {
   /// Disegna la legenda in base allo stato attuale
   /// </summary>
   internal void DrawLegend() {
+    Console.ResetColor();
     Console.SetCursorPosition(0, Renderer.legendStartY);
 
     // Determina colori e testo prima di disegnare
@@ -146,6 +147,7 @@ internal class UIRenderer {
   /// Disegna il box delle stats
   /// </summary>
   internal void DrawStats() {
+    Console.ResetColor();
     Console.SetCursorPosition(Renderer.statsBoxStartX, Renderer.statsBoxStartY);
     BoxDraw.DrawBoxTop(Renderer.statsBoxWidth);
     BoxDraw.DrawBoxLine($"Punteggio: {statsManager.Value}", Renderer.statsBoxWidth);
