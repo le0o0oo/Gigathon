@@ -78,4 +78,4 @@ Di conseguenza sono andato per una via di mezzo, implementando entrambe le logic
 Ho aggiungo una voce al menu "Opzioni", disabilitata di default, per abilitare il rimescolo come detto nel documento
 
 ### Punteggio
-Il punteggio viene calcolato in base in base al tempo, il tipo di mosse e il numero di esse.
+Il punteggio viene calcolato in base al tempo, il tipo di mosse e il numero di esse.

@@ -24,7 +24,7 @@ Quando viene avviato, vengono eseguite le seguenti azioni:
 3. Spawna un nuovo thread in background per gestire il ridimensionamento
 4. Entra in un ciclo `while` che attende l'input dell'utente tramite `Console.ReadKey(true)`. Questo approccio è efficiente perché il thread principale rimane bloccato finché un tasto non viene premuto, evitando di consumare CPU inutilmente. L'input viene poi passato all'[ActivityManager](#activity-manager) per essere gestito.
 ### 2. Activity manager
-L'activity manager gestice le schermate e le finestre modali che vanno mostrate sullo schermo e redirige eventuali input utenti ad esse.
+L'activity manager gestice le schermate e le finestre modali che vanno mostrate sullo schermo e redirige eventuali input utente ad esse.
 
 Ogni attività deve essere un oggetto che implementa [IActivity](../Solitario/Activities/Data/IActivity.cs) (situata in `Solitario/Activities/Data`),
 e contiene metodi basici per una attività, che sono:
@@ -56,7 +56,7 @@ Il modello rappresenta lo stato del gioco e le regole.
     - [Tableau](../Solitario/Game/Managers/Tableau.cs): Gestisce le pile di carte sul tavolo.
     - [Actions](../Solitario/Game/Managers/Actions.cs): Gestisce il **command pattern** per le azioni di gioco e salva in uno [Stack](https://learn.microsoft.com/en-us/dotnet/api/system.collections.stack?view=net-9.0) le azioni di gioco
     - [Stats](../Solitario/Game/Managers/Stats.cs): Calcola e memorizza le statistiche di gioco (punteggio, mosse, tempo).
-    - [Cursor](../Solitario/Game/Managers/Cursor.cs): Gestisce il cursore del mouse, che può essere usato per selezionare le carte.
+    - [Cursor](../Solitario/Game/Managers/Cursor.cs): Gestisce il cursore di selezione, che può essere usato per selezionare le carte.
 
 - `Models/`: Contiene i modelli di gioco, come ad esempio la definizione di una carta.
     - [Card](../Solitario/Game/Models/Card.cs): Rappresenta una singola carta con seme, valore e stato (coperta/scoperta).
