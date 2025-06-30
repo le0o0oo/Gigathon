@@ -124,7 +124,7 @@ internal class UIRenderer {
 
     List<string> lines =
     [
-      $"{AnsiColors.Foreground.BoldGreen}Usa le freccie per muovere il cursore",
+      $"{AnsiColors.Foreground.BoldGreen}Usa le frecce per muovere il cursore",
       $"{AnsiColors.Foreground.BoldYellow}(R){AnsiColors.Reset} {pickActionColor}{Legend.pickCardText}",
       $"{AnsiColors.Foreground.BoldYellow}(E){AnsiColors.Reset} {pickActionColor}{Legend.pickWasteText}",
       $"{AnsiColors.Foreground.BoldYellow}(Spazio){AnsiColors.Reset} {AnsiColors.Foreground.BoldCyan}{dynamicSelectText}",
