@@ -52,6 +52,7 @@ internal class InputHandler {
       case ConsoleKey.E:
         controller.AttemptWasteSelection();
         renderer.DrawSelection();
+        renderer.DrawLegend();
         break;
 
       case ConsoleKey.Enter:
