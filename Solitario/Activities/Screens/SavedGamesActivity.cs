@@ -14,7 +14,7 @@ internal class SavedGamesActivity : IActivity {
   const int maxButtonsPerPage = 10;
   const int maxFileLength = 23;
   const int buttonsStartY = 5;
-  private int PagesCount => (int)((_buttons.Count) / maxButtonsPerPage) + 1;
+  private int PagesCount => (int)Math.Ceiling((double)(_buttons.Count - 1) / maxButtonsPerPage);
   /// <summary>
   /// Indice del primo pulsante della pagina corrente.
   /// </summary>
