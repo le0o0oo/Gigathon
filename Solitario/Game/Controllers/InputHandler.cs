@@ -102,6 +102,7 @@ internal class InputHandler {
       renderer.DrawCursor();
       if (selection.Active) renderer.DrawSelection();
       renderer.DrawStats();
+      renderer.DrawLegend();
     }
 
     //legend.CanShortCutFoundation = selection.Active || selection.Active && selection.SourceArea == Areas.Deck;
