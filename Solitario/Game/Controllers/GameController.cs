@@ -144,6 +144,7 @@ internal class GameController {
       // Non ricacolare hint
       statsManager.ApplyActionScore(hintManager.LastAction!);
       actionsManager.Execute(hintManager.LastAction);
+      statsManager.IncMovesCount();
     }
 
     renderer.DrawStats();

@@ -91,8 +91,6 @@ internal class InputHandler {
     if (hintManager.ShowingHint && !changedHintState) {
       hintManager.ShowingHint = false;
 
-      statsManager.IncMovesCount();
-
       if (hintManager.LastAction is MoveCardsAction action) {
         renderer.DrawBasedOnArea(action.sourceArea);
         renderer.DrawBasedOnArea(action.destArea);

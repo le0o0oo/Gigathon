@@ -126,7 +126,7 @@ internal class Renderer {
   internal void DrawFoundations() => boardRenderer.DrawFoundations();
 
   internal void DrawCursor() => uiRenderer.DrawCursor();
-  internal void DrawSelection(bool useInitialPosition = false) => uiRenderer.DrawSelection(useInitialPosition);
+  internal void DrawSelection(bool redraw = false) => uiRenderer.DrawSelection(redraw);
   internal void DrawLegend() => uiRenderer.DrawLegend();
   internal void DrawAction(IAction action, bool animate = true) => actionRenderer.DrawAction(action, animate);
   internal void DrawStats() => uiRenderer.DrawStats();
