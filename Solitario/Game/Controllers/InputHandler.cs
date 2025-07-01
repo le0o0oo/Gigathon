@@ -84,6 +84,7 @@ internal class InputHandler {
 
       case ConsoleKey.H:
         changedHintState = controller.RequestHint();
+        renderer.DrawLegend();
         break;
     }
 
