@@ -36,7 +36,7 @@ internal static class ComponentRenderer {
 	/// <returns></returns>
 	internal static string GetCheckboxArt(Checkbox checkbox, bool selected) {
 		string icon;
-		string extraChar = Console.WindowWidth % 2 == 0 ? "" : " "; // Previene problemi di visualizzazione
+		string extraChar = Console.WindowWidth % 2 == 0 && CurrentSettings.UseAnsi ? "" : " "; // Previene problemi di visualizzazione
 		if (CurrentSettings.UseAnsi) {
 			icon = checkbox.Checked ? "🗹" : "☐";
 		}
